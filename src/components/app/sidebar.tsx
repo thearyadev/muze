@@ -12,6 +12,8 @@ import {
 } from "@radix-ui/react-icons";
 import { usePathname } from "next/navigation";
 import { Separator } from "../ui/separator";
+import { Button } from "../ui/button";
+import CommandLabel from "./command_label";
 
 function SidebarButton({
   href,
@@ -36,11 +38,18 @@ function SidebarButton({
   );
 }
 
-export default function Sidebar() {
+export default function Sidebar({ className }: { className?: string }) {
   return (
-    <div className="h-screen w-64 bg-zinc-800 p-5">
+    <div className={`h-screen w-64 bg-zinc-800 p-5 ${className}`}>
       <div className="pb-4">
-        <Input />
+        <Button
+          variant="outline"
+          size="sm"
+          className="flex w-full flex-row justify-between border-gray-600 bg-transparent text-gray-400 hover:bg-gray-400 hover:bg-opacity-20 hover:text-white"
+        >
+          Search...
+          <CommandLabel commandKeyChain="K" />
+        </Button>
       </div>
       <SidebarButton href="/home" label="Home">
         <HomeIcon />
