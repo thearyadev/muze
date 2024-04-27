@@ -35,6 +35,11 @@ const config = {
       boxShadow: {
         "3xl": "0 50px 100px 0px rgba(0, 0, 0, 1)",
       },
+      colors: {
+        zinc: {
+          850: "#222222"
+        }
+      }
     },
   },
   plugins: [require("tailwindcss-animate")],

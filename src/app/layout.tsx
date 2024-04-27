@@ -6,7 +6,9 @@ import { TRPCReactProvider } from "~/trpc/react";
 import Player from "~/components/app/player";
 import Sidebar from "~/components/app/sidebar";
 import PlayerContextProvider from "~/components/app/player_context";
-import { Suspense } from "react";
+
+import Header from "~/components/app/header";
+import KeybindContextProvider from "~/components/app/keybind_context";
 
 const inter = Inter({
   subsets: ["latin"],
@@ -26,17 +28,26 @@ export default function RootLayout({
 }) {
   return (
     <html lang="en">
-      <body className={`font-sans ${inter.variable}`}>
+      <body
+        className={`font-sans ${inter.variable} opacity-10 transition-all duration-300 ease-in-out`}
+      >
         <TRPCReactProvider>
           <PlayerContextProvider>
-            <div className="flex">
-              <div className="hidden flex-none sm:block">
-                <Sidebar />
-              </div>
-              <div className="grow">{children}</div>
-            </div>
+            <KeybindContextProvider>
+              <div className="flex">
+                <div className="hidden flex-none sm:block">
+                  <Sidebar />
+                </div>
 
-            <Player />
+                <div className="sm:hidden">
+                  <Header />
+                </div>
+
+                <div className="grow">{children}</div>
+              </div>
+
+              <Player />
+            </KeybindContextProvider>
           </PlayerContextProvider>
         </TRPCReactProvider>
       </body>
