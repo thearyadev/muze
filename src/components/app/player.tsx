@@ -1,25 +1,19 @@
 "use client";
 
 import React, { useContext, useEffect } from "react";
-import { PlayerContext } from "./player_context";
 import { Avatar } from "../ui/avatar";
-import { AvatarFallback, AvatarImage } from "@radix-ui/react-avatar";
+import { AvatarImage } from "@radix-ui/react-avatar";
 import Link from "next/link";
 
 import { VolumeSlider, TrackSlider } from "../ui/slider";
-import { cn } from "~/lib/utils";
 
 import {
   PlayCircleOutlined,
   PauseCircleOutlined,
   StepBackwardFilled,
   StepForwardFilled,
-  SoundFilled,
 } from "@ant-design/icons";
-import { CalendarIcon, LoopIcon, SpeakerLoudIcon } from "@radix-ui/react-icons";
-import { argv0 } from "process";
-import { Tooltip, TooltipProvider } from "../ui/tooltip";
-import { TooltipContent, TooltipTrigger } from "@radix-ui/react-tooltip";
+import { LoopIcon, SpeakerLoudIcon } from "@radix-ui/react-icons";
 import {
   HoverCard,
   HoverCardContent,

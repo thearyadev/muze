@@ -10,21 +10,36 @@ import {
   PersonIcon,
   TableIcon,
 } from "@radix-ui/react-icons";
-import { usePathname } from "next/navigation";
+import { usePathname, useRouter } from "next/navigation";
 import { Separator } from "../ui/separator";
 import { Button } from "../ui/button";
 import CommandLabel from "./command_label";
+import { useContext, useEffect } from "react";
+import { KeybindContext } from "./keybind_context";
 
 function SidebarButton({
   href,
   label,
   children,
+  commandKey,
 }: {
   href: string;
   label: string;
   children: React.ReactNode;
+  commandKey: string;
 }) {
   const pathname = usePathname();
+  const router = useRouter();
+
+  const { registerKeybind } = useContext(KeybindContext);
+  useEffect(() => {
+    registerKeybind(
+      commandKey,
+      undefined,
+    )(() => {
+      router.push(href);
+    });
+  }, []);
   return (
     <div className="pb-1">
       <Link
@@ -51,22 +66,22 @@ export default function Sidebar({ className }: { className?: string }) {
           <CommandLabel commandKeyChain="K" />
         </Button>
       </div>
-      <SidebarButton href="/home" label="Home">
+      <SidebarButton href="/home" label="Home" commandKey="1">
         <HomeIcon />
       </SidebarButton>
-      <SidebarButton href="/queue" label="Queue">
+      <SidebarButton href="/queue" label="Queue" commandKey="2">
         <ListBulletIcon />
       </SidebarButton>
-      <SidebarButton href="/all" label="All Songs">
+      <SidebarButton href="/all_songs" label="All Songs" commandKey="3">
         <ArchiveIcon />
       </SidebarButton>
-      <SidebarButton href="/albums" label="Albums">
+      <SidebarButton href="/albums" label="Albums" commandKey="4">
         <CardStackIcon />
       </SidebarButton>
-      <SidebarButton href="/artists" label="Artists">
+      <SidebarButton href="/artists" label="Artists" commandKey="5">
         <PersonIcon />
       </SidebarButton>
-      <SidebarButton href="/genres" label="Genres">
+      <SidebarButton href="/genres" label="Genres" commandKey="6">
         <TableIcon />
       </SidebarButton>
     </div>

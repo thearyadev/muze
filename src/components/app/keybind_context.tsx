@@ -63,8 +63,8 @@ export default function KeybindContextProvider({
     };
 
     const keyUpHandler = (event: KeyboardEvent) => {
-      // on key up assume all commands are cancelled
-      keyPressRef.current = [];
+      const { key } = event;
+      keyPressRef.current = keyPressRef.current.filter((k) => k !== key);
     };
     window.addEventListener("keydown", keyDownHandler);
     window.addEventListener("keyup", keyUpHandler);
