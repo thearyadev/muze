@@ -32,17 +32,21 @@ export const tracks = createTable("track", {
   discNumber: int("disc_number", { mode: "number" }),
   genre: text("genre", { length: 256 }),
   year: int("year", { mode: "number" }),
-  
+  path: text("path", { length: 256 }).notNull(),
+  fingerprint: text("fingerprint", { length: 256 }).notNull(),
+  mbid: text("mbid").notNull(),
 });
 
 export const albums = createTable("album", {
   id: int("id", { mode: "number" }).primaryKey({ autoIncrement: true }),
   name: text("name", { length: 256 }),
+  mbid: text("mbid").notNull(),
 });
 
 export const artists = createTable("artist", {
   id: int("id", { mode: "number" }).primaryKey({ autoIncrement: true }),
   name: text("name", { length: 256 }),
+  mbid: text("mbid").notNull(),
 });
 
 
