@@ -37,9 +37,9 @@ const config = {
       },
       colors: {
         zinc: {
-          850: "#222222"
-        }
-      }
+          850: "#222222",
+        },
+      },
     },
   },
   plugins: [require("tailwindcss-animate")],

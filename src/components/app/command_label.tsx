@@ -2,8 +2,8 @@ import { cn } from "~/lib/utils";
 
 export default function CommandLabel({
   className,
-  commandKey="⌘",
-  commandKeyChain="K"
+  commandKey = "⌘",
+  commandKeyChain = "K",
 }: {
   className?: string;
   commandKey?: string;
@@ -16,8 +16,8 @@ export default function CommandLabel({
         className,
       )}
     >
-      <span className="text-xs">{commandKey}</span>{commandKeyChain}
+      <span className="text-xs">{commandKey}</span>
+      {commandKeyChain}
     </kbd>
   );
 }
-

@@ -60,6 +60,6 @@ export const userRouter = createTRPCRouter({
         });
         return { success: true };
       }
-      throw new Error("User already exists")
+      throw new Error("User already exists");
     }),
 });

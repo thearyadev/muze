@@ -1,3 +1,3 @@
 export default function Home() {
-  return <p>Songs</p>
+  return <p>Songs</p>;
 }

@@ -1,3 +1,3 @@
 export default function Home() {
-  return <p>Queue</p>
+  return <p>Queue</p>;
 }

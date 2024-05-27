@@ -103,9 +103,12 @@ export default function Player() {
       });
     }
     registerKeybind(" ", undefined)(handlePlayPause);
-    registerKeybind("Meta", "u")(() => {
-      console.log("meta u!!! callback")
-    })
+    registerKeybind(
+      "Meta",
+      "u",
+    )(() => {
+      console.log("meta u!!! callback");
+    });
 
     registerKeybind("d", "z")(handlePlayPause);
 

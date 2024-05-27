@@ -6,16 +6,14 @@ import {
   SheetDescription,
 } from "~/components/ui/sheet";
 import Sidebar from "./sidebar";
-import {
-  HamburgerMenuIcon
-} from "@radix-ui/react-icons";
+import { HamburgerMenuIcon } from "@radix-ui/react-icons";
 
 function Header() {
   return (
-    <div className="bg-zinc-800 w-screen h-14 shadow-2xl grid grid-cols-2 pl-4 pr-4 text-white hover:text-orange-400 transition duration-100">
+    <div className="grid h-14 w-screen grid-cols-2 bg-zinc-800 pl-4 pr-4 text-white shadow-2xl transition duration-100 hover:text-orange-400">
       <Sheet>
         <SheetTrigger>
-          <HamburgerMenuIcon className="w-5 h-5" />
+          <HamburgerMenuIcon className="h-5 w-5" />
         </SheetTrigger>
         <SheetContent side="left" className="bg-zinc-800">
           <SheetHeader>

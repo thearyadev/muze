@@ -32,7 +32,7 @@ const TrackSlider = React.forwardRef<
   <SliderPrimitive.Root
     ref={ref}
     className={cn(
-      "relative flex w-full touch-none select-none items-center h-2.5 -mb-1",
+      "relative -mb-1 flex h-2.5 w-full touch-none select-none items-center",
       className,
     )}
     {...props}

@@ -39,7 +39,7 @@
     ".next/types/**/*.ts"
   ],
   "ts-node": {
-    "esm": true,
+    "esm": true
   },
   "exclude": ["node_modules"]
 }

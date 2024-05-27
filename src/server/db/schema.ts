@@ -49,8 +49,6 @@ export const artists = createTable("artist", {
   mbid: text("mbid").notNull(),
 });
 
-
-
 export const artistTracks = createTable("artist_track", {
   id: int("id", { mode: "number" }).primaryKey({ autoIncrement: true }),
   artistId: int("artist_id", { mode: "number" })
