@@ -16,6 +16,7 @@ import { Button } from "../ui/button";
 import CommandLabel from "./command_label";
 import { useContext, useEffect } from "react";
 import { KeybindContext } from "./keybind_context";
+import { sync } from "~/lib/actions";
 
 function SidebarButton({
   href,
@@ -84,6 +85,9 @@ export default function Sidebar({ className }: { className?: string }) {
       <SidebarButton href="/genres" label="Genres" commandKey="6">
         <TableIcon />
       </SidebarButton>
+      <Button onClick={() => sync()}>Sync</Button>
+
     </div>
+
   );
 }

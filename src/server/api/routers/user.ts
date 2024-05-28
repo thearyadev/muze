@@ -42,6 +42,9 @@ export const userRouter = createTRPCRouter({
       },
     });
   }),
+  test: publicProcedure.query(() => {
+    return "meow"
+  }),
   createUser: publicProcedure
     .input(
       z.object({ username: z.string().min(1), password: z.string().min(1) }),
@@ -62,4 +65,5 @@ export const userRouter = createTRPCRouter({
       }
       throw new Error("User already exists");
     }),
-});
+
+})

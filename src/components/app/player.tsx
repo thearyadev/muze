@@ -207,17 +207,17 @@ export default function Player() {
           <StepBackwardFilled className="text-xl text-white transition duration-100 hover:text-orange-400" />
           <PauseCircleOutlined
             className={`text-4xl text-white transition duration-100 hover:text-orange-400 ${!playing ? "hidden" : null}`}
-            onClick={handlePlayPause}
+            onMouseDown={handlePlayPause}
           />
           <PlayCircleOutlined
             className={`text-4xl text-white transition duration-100 hover:text-orange-400 ${!playing ? null : "hidden"}`}
-            onClick={handlePlayPause}
+            onMouseDown={handlePlayPause}
           />
           <div className="flex flex-row items-center space-x-5 ">
             <StepForwardFilled className="text-xl text-white transition duration-100 hover:text-orange-400" />
             <LoopIcon
               className={`text-xs text-gray-400 hover:text-orange-400 ${loop ? "text-orange-400" : null}`}
-              onClick={handleLoopBtnClick}
+              onMouseDown={handleLoopBtnClick}
             />
           </div>
         </div>
