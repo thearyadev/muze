@@ -12,6 +12,8 @@ export const env = createEnv({
       .enum(["development", "test", "production"])
       .default("development"),
     MUSIC_PATH: z.string().default("/music"),
+    COVER_ART_PATH: z.string().default("/covers")
+
   },
 
   /**
@@ -31,6 +33,7 @@ export const env = createEnv({
     DATABASE_URL: process.env.DATABASE_URL,
     NODE_ENV: process.env.NODE_ENV,
     MUSIC_PATH: process.env.MUSIC_PATH,
+    COVER_ART_PATH: process.env.COVER_ART_PATH
     // NEXT_PUBLIC_CLIENTVAR: process.env.NEXT_PUBLIC_CLIENTVAR,
   },
   /**
