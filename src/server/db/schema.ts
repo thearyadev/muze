@@ -33,20 +33,29 @@ export const tracks = createTable("track", {
   genre: text("genre", { length: 256 }),
   year: int("year", { mode: "number" }),
   path: text("path", { length: 256 }).notNull(),
-  fingerprint: text("fingerprint", { length: 256 }).notNull(),
   mbid: text("mbid").notNull(),
 });
 
 export const albums = createTable("album", {
   id: int("id", { mode: "number" }).primaryKey({ autoIncrement: true }),
-  name: text("name", { length: 256 }),
+  name: text("name", { length: 256 }).notNull(),
   mbid: text("mbid").notNull(),
 });
 
 export const artists = createTable("artist", {
   id: int("id", { mode: "number" }).primaryKey({ autoIncrement: true }),
-  name: text("name", { length: 256 }),
+  name: text("name", { length: 256 }).notNull(),
   mbid: text("mbid").notNull(),
+});
+
+export const albumArtists = createTable("album_artist", {
+  id: int("id", { mode: "number" }).primaryKey({ autoIncrement: true }),
+  artistId: int("artist_id", { mode: "number" })
+    .references(() => artists.id)
+    .notNull(),
+  albumId: int("album_id", { mode: "number" })
+    .references(() => albums.id)
+    .notNull(),
 });
 
 export const artistTracks = createTable("artist_track", {
@@ -68,7 +77,6 @@ export const playlistTracks = createTable("playlist_track", {
     .references(() => tracks.id)
     .notNull(),
 });
-
 export const userListens = createTable("user_listen", {
   id: int("id", { mode: "number" }).primaryKey({ autoIncrement: true }),
   userId: int("user_id", { mode: "number" })
