@@ -1,14 +1,15 @@
 import { createTRPCClient } from "@trpc/client";
-import { z } from "zod";
+import { number, z } from "zod";
 import { env } from "~/env";
 
 import { createTRPCRouter, publicProcedure } from "~/server/api/trpc";
 import fs from "fs";
 import path from "path";
 import * as mm from "music-metadata";
-import { tracks, artists, albums } from "~/server/db/schema";
-import { eq } from "drizzle-orm";
+import { tracks, artists, albums, artistTracks } from "~/server/db/schema";
+import { eq, and, asc } from "drizzle-orm";
 import { metadata } from "~/app/layout";
+import { measureMemory } from "vm";
 
 async function getTracks(dir: string): Promise<string[]> {
   let files: string[] = [];
@@ -42,7 +43,6 @@ type Metadata = {
   DISC_NUMBER?: number;
   GENRE?: string;
   YEAR?: number;
-
   COVER?: Buffer;
 };
 
@@ -100,12 +100,14 @@ export const libraryRouter = createTRPCRouter({
     tracks_fs.forEach(async (track_i) => {
       const metadata = await extractMetadata(track_i); // get metadata for a track
       if (
-        !metadata.MB_TRACK_ID ||
-        !metadata.MB_ARTIST_ID?.length ||
-        !(metadata.ARTIST_NAME?.length === metadata.MB_ARTIST_ID?.length)
+        metadata.MB_TRACK_ID === undefined ||
+        metadata.MB_ARTIST_ID === undefined ||
+        metadata.ARTIST_NAME === undefined ||
+        metadata.ARTIST_NAME.length === 0 ||
+        metadata.MB_ARTIST_ID.length === 0
       ) {
         console.log(
-          "The metadata in this track appears to be invalid. Please run tagging with MusicBrainz Picard",
+          `Error: The metadata for track ${track_i} is not vaild. Please tag using MusicBrainz Picard`,
         );
         return;
       }
@@ -176,6 +178,7 @@ export const libraryRouter = createTRPCRouter({
               .insert(albums)
               .values({
                 name: metadata.ALBUM_NAME,
+                artistId: artistIds[0] as number,
                 mbid: metadata.MB_ALBUM_ID,
               })
               .returning({ newRecordId: albums.id })
@@ -229,20 +232,58 @@ export const libraryRouter = createTRPCRouter({
         track_id = newRecord[0]!.newRecordId;
       }
 
-      // album artist
       // track artist
+      artistIds.forEach(async (item) => {
+        const relationQuery = await ctx.db
+          .select()
+          .from(artistTracks)
+          .where(
+            and(
+              eq(artistTracks.trackId, track_id),
+              eq(artistTracks.artistId, item),
+            ),
+          )
+          .execute();
+        if (relationQuery.length === 0) {
+          // relation doesnt exist
+          await ctx.db
+            .insert(artistTracks)
+            .values({
+              artistId: item,
+              trackId: track_id,
+            })
+            .execute();
+        }
+      });
 
-      //   );
-      //   if (metadata.COVER && !fs.existsSync(coverPath)) {
-      //     fs.writeFile(coverPath, metadata.COVER, (err) => {
-      //       if (err) {
-      //         console.error(err);
-      //         return;
-      //       }
-      //       console.log("Wrote cover to file system");
-      //     });
-      //   }
+      // if (metadata.COVER && !fs.existsSync(coverPath)) {
+      //   fs.writeFile(coverPath, metadata.COVER, (err) => {
+      //     if (err) {
+      //       console.error(err);
+      //       return;
+      //     }
+      //     console.log("Wrote cover to file system");
+      //   });
       // }
     });
   }),
+
+  allSongs: publicProcedure
+    .input(
+      z.object({
+        pageSize: z.number(),
+        page: z.number(),
+      }),
+    )
+    .query(async ({ ctx, input }) => {
+      return ctx.db
+        .select()
+        .from(tracks)
+        .orderBy(asc(tracks.id))
+        .limit(input.pageSize)
+        .offset((input.page - 1) * input.pageSize)
+        .innerJoin(albums, eq(tracks.albumId, albums.id))
+        .innerJoin(artistTracks, eq(tracks.id, artistTracks.trackId))
+        .innerJoin(artists, eq(artistTracks.artistId, artists.id));
+    }),
 });
