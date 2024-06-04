@@ -4,9 +4,10 @@ import { env } from "~/env";
 
 export default {
   schema: "./src/server/db/schema.ts",
-  driver: "better-sqlite",
+  dialect: "sqlite",
   dbCredentials: {
     url: env.DATABASE_URL,
   },
   tablesFilter: ["lyzard_*"],
+  out: "./"
 } satisfies Config;
