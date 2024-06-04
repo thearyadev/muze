@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useContext, useEffect } from "react";
+import React, { useContext, useEffect, useState } from "react";
 import { Avatar } from "../ui/avatar";
 import { AvatarImage } from "@radix-ui/react-avatar";
 import Link from "next/link";
@@ -20,10 +20,14 @@ import {
   HoverCardTrigger,
 } from "../ui/hover-card";
 import { KeybindContext } from "./keybind_context";
+import { PlayerContext } from "./player_context";
+import { api } from "~/trpc/react";
+import { notFound } from "next/navigation";
 
 export default function Player() {
+  const { track } = useContext(PlayerContext);
   const [position, setPosition] = React.useState([0]);
-  const [maxPosition, setMaxPosition] = React.useState(240);
+  const [maxPosition, setMaxPosition] = React.useState(0);
   const [playing, setPlaying] = React.useState(false);
   const [volume, setVolume] = React.useState(50);
   const [loop, setLoop] = React.useState(false);
@@ -134,6 +138,11 @@ export default function Player() {
     };
   }, []);
 
+  console.log(track)
+  if (track=== null){
+    return "error"
+  }
+
   return (
     <div
       className="fixed bottom-0 select-none"
@@ -177,15 +186,15 @@ export default function Player() {
             />
           </Avatar>
           <div className="hidden pl-3 sm:block">
-            <p className="text-sm leading-tight text-white">Positions</p>
+            <p className="text-sm leading-tight text-white">{track.name}</p>
 
             <HoverCard>
               <HoverCardTrigger asChild>
                 <Link
                   href="/artist/3"
-                  className="text-xs text-gray-500 hover:text-orange-400 "
+                  className="text-xs text-gray-500 transition-all fade-in-100 fade-out-100 hover:text-orange-400 "
                 >
-                  Ariana Grande
+                {track.artistNames} 
                 </Link>
               </HoverCardTrigger>
               <HoverCardContent className="w-52">

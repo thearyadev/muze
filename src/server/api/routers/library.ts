@@ -7,9 +7,10 @@ import fs from "fs";
 import path from "path";
 import * as mm from "music-metadata";
 import { tracks, artists, albums, artistTracks } from "~/server/db/schema";
-import { eq, and, asc } from "drizzle-orm";
+import { eq, and, asc, getTableColumns, sql } from "drizzle-orm";
 import { metadata } from "~/app/layout";
 import { measureMemory } from "vm";
+import { get } from "http";
 
 async function getTracks(dir: string): Promise<string[]> {
   let files: string[] = [];
@@ -178,7 +179,7 @@ export const libraryRouter = createTRPCRouter({
               .insert(albums)
               .values({
                 name: metadata.ALBUM_NAME,
-                artistId: artistIds[0] as number,
+                artistId: artistIds[0] as number, // TODO: discover correct album artist
                 mbid: metadata.MB_ALBUM_ID,
               })
               .returning({ newRecordId: albums.id })
@@ -276,14 +277,39 @@ export const libraryRouter = createTRPCRouter({
       }),
     )
     .query(async ({ ctx, input }) => {
-      return ctx.db
-        .select()
+      const query = await ctx.db
+        .select({
+          ...getTableColumns(tracks),
+          albumName: albums.name,
+          artistNames: sql<string>`string_agg(${artists.name}, ', ') AS artistNames`,
+        })
         .from(tracks)
+        .where(eq(tracks.id, 116))
         .orderBy(asc(tracks.id))
         .limit(input.pageSize)
         .offset((input.page - 1) * input.pageSize)
         .innerJoin(albums, eq(tracks.albumId, albums.id))
         .innerJoin(artistTracks, eq(tracks.id, artistTracks.trackId))
-        .innerJoin(artists, eq(artistTracks.artistId, artists.id));
+        .innerJoin(artists, eq(artistTracks.artistId, artists.id))
+        .execute();
+      return query;
     }),
+  getTrack: publicProcedure.input(z.number()).query(async ({ ctx, input }) => {
+    return (
+      (
+        await ctx.db
+          .select({
+            ...getTableColumns(tracks),
+            albumName: albums.name,
+            artistNames: sql<string>`string_agg(${artists.name}, ', ') AS artistNames`,
+          })
+          .from(tracks)
+          .where(eq(tracks.id, input))
+          .innerJoin(albums, eq(tracks.albumId, albums.id))
+          .innerJoin(artistTracks, eq(artistTracks.trackId, tracks.id))
+          .innerJoin(artists, eq(artists.id, artistTracks.artistId))
+          .execute()
+      )[0] || null
+    );
+  }),
 });
