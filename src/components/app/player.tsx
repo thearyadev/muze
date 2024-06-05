@@ -25,14 +25,22 @@ import { api } from "~/trpc/react";
 import { notFound } from "next/navigation";
 
 export default function Player() {
-  const { track } = useContext(PlayerContext);
-  const [position, setPosition] = React.useState([0]);
-  const [maxPosition, setMaxPosition] = React.useState(0);
-  const [playing, setPlaying] = React.useState(false);
-  const [volume, setVolume] = React.useState(50);
-  const [loop, setLoop] = React.useState(false);
+  const {
+    track,
+    playing,
+    setPlaying,
+    position,
+    setPosition,
+    maxPosition,
+    setMaxPosition,
+    volume,
+    setVolume,
+    loop,
+    setLoop,
+    writePositionToLocalStorage,
+    audioRef,
+  } = useContext(PlayerContext);
   const { registerKeybind } = useContext(KeybindContext);
-  const audioRef = React.useRef<HTMLAudioElement>(null);
 
   const handleVolumeChange = (value: number[]) => {
     setVolume(value[0] as number);
@@ -49,12 +57,13 @@ export default function Player() {
     } else {
       audioRef.current.pause();
     }
+    audioRef.current.currentTime = position[0] as number;
   };
 
   const handleTimeChange = () => {
     if (!audioRef.current) return;
     setPosition([audioRef.current.currentTime]);
-    setMaxPosition(audioRef.current.duration);
+    writePositionToLocalStorage(audioRef.current.currentTime);
   };
 
   const handleTrackComplete = () => {
@@ -93,6 +102,8 @@ export default function Player() {
     if (audioRef.current?.error !== null) {
       console.error(audioRef.current?.error);
     }
+
+    setMaxPosition(audioRef?.current?.duration as number);
 
     if (navigator) {
       navigator.mediaSession.setActionHandler("play", () => {
@@ -138,9 +149,8 @@ export default function Player() {
     };
   }, []);
 
-  console.log(track)
-  if (track=== null){
-    return "error"
+  if (track === null) {
+    return "error";
   }
 
   return (
@@ -156,8 +166,9 @@ export default function Player() {
         id={"audo"}
         ref={audioRef}
         title="Billie Eilish - listen before i go"
-        src="https://music.aryankothari.dev/play/6033fc36-e449-4db4-90e7-8d43ab9239dd?t=232|ZRu2mv45IfycmwfJiiMz2RdhjhuStwxlXlHOsYOh"
+        src={`/api/track_data?id=${track.id}`}
         onTimeUpdate={handleTimeChange}
+
         onEnded={handleTrackComplete}
       />
       <div className="w-screen">
@@ -194,7 +205,7 @@ export default function Player() {
                   href="/artist/3"
                   className="text-xs text-gray-500 transition-all fade-in-100 fade-out-100 hover:text-orange-400 "
                 >
-                {track.artistNames} 
+                  {track.artistNames}
                 </Link>
               </HoverCardTrigger>
               <HoverCardContent className="w-52">
