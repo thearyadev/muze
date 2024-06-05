@@ -30,7 +30,6 @@ export const tracks = createTable("track", {
   duration: int("duration", { mode: "number" }),
   trackNumber: int("track_number", { mode: "number" }),
   discNumber: int("disc_number", { mode: "number" }),
-  genre: text("genre", { length: 256 }),
   year: int("year", { mode: "number" }),
   path: text("path", { length: 256 }).notNull(),
   mbid: text("mbid").notNull(),
@@ -42,6 +41,18 @@ export const albums = createTable("album", {
   artistId: int("artist_id", { mode: "number" }).references(() => artists.id).notNull(),
   mbid: text("mbid").notNull(),
 });
+
+export const genres = createTable("genre", {
+  id: int("id", {mode: "number"}).primaryKey({autoIncrement: true}),
+  name: text("name", {length: 256}).notNull(),
+}) 
+
+
+export const genreTrack = createTable("genre_track", { // TODO: convert the fks to a joined pk to avoid duplicates
+  id: int("id", { mode: "number" }).primaryKey({ autoIncrement: true }),
+  trackId: int("track_id", {mode: "number"}).references(() => tracks.id),
+  genreId: int("genre_id", {mode: "number"}).references(() => genres.id),
+})
 
 export const artists = createTable("artist", {
   id: int("id", { mode: "number" }).primaryKey({ autoIncrement: true }),
