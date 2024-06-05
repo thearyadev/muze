@@ -6,11 +6,8 @@ import { createTRPCRouter, publicProcedure } from "~/server/api/trpc";
 import fs from "fs";
 import path from "path";
 import * as mm from "music-metadata";
-import { tracks, artists, albums, artistTracks } from "~/server/db/schema";
+import { tracks, artists, albums, artistTracks, genres, genreTrack } from "~/server/db/schema";
 import { eq, and, asc, getTableColumns, sql } from "drizzle-orm";
-import { metadata } from "~/app/layout";
-import { measureMemory } from "vm";
-import { get } from "http";
 
 async function getTracks(dir: string): Promise<string[]> {
   let files: string[] = [];
@@ -42,7 +39,7 @@ type Metadata = {
   DURATION?: number;
   TRACK_NUMBER?: number;
   DISC_NUMBER?: number;
-  GENRE?: string;
+  GENRE?: string[];
   YEAR?: number;
   COVER?: Buffer;
 };
@@ -89,6 +86,7 @@ async function extractMetadata(file_path: string): Promise<Metadata> {
     DISC_NUMBER: metadata.common.disk.no ? metadata.common.disk.no : undefined,
     DURATION: metadata.format.duration,
     YEAR: metadata.common.year,
+    GENRE: metadata.common.genre,
     COVER: metadata.common.picture
       ? metadata.common.picture[0]?.data
       : undefined,
@@ -207,7 +205,6 @@ export const libraryRouter = createTRPCRouter({
             duration: metadata.DURATION,
             trackNumber: metadata.TRACK_NUMBER,
             discNumber: metadata.DISC_NUMBER,
-            genre: metadata.GENRE,
             year: metadata.YEAR,
             path: track_i,
             mbid: metadata.MB_TRACK_ID,
@@ -223,7 +220,6 @@ export const libraryRouter = createTRPCRouter({
             duration: metadata.DURATION,
             trackNumber: metadata.TRACK_NUMBER,
             discNumber: metadata.DISC_NUMBER,
-            genre: metadata.GENRE,
             year: metadata.YEAR,
             path: track_i,
             mbid: metadata.MB_TRACK_ID,
@@ -232,6 +228,24 @@ export const libraryRouter = createTRPCRouter({
           .execute();
         track_id = newRecord[0]!.newRecordId;
       }
+
+      metadata.GENRE?.forEach(async (genre_name) => {
+        // look up the genre
+        // if its there, use its id
+        // if not, create a new one 
+        if (genre_name.length > 20) { // improper tagging
+          return
+        }
+        var genre_id = -1
+        const genre_query = await ctx.db.select().from(genres).where(eq(genres.name, genre_name)).execute()
+        if (genre_query.length > 0) {
+          genre_id = genre_query[0]?.id as number
+        }else {
+          const newRecord = await ctx.db.insert(genres).values({name: genre_name}).returning({newRecordId: genres.id}).execute()
+          genre_id = newRecord[0]!.newRecordId
+        }
+        await ctx.db.insert(genreTrack).values({genreId: genre_id, trackId: track_id})
+      })
 
       // track artist
       artistIds.forEach(async (item) => {
@@ -256,17 +270,8 @@ export const libraryRouter = createTRPCRouter({
             .execute();
         }
       });
-
-      // if (metadata.COVER && !fs.existsSync(coverPath)) {
-      //   fs.writeFile(coverPath, metadata.COVER, (err) => {
-      //     if (err) {
-      //       console.error(err);
-      //       return;
-      //     }
-      //     console.log("Wrote cover to file system");
-      //   });
-      // }
     });
+    console.log("done")
   }),
 
   allSongs: publicProcedure
@@ -277,20 +282,31 @@ export const libraryRouter = createTRPCRouter({
       }),
     )
     .query(async ({ ctx, input }) => {
+      const subquery = ctx.db
+        .select({
+          trackId: artistTracks.trackId,
+          artistNames: sql<string>`string_agg(${artists.name}, ', ')`.as(
+            "artistNames",
+          ),
+        })
+        .from(artistTracks)
+        .innerJoin(artists, eq(artistTracks.artistId, artists.id))
+        .groupBy(artistTracks.trackId)
+        .as("artists");
+
       const query = await ctx.db
         .select({
           ...getTableColumns(tracks),
           albumName: albums.name,
-          artistNames: sql<string>`string_agg(${artists.name}, ', ') AS artistNames`,
+          artistNames: subquery.artistNames
         })
         .from(tracks)
-        .where(eq(tracks.id, 116))
         .orderBy(asc(tracks.id))
         .limit(input.pageSize)
         .offset((input.page - 1) * input.pageSize)
         .innerJoin(albums, eq(tracks.albumId, albums.id))
         .innerJoin(artistTracks, eq(tracks.id, artistTracks.trackId))
-        .innerJoin(artists, eq(artistTracks.artistId, artists.id))
+        .innerJoin(subquery, eq(tracks.id, subquery.trackId))
         .execute();
       return query;
     }),
