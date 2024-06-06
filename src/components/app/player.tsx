@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useContext, useEffect, } from "react";
+import React, { useContext, useEffect } from "react";
 import { Avatar } from "../ui/avatar";
 import { AvatarImage } from "@radix-ui/react-avatar";
 import Link from "next/link";
@@ -39,10 +39,9 @@ export default function Player() {
     handleTrackComplete,
     handleLoopBtnClick,
     handleTimeChange,
-    setMaxPosition
+    setMaxPosition,
   } = useContext(PlayerContext);
   const { registerKeybind } = useContext(KeybindContext);
-
 
   useEffect(() => {
     if (audioRef.current?.error !== null) {
@@ -95,14 +94,7 @@ export default function Player() {
   }
 
   return (
-    <div
-      className="fixed bottom-0 select-none"
-      onLoad={() => {
-        setTimeout(() => {
-          document.body.classList.remove("opacity-10");
-        }, 100);
-      }}
-    >
+    <div className=" select-none ">
       <audio
         id={"audo"}
         ref={audioRef}
@@ -112,9 +104,7 @@ export default function Player() {
         onCanPlay={() => {
           if (!audioRef.current) return;
           setMaxPosition(audioRef.current.duration);
-        
         }}
-
         onEnded={handleTrackComplete}
       />
       <div className="w-screen">
@@ -165,7 +155,7 @@ export default function Player() {
             </HoverCard>
           </div>
         </div>
-            <div
+        <div
           className="flex flex-row items-center justify-center space-x-10 align-middle"
           // controls
         >
