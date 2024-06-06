@@ -7,6 +7,7 @@ import path from "path";
 import * as mm from "music-metadata";
 import { tracks, artists, albums, artistTracks, genres, genreTrack } from "~/server/db/schema";
 import { eq, and, asc, getTableColumns, sql } from "drizzle-orm";
+import { getServerAuthSession } from "~/server/auth";
 
 async function getTracks(dir: string): Promise<string[]> {
   let files: string[] = [];
@@ -310,6 +311,7 @@ export const libraryRouter = createTRPCRouter({
       return query;
     }),
   getTrack: publicProcedure.input(z.number()).query(async ({ ctx, input }) => {
+    console.log(await getServerAuthSession())
     return (
       (
         await ctx.db

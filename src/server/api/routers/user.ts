@@ -1,7 +1,11 @@
 import { createTRPCClient } from "@trpc/client";
 import { z } from "zod";
 
-import { createTRPCRouter, publicProcedure } from "~/server/api/trpc";
+import {
+  createTRPCRouter,
+  protectedProcedure,
+  publicProcedure,
+} from "~/server/api/trpc";
 import { users } from "~/server/db/schema";
 
 // export const postRouter = createTRPCRouter({
@@ -33,37 +37,8 @@ import { users } from "~/server/db/schema";
 //
 
 export const userRouter = createTRPCRouter({
-  userList: publicProcedure.query(({ ctx }) => {
-    return ctx.db.query.users.findMany({
-      columns: {
-        id: true,
-        username: true,
-        password: false,
-      },
-    });
+  isAuthenticated: publicProcedure.query(({ ctx }) => {
+    if (!ctx.session || !ctx.session.user) return false;
+    return true;
   }),
-  test: publicProcedure.query(() => {
-    return "meow"
-  }),
-  createUser: publicProcedure
-    .input(
-      z.object({ username: z.string().min(1), password: z.string().min(1) }),
-    )
-    .mutation(async ({ ctx, input }) => {
-      if (
-        (
-          await ctx.db.query.users.findMany({
-            where: (users, { eq }) => eq(users.username, input.username),
-          })
-        ).length == 0
-      ) {
-        await ctx.db.insert(users).values({
-          username: input.username,
-          password: input.password,
-        });
-        return { success: true };
-      }
-      throw new Error("User already exists");
-    }),
-
-})
+});

@@ -1,7 +1,16 @@
 // Example model schema from the Drizzle docs
 // https://orm.drizzle.team/docs/sql-schema-declaration
 
-import { int, sqliteTableCreator, text } from "drizzle-orm/sqlite-core";
+import {
+  Index,
+  index,
+  int,
+  primaryKey,
+  sqliteTableCreator,
+  text,
+} from "drizzle-orm/sqlite-core";
+import { sql } from "drizzle-orm";
+import type { AdapterAccount } from "next-auth/adapters";
 
 /**
  * This is an example of how to use the multi-project schema feature of Drizzle ORM. Use the same
@@ -9,13 +18,14 @@ import { int, sqliteTableCreator, text } from "drizzle-orm/sqlite-core";
  *
  * @see https://orm.drizzle.team/docs/goodies#multi-project-schema
  */
-export const createTable = sqliteTableCreator((name) => `lyzard_${name}`);
+export const createTable = sqliteTableCreator((name) => `muze_${name}`);
 
 export const users = createTable("user", {
   id: int("id", { mode: "number" }).primaryKey({ autoIncrement: true }),
   username: text("username", { length: 256 }).notNull(),
   password: text("password", { length: 256 }).notNull(),
 });
+
 
 export const playlists = createTable("playlist", {
   id: int("id", { mode: "number" }).primaryKey({ autoIncrement: true }),
@@ -38,21 +48,23 @@ export const tracks = createTable("track", {
 export const albums = createTable("album", {
   id: int("id", { mode: "number" }).primaryKey({ autoIncrement: true }),
   name: text("name", { length: 256 }).notNull(),
-  artistId: int("artist_id", { mode: "number" }).references(() => artists.id).notNull(),
+  artistId: int("artist_id", { mode: "number" })
+    .references(() => artists.id)
+    .notNull(),
   mbid: text("mbid").notNull(),
 });
 
 export const genres = createTable("genre", {
-  id: int("id", {mode: "number"}).primaryKey({autoIncrement: true}),
-  name: text("name", {length: 256}).notNull(),
-}) 
-
-
-export const genreTrack = createTable("genre_track", { // TODO: convert the fks to a joined pk to avoid duplicates
   id: int("id", { mode: "number" }).primaryKey({ autoIncrement: true }),
-  trackId: int("track_id", {mode: "number"}).references(() => tracks.id),
-  genreId: int("genre_id", {mode: "number"}).references(() => genres.id),
-})
+  name: text("name", { length: 256 }).notNull(),
+});
+
+export const genreTrack = createTable("genre_track", {
+  // TODO: convert the fks to a joined pk to avoid duplicates
+  id: int("id", { mode: "number" }).primaryKey({ autoIncrement: true }),
+  trackId: int("track_id", { mode: "number" }).references(() => tracks.id),
+  genreId: int("genre_id", { mode: "number" }).references(() => genres.id),
+});
 
 export const artists = createTable("artist", {
   id: int("id", { mode: "number" }).primaryKey({ autoIncrement: true }),
