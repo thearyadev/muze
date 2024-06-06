@@ -1,6 +1,6 @@
 "use client";
 
-import { Input } from "../ui/input";
+import { Input } from "../ui/searchInput";
 import Link from "next/link";
 import {
   HomeIcon,
@@ -17,6 +17,7 @@ import CommandLabel from "./command_label";
 import { useContext, useEffect } from "react";
 import { KeybindContext } from "./keybind_context";
 import { sync } from "~/lib/actions";
+import { signOut } from "next-auth/react";
 
 function SidebarButton({
   href,
@@ -67,27 +68,32 @@ export default function Sidebar({ className }: { className?: string }) {
           <CommandLabel commandKeyChain="K" />
         </Button>
       </div>
-      <SidebarButton href="/home" label="Home" commandKey="1">
+      <SidebarButton href="/app/home" label="Home" commandKey="1">
         <HomeIcon />
       </SidebarButton>
-      <SidebarButton href="/queue" label="Queue" commandKey="2">
+      <SidebarButton href="/app/queue" label="Queue" commandKey="2">
         <ListBulletIcon />
       </SidebarButton>
-      <SidebarButton href="/all_songs" label="All Songs" commandKey="3">
+      <SidebarButton href="/app/all_songs" label="All Songs" commandKey="3">
         <ArchiveIcon />
       </SidebarButton>
-      <SidebarButton href="/albums" label="Albums" commandKey="4">
+      <SidebarButton href="/app/albums" label="Albums" commandKey="4">
         <CardStackIcon />
       </SidebarButton>
-      <SidebarButton href="/artists" label="Artists" commandKey="5">
+      <SidebarButton href="/app/artists" label="Artists" commandKey="5">
         <PersonIcon />
       </SidebarButton>
-      <SidebarButton href="/genres" label="Genres" commandKey="6">
+      <SidebarButton href="/app/genres" label="Genres" commandKey="6">
         <TableIcon />
       </SidebarButton>
       <Button onClick={() => sync()}>Sync</Button>
-
+      <Button
+        onClick={() => {
+          signOut();
+        }}
+      >
+        Logout
+      </Button>
     </div>
-
   );
 }
