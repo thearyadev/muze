@@ -21,8 +21,6 @@ import {
 } from "../ui/hover-card";
 import { KeybindContext } from "./keybind_context";
 import { PlayerContext } from "./player_context";
-import { api } from "~/trpc/react";
-import { notFound } from "next/navigation";
 
 export default function Player() {
   const {
@@ -32,78 +30,24 @@ export default function Player() {
     position,
     setPosition,
     maxPosition,
-    setMaxPosition,
     volume,
-    setVolume,
     loop,
     setLoop,
-    writePositionToLocalStorage,
     audioRef,
+    handlePlayPause,
+    handleVolumeChange,
+    handleTrackComplete,
+    handleLoopBtnClick,
+    handleTimeChange,
+    setMaxPosition
   } = useContext(PlayerContext);
   const { registerKeybind } = useContext(KeybindContext);
 
-  const handleVolumeChange = (value: number[]) => {
-    setVolume(value[0] as number);
-    if (!audioRef.current) return;
-    audioRef.current.volume = (value[0] as number) / 100;
-    localStorage.setItem("volume", (value[0] as number).toString());
-  };
-
-  const handlePlayPause = () => {
-    setPlaying((prevPlaying) => !prevPlaying);
-    if (!audioRef.current) return;
-    if (audioRef.current.paused) {
-      audioRef.current.play();
-    } else {
-      audioRef.current.pause();
-    }
-    audioRef.current.currentTime = position[0] as number;
-  };
-
-  const handleTimeChange = () => {
-    if (!audioRef.current) return;
-    setPosition([audioRef.current.currentTime]);
-    writePositionToLocalStorage(audioRef.current.currentTime);
-  };
-
-  const handleTrackComplete = () => {
-    setPlaying(false);
-    if (loop) {
-      if (!audioRef.current) return;
-      audioRef.current.play();
-      setPlaying(true);
-    }
-    // if no repeat, check queue
-    // if no queue, do nothing
-  };
-
-  const handleSpaceBar = (e: KeyboardEvent) => {
-    if (e.code === "Space") {
-      handlePlayPause();
-    }
-
-    if (e.code === "ArrowRight") {
-      if (!audioRef.current) return;
-      audioRef.current.currentTime += 1;
-    }
-
-    if (e.code === "ArrowLeft") {
-      if (!audioRef.current) return;
-      audioRef.current.currentTime -= 1;
-    }
-  };
-
-  const handleLoopBtnClick = () => {
-    setLoop((prevLoop) => !prevLoop);
-    localStorage.setItem("loop", loop ? "false" : "true");
-  };
 
   useEffect(() => {
     if (audioRef.current?.error !== null) {
       console.error(audioRef.current?.error);
     }
-
-    setMaxPosition(audioRef?.current?.duration as number);
 
     if (navigator) {
       navigator.mediaSession.setActionHandler("play", () => {
@@ -139,9 +83,6 @@ export default function Player() {
     }
 
     return () => {
-      // if (document) {
-      //   document.removeEventListener("keydown", handleSpaceBar);
-      // }
       if (navigator) {
         navigator.mediaSession.setActionHandler("play", null);
         navigator.mediaSession.setActionHandler("pause", null);
@@ -168,6 +109,11 @@ export default function Player() {
         title="Billie Eilish - listen before i go"
         src={`/api/track_data?id=${track.id}`}
         onTimeUpdate={handleTimeChange}
+        onCanPlay={() => {
+          if (!audioRef.current) return;
+          setMaxPosition(audioRef.current.duration);
+        
+        }}
 
         onEnded={handleTrackComplete}
       />
@@ -219,8 +165,7 @@ export default function Player() {
             </HoverCard>
           </div>
         </div>
-
-        <div
+            <div
           className="flex flex-row items-center justify-center space-x-10 align-middle"
           // controls
         >
