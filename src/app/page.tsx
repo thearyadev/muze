@@ -1,5 +1,5 @@
-import { api } from "~/trpc/server";
+import { redirect } from "next/navigation";
 
-export default async function Home() {
-  return <p>Hello World</p>;
+export default function IndexRedirect() {
+  redirect("/app/home");
 }

@@ -3,11 +3,6 @@ import "~/styles/globals.css";
 import { Inter } from "next/font/google";
 
 import { TRPCReactProvider } from "~/trpc/react";
-import Player from "~/components/app/player";
-import Sidebar from "~/components/app/sidebar";
-import PlayerContextProvider from "~/components/app/player_context";
-
-import Header from "~/components/app/header";
 import KeybindContextProvider from "~/components/app/keybind_context";
 
 const inter = Inter({
@@ -28,27 +23,9 @@ export default function RootLayout({
 }) {
   return (
     <html lang="en">
-      <body
-        className={`font-sans ${inter.variable} opacity-10 transition-all duration-300 ease-in-out`}
-      >
+      <body className={`font-sans ${inter.variable}`}>
         <TRPCReactProvider>
-          <PlayerContextProvider>
-            <KeybindContextProvider>
-              <div className="flex">
-                <div className="hidden flex-none sm:block">
-                  <Sidebar />
-                </div>
-
-                <div className="sm:hidden">
-                  <Header />
-                </div>
-
-                <div className="grow">{children}</div>
-              </div>
-
-              <Player />
-            </KeybindContextProvider>
-          </PlayerContextProvider>
+          <KeybindContextProvider>{children}</KeybindContextProvider>
         </TRPCReactProvider>
       </body>
     </html>
