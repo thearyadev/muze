@@ -2,7 +2,6 @@
 import React, { useEffect } from "react";
 import type { inferRouterOutputs } from "@trpc/server";
 import { AppRouter } from "~/server/api/root";
-import { deflate } from "zlib";
 
 type RouterOutput = inferRouterOutputs<AppRouter>;
 
