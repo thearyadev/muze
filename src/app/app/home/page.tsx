@@ -12,9 +12,9 @@ export default function Home() {
     <div className="overflow-y-scroll h-screen">
       {data?.map((item) => {
         return (
-          <div className="text-white">
+          <div className="text-white" key={item.id}>
             {item.name} by {item.artistNames}
-            <Button onClick={() => {changeTrack(item, true)}}>play</Button>
+            <Button onClick={() => {changeTrack(item, true)}} >play</Button>
           </div>
         );
       })}

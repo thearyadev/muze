@@ -12,6 +12,7 @@ type PlayerContextType = ReturnType<typeof usePlayerState>;
 type ResumeData = {
   track: TrackQuery | null;
   position: number | null;
+  volume: number | null;
 };
 
 function usePlayerState() {
@@ -19,7 +20,7 @@ function usePlayerState() {
   const [playing, setPlaying] = React.useState(false);
   const [position, setPosition] = React.useState([0]);
   const [maxPosition, setMaxPosition] = React.useState(0);
-  const [volume, setVolume] = React.useState(50);
+  const [volume, setVolume] = React.useState(0);
   const [loop, setLoop] = React.useState(false);
   const audioRef = React.useRef<HTMLAudioElement>(null);
 
@@ -69,9 +70,7 @@ function usePlayerState() {
   const handleTimeChange = () => {
     if (!audioRef.current) return;
 
-    // setMaxPosition(audioRef.current.duration);
     setPosition([audioRef.current.currentTime]);
-
     writePositionToLocalStorage(audioRef.current.currentTime);
   };
   const handleLoopBtnClick = () => {
@@ -80,11 +79,12 @@ function usePlayerState() {
   };
 
   useEffect(() => {
-    const { track, position } = readTrackFromLocalStorage();
+    const { track, position, volume } = readTrackFromLocalStorage();
     if (track) {
       changeTrack(track, false);
       setPosition([position ? position : 0]);
       setPlaying(false);
+      setVolume(volume !== null ? volume : 50); // 0 is falsey ... 
     }
   }, []);
   return {
@@ -123,9 +123,11 @@ function writePositionToLocalStorage(position: number) {
 function readTrackFromLocalStorage(): ResumeData {
   const track = localStorage.getItem("track");
   const position = localStorage.getItem("position");
+  const volume = localStorage.getItem("volume");
   return {
     track: track ? JSON.parse(track) : null,
     position: position ? parseInt(position) : null,
+    volume: volume ? parseInt(volume) : null,
   };
 }
 

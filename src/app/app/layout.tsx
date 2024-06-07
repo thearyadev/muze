@@ -47,7 +47,7 @@ export default async function RootLayout({
 
         <div className="grow">{children}</div>
       </div>
-      <div className="bg-green-600 fixed bottom-0">
+      <div className="fixed bottom-0">
 
         <Player />
       </div>

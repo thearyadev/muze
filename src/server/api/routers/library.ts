@@ -295,7 +295,7 @@ export const libraryRouter = createTRPCRouter({
         .as("artists");
 
       const query = await ctx.db
-        .select({
+        .selectDistinct({
           ...getTableColumns(tracks),
           albumName: albums.name,
           artistNames: subquery.artistNames

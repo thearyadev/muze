@@ -22,6 +22,14 @@ import {
 import { KeybindContext } from "./keybind_context";
 import { PlayerContext } from "./player_context";
 
+function PlayerBody({ children }: { children: React.ReactNode }) {
+  return (
+    <div className="grid min-h-20 w-screen grid-cols-3 bg-zinc-800 p-4 shadow-3xl shadow-slate-950">
+      {children}
+    </div>
+  );
+}
+
 export default function Player() {
   const {
     track,
@@ -70,17 +78,6 @@ export default function Player() {
 
     registerKeybind("d", "z")(handlePlayPause);
 
-    if (localStorage) {
-      const volume = localStorage.getItem("volume");
-      if (volume) {
-        handleVolumeChange([parseInt(volume)]);
-      }
-      const loop = localStorage.getItem("loop");
-      if (loop) {
-        setLoop(loop === "true");
-      }
-    }
-
     return () => {
       if (navigator) {
         navigator.mediaSession.setActionHandler("play", null);
@@ -90,11 +87,15 @@ export default function Player() {
   }, []);
 
   if (track === null) {
-    return "error";
+    return (
+      <div className="select-none">
+        <PlayerBody>{null}</PlayerBody>
+      </div>
+    );
   }
 
   return (
-    <div className=" select-none ">
+    <div className="select-none">
       <audio
         id={"audo"}
         ref={audioRef}
@@ -104,6 +105,7 @@ export default function Player() {
         onCanPlay={() => {
           if (!audioRef.current) return;
           setMaxPosition(audioRef.current.duration);
+          audioRef.current.volume = volume / 100;
         }}
         onEnded={handleTrackComplete}
       />
@@ -121,7 +123,7 @@ export default function Player() {
           className="w-screen transition duration-75"
         />
       </div>
-      <div className="grid w-screen grid-cols-3 bg-zinc-800 p-4 shadow-3xl shadow-slate-950">
+      <PlayerBody>
         <div
           className="flex flex-row items-center"
           // Track Info
@@ -190,7 +192,7 @@ export default function Player() {
             onValueChange={handleVolumeChange}
           />
         </div>
-      </div>
+      </PlayerBody>
     </div>
   );
 }
