@@ -3,7 +3,7 @@ import "~/styles/globals.css";
 import { Inter } from "next/font/google";
 
 import { TRPCReactProvider } from "~/trpc/react";
-import KeybindContextProvider from "~/components/app/keybind_context";
+import { Toaster } from "sonner";
 
 const inter = Inter({
   subsets: ["latin"],
@@ -24,10 +24,11 @@ export default function RootLayout({
   return (
     <html lang="en">
       <body className={`font-sans ${inter.variable}`}>
+        <Toaster richColors className="bg-zinc-900 text-white" />
         <TRPCReactProvider>
-          <KeybindContextProvider>{children}</KeybindContextProvider>
+          {children}
         </TRPCReactProvider>
       </body>
     </html>
-  );
+  )
 }

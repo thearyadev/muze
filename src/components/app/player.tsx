@@ -19,7 +19,6 @@ import {
   HoverCardContent,
   HoverCardTrigger,
 } from "../ui/hover-card";
-import { KeybindContext } from "./keybind_context";
 import { PlayerContext } from "./player_context";
 
 function PlayerBody({ children }: { children: React.ReactNode }) {
@@ -49,42 +48,6 @@ export default function Player() {
     handleTimeChange,
     setMaxPosition,
   } = useContext(PlayerContext);
-  const { registerKeybind } = useContext(KeybindContext);
-
-  useEffect(() => {
-    if (audioRef.current?.error !== null) {
-      console.error(audioRef.current?.error);
-    }
-
-    if (navigator) {
-      navigator.mediaSession.setActionHandler("play", () => {
-        setPlaying(true);
-        if (!audioRef.current) return;
-        audioRef.current.play();
-      });
-      navigator.mediaSession.setActionHandler("pause", () => {
-        setPlaying(false);
-        if (!audioRef.current) return;
-        audioRef.current.pause();
-      });
-    }
-    registerKeybind(" ", undefined)(handlePlayPause);
-    registerKeybind(
-      "Meta",
-      "u",
-    )(() => {
-      console.log("meta u!!! callback");
-    });
-
-    registerKeybind("d", "z")(handlePlayPause);
-
-    return () => {
-      if (navigator) {
-        navigator.mediaSession.setActionHandler("play", null);
-        navigator.mediaSession.setActionHandler("pause", null);
-      }
-    };
-  }, []);
 
   if (track === null) {
     return (
@@ -96,19 +59,7 @@ export default function Player() {
 
   return (
     <div className="select-none">
-      <audio
-        id={"audo"}
-        ref={audioRef}
-        title="Billie Eilish - listen before i go"
-        src={`/api/track_data?id=${track.id}`}
-        onTimeUpdate={handleTimeChange}
-        onCanPlay={() => {
-          if (!audioRef.current) return;
-          setMaxPosition(audioRef.current.duration);
-          audioRef.current.volume = volume / 100;
-        }}
-        onEnded={handleTrackComplete}
-      />
+
       <div className="w-screen">
         <TrackSlider
           defaultValue={position}
@@ -136,25 +87,15 @@ export default function Player() {
           </Avatar>
           <div className="hidden pl-3 sm:block">
             <p className="text-sm leading-tight text-white">{track.name}</p>
-
-            <HoverCard>
-              <HoverCardTrigger asChild>
-                <Link
-                  href="/artist/3"
-                  className="text-xs text-gray-500 transition-all fade-in-100 fade-out-100 hover:text-orange-400 "
-                >
-                  {track.artistNames}
-                </Link>
-              </HoverCardTrigger>
-              <HoverCardContent className="w-52">
-                <div className="flex items-center justify-start space-x-4">
-                  <Avatar>
-                    <AvatarImage src="https://music.aryankothari.dev/img/covers/d96271a849821b3301316c614285feec6b0d37b6.jpeg" />
-                  </Avatar>
-                  <h4 className="text-sm font-semibold">Ariana Grande</h4>
-                </div>
-              </HoverCardContent>
-            </HoverCard>
+            {track.artistIds.split(";").map((artistId, index) => (
+              <Link
+                href={`/artist/${artistId}`}
+                className="text-xs text-gray-500 transition-all fade-in-100 fade-out-100 hover:text-orange-400 "
+              >
+                {track.artistNames.split(";")[index]}
+                {index < track.artistIds.split(";").length - 1 ? ", " : ""}
+              </Link>
+            ))}
           </div>
         </div>
         <div

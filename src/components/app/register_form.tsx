@@ -1,6 +1,6 @@
 "use client";
 import { signIn } from "next-auth/react";
-import { FormEvent, useState } from "react";
+import { FormEvent, useEffect, useState } from "react";
 import { Button } from "../ui/button";
 import { z } from "zod";
 import { useForm } from "react-hook-form";
@@ -23,8 +23,9 @@ const formSchema = z.object({
   password: z.string().min(2).max(256),
 });
 
-export default function LoginForm({ error }: { error?: string }) {
+export default function RegisterForm({ error }: { error?: string }) {
   const router = useRouter()
+  const registerMutation = api.user.register.useMutation()
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
     defaultValues: {
@@ -34,12 +35,20 @@ export default function LoginForm({ error }: { error?: string }) {
   });
 
   async function onSubmit(values: z.infer<typeof formSchema>) {
-    await signIn("credentials", {
+    registerMutation.mutate({
       username: values.username,
-      password: values.password,
-      callback: "/app/home",
-    });
+      password: values.password
+    })
+
   }
+  useEffect(() =>{
+    console.log(registerMutation.status)
+    if (registerMutation.isSuccess){
+      router.push("/login")
+    }
+
+  }, [registerMutation.status])
+
 
   return (
     <Form {...form}>
@@ -81,11 +90,8 @@ export default function LoginForm({ error }: { error?: string }) {
           )}
         />
         <div className="flex justify-between">
-          <Button type="submit">Login</Button>
-          <Button variant="link" onClick={() => {
-            router.push("/register")
-          }}>Register</Button>
-        </div>
+          <Button type="submit">Register</Button>
+                  </div>
       </form>
     </Form>
   );

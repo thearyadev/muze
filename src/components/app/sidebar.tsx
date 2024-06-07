@@ -15,9 +15,9 @@ import { Separator } from "../ui/separator";
 import { Button } from "../ui/button";
 import CommandLabel from "./command_label";
 import { useContext, useEffect } from "react";
-import { KeybindContext } from "./keybind_context";
 import { sync } from "~/lib/actions";
-import { signOut } from "next-auth/react";
+import { signOut, useSession } from "next-auth/react";
+import { AccountButton } from "./accountButton";
 
 function SidebarButton({
   href,
@@ -33,15 +33,6 @@ function SidebarButton({
   const pathname = usePathname();
   const router = useRouter();
 
-  const { registerKeybind } = useContext(KeybindContext);
-  useEffect(() => {
-    registerKeybind(
-      commandKey,
-      undefined,
-    )(() => {
-      router.push(href);
-    });
-  }, []);
   return (
     <div className="pb-1">
       <Link
@@ -55,45 +46,42 @@ function SidebarButton({
   );
 }
 
-export default function Sidebar({ className }: { className?: string }) {
+export default function Sidebar({ className, username }: { className?: string, username: string }) {
   return (
-    <div className={`h-screen w-64 bg-zinc-800 p-5 ${className}`}>
-      <div className="pb-4">
-        <Button
-          variant="outline"
-          size="sm"
-          className="flex w-full flex-row justify-between border-gray-600 bg-transparent text-gray-400 hover:bg-gray-400 hover:bg-opacity-20 hover:text-white"
-        >
-          Search...
-          <CommandLabel commandKeyChain="K" />
-        </Button>
+    <div
+      className={`flex h-screen w-64 flex-col justify-between bg-zinc-800 p-5 pb-24 ${className}`}
+    >
+      <div>
+        <div className="pb-4">
+          <Button
+            variant="outline"
+            size="sm"
+            className="flex w-full flex-row justify-between border-gray-600 bg-transparent text-gray-400 hover:bg-gray-400 hover:bg-opacity-20 hover:text-white"
+          >
+            Search...
+            <CommandLabel commandKeyChain="K" />
+          </Button>
+        </div>
+        <SidebarButton href="/app/home" label="Home" commandKey="1">
+          <HomeIcon />
+        </SidebarButton>
+        <SidebarButton href="/app/queue" label="Queue" commandKey="2">
+          <ListBulletIcon />
+        </SidebarButton>
+        <SidebarButton href="/app/all_songs" label="All Songs" commandKey="3">
+          <ArchiveIcon />
+        </SidebarButton>
+        <SidebarButton href="/app/albums" label="Albums" commandKey="4">
+          <CardStackIcon />
+        </SidebarButton>
+        <SidebarButton href="/app/artists" label="Artists" commandKey="5">
+          <PersonIcon />
+        </SidebarButton>
+        <SidebarButton href="/app/genres" label="Genres" commandKey="6">
+          <TableIcon />
+        </SidebarButton>
       </div>
-      <SidebarButton href="/app/home" label="Home" commandKey="1">
-        <HomeIcon />
-      </SidebarButton>
-      <SidebarButton href="/app/queue" label="Queue" commandKey="2">
-        <ListBulletIcon />
-      </SidebarButton>
-      <SidebarButton href="/app/all_songs" label="All Songs" commandKey="3">
-        <ArchiveIcon />
-      </SidebarButton>
-      <SidebarButton href="/app/albums" label="Albums" commandKey="4">
-        <CardStackIcon />
-      </SidebarButton>
-      <SidebarButton href="/app/artists" label="Artists" commandKey="5">
-        <PersonIcon />
-      </SidebarButton>
-      <SidebarButton href="/app/genres" label="Genres" commandKey="6">
-        <TableIcon />
-      </SidebarButton>
-      <Button onClick={() => sync()}>Sync</Button>
-      <Button
-        onClick={() => {
-          signOut();
-        }}
-      >
-        Logout
-      </Button>
+      <AccountButton username={username} />
     </div>
   );
 }

@@ -2,6 +2,7 @@
 import React, { useEffect } from "react";
 import type { inferRouterOutputs } from "@trpc/server";
 import { AppRouter } from "~/server/api/root";
+import { useHotkeys } from "@mantine/hooks";
 
 type RouterOutput = inferRouterOutputs<AppRouter>;
 
@@ -23,7 +24,6 @@ function usePlayerState() {
   const [volume, setVolume] = React.useState(0);
   const [loop, setLoop] = React.useState(false);
   const audioRef = React.useRef<HTMLAudioElement>(null);
-
   const changeTrack = async (trackData: TrackQuery, play: boolean) => {
     setTrackData(trackData);
     writeTrackToLocalStorage(trackData);
@@ -47,6 +47,7 @@ function usePlayerState() {
   };
 
   const handlePlayPause = () => {
+    console.log("pp trigger");
     setPlaying((prevPlaying) => !prevPlaying);
     if (!audioRef.current) return;
     if (audioRef.current.paused) {
@@ -54,7 +55,6 @@ function usePlayerState() {
     } else {
       audioRef.current.pause();
     }
-    audioRef.current.currentTime = position[0] as number;
   };
 
   const handleTrackComplete = () => {
@@ -77,15 +77,30 @@ function usePlayerState() {
     setLoop((prevLoop) => !prevLoop);
     localStorage.setItem("loop", loop ? "false" : "true");
   };
+  useHotkeys([["space", handlePlayPause]], ["INPUT", "TEXTAREA"]);
 
   useEffect(() => {
     const { track, position, volume } = readTrackFromLocalStorage();
     if (track) {
       changeTrack(track, false);
       setPosition([position ? position : 0]);
+      if (audioRef.current) {
+        audioRef.current.currentTime = position ? position : 0;
+      }
       setPlaying(false);
-      setVolume(volume !== null ? volume : 50); // 0 is falsey ... 
+      setVolume(volume !== null ? volume : 50); // 0 is falsey ...
     }
+    if (navigator) {
+      navigator.mediaSession.setActionHandler("play", handlePlayPause);
+      navigator.mediaSession.setActionHandler("pause", handlePlayPause);
+    }
+
+    return () => {
+      if (navigator) {
+        navigator.mediaSession.setActionHandler("play", null);
+        navigator.mediaSession.setActionHandler("pause", null);
+      }
+    };
   }, []);
   return {
     track: trackData,
@@ -138,6 +153,21 @@ export default function PlayerContextProvider({
 }) {
   const value = usePlayerState();
   return (
-    <PlayerContext.Provider value={value}>{children}</PlayerContext.Provider>
+    <>
+      <audio
+        id={"audo"}
+        ref={value.audioRef}
+        title="Billie Eilish - listen before i go"
+        src={`/api/track_data?id=${value.track?.id}`}
+        onTimeUpdate={value.handleTimeChange}
+        onCanPlay={() => {
+          if (!value.audioRef.current) return;
+          value.setMaxPosition(value.audioRef.current.duration);
+          value.audioRef.current.volume = value.volume / 100;
+        }}
+        onEnded={value.handleTrackComplete}
+      />
+      <PlayerContext.Provider value={value}>{children}</PlayerContext.Provider>
+    </>
   );
 }

@@ -8,23 +8,11 @@ import Sidebar from "~/components/app/sidebar";
 import PlayerContextProvider from "~/components/app/player_context";
 
 import Header from "~/components/app/header";
-import KeybindContextProvider from "~/components/app/keybind_context";
 import { SessionProvider } from "next-auth/react";
 import { redirect } from "next/navigation";
 import { getServerAuthSession } from "~/server/auth";
 
-const inter = Inter({
-  subsets: ["latin"],
-  variable: "--font-sans",
-});
-
-export const metadata = {
-  title: "Muze",
-  description: "Muze",
-  icons: [{ rel: "icon", url: "/favicon.ico" }],
-};
-
-export default async function RootLayout({
+export default async function AppLayout({
   children,
 }: {
   children: React.ReactNode;
@@ -38,7 +26,7 @@ export default async function RootLayout({
     <PlayerContextProvider>
       <div className="flex">
         <div className="hidden flex-none sm:block">
-          <Sidebar />
+          <Sidebar username={session.user.name}/>
         </div>
 
         <div className="sm:hidden">

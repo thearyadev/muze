@@ -26,7 +26,6 @@ export const users = createTable("user", {
   password: text("password", { length: 256 }).notNull(),
 });
 
-
 export const playlists = createTable("playlist", {
   id: int("id", { mode: "number" }).primaryKey({ autoIncrement: true }),
   name: text("name", { length: 256 }),
@@ -59,12 +58,19 @@ export const genres = createTable("genre", {
   name: text("name", { length: 256 }).notNull(),
 });
 
-export const genreTrack = createTable("genre_track", {
-  // TODO: convert the fks to a joined pk to avoid duplicates
-  id: int("id", { mode: "number" }).primaryKey({ autoIncrement: true }),
-  trackId: int("track_id", { mode: "number" }).references(() => tracks.id),
-  genreId: int("genre_id", { mode: "number" }).references(() => genres.id),
-});
+export const genreTrack = createTable(
+  "genre_track",
+  {
+    // TODO: convert the fks to a joined pk to avoid duplicates
+    trackId: int("track_id", { mode: "number" }).references(() => tracks.id),
+    genreId: int("genre_id", { mode: "number" }).references(() => genres.id),
+  },
+  (table) => {
+    return {
+      pk: primaryKey({ columns: [table.trackId, table.genreId] }),
+    };
+  },
+);
 
 export const artists = createTable("artist", {
   id: int("id", { mode: "number" }).primaryKey({ autoIncrement: true }),

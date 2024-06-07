@@ -5,7 +5,14 @@ import { createTRPCRouter, publicProcedure } from "~/server/api/trpc";
 import fs from "fs";
 import path from "path";
 import * as mm from "music-metadata";
-import { tracks, artists, albums, artistTracks, genres, genreTrack } from "~/server/db/schema";
+import {
+  tracks,
+  artists,
+  albums,
+  artistTracks,
+  genres,
+  genreTrack,
+} from "~/server/db/schema";
 import { eq, and, asc, getTableColumns, sql } from "drizzle-orm";
 import { getServerAuthSession } from "~/server/auth";
 
@@ -96,7 +103,8 @@ export const libraryRouter = createTRPCRouter({
   sync: publicProcedure.mutation(async ({ ctx }) => {
     const targetDirectory = env.MUSIC_PATH;
     const tracks_fs = await getTracks(targetDirectory);
-    tracks_fs.forEach(async (track_i) => {
+
+    for (const track_i of tracks_fs) {
       const metadata = await extractMetadata(track_i); // get metadata for a track
       if (
         metadata.MB_TRACK_ID === undefined ||
@@ -108,7 +116,7 @@ export const libraryRouter = createTRPCRouter({
         console.log(
           `Error: The metadata for track ${track_i} is not vaild. Please tag using MusicBrainz Picard`,
         );
-        return;
+        continue;
       }
 
       const artistIds = await Promise.all(
@@ -232,20 +240,35 @@ export const libraryRouter = createTRPCRouter({
       metadata.GENRE?.forEach(async (genre_name) => {
         // look up the genre
         // if its there, use its id
-        // if not, create a new one 
-        if (genre_name.length > 20) { // improper tagging
-          return
+        // if not, create a new one
+        if (genre_name.length > 20) {
+          // improper tagging
+          return;
         }
-        var genre_id = -1
-        const genre_query = await ctx.db.select().from(genres).where(eq(genres.name, genre_name)).execute()
+        var genre_id = -1;
+        const genre_query = await ctx.db
+          .select()
+          .from(genres)
+          .where(eq(genres.name, genre_name))
+          .execute();
         if (genre_query.length > 0) {
-          genre_id = genre_query[0]?.id as number
-        }else {
-          const newRecord = await ctx.db.insert(genres).values({name: genre_name}).returning({newRecordId: genres.id}).execute()
-          genre_id = newRecord[0]!.newRecordId
+          genre_id = genre_query[0]?.id as number;
+        } else {
+          const newRecord = await ctx.db
+            .insert(genres)
+            .values({ name: genre_name })
+            .returning({ newRecordId: genres.id })
+            .execute();
+          genre_id = newRecord[0]!.newRecordId;
         }
-        await ctx.db.insert(genreTrack).values({genreId: genre_id, trackId: track_id})
-      })
+        try {
+          await ctx.db
+            .insert(genreTrack)
+            .values({ genreId: genre_id, trackId: track_id });
+        } catch {
+          // genre already exists
+        }
+      });
 
       // track artist
       artistIds.forEach(async (item) => {
@@ -270,8 +293,7 @@ export const libraryRouter = createTRPCRouter({
             .execute();
         }
       });
-    });
-    console.log("done")
+    }
   }),
 
   allSongs: publicProcedure
@@ -285,9 +307,13 @@ export const libraryRouter = createTRPCRouter({
       const subquery = ctx.db
         .select({
           trackId: artistTracks.trackId,
-          artistNames: sql<string>`string_agg(${artists.name}, ', ')`.as(
+          artistNames: sql<string>`string_agg(${artists.name}, ';')`.as(
             "artistNames",
           ),
+          artistIds:
+            sql<string>`string_agg(cast(${artists.id} AS TEXT), ';')`.as(
+              "artistIds",
+            ),
         })
         .from(artistTracks)
         .innerJoin(artists, eq(artistTracks.artistId, artists.id))
@@ -298,7 +324,8 @@ export const libraryRouter = createTRPCRouter({
         .selectDistinct({
           ...getTableColumns(tracks),
           albumName: albums.name,
-          artistNames: subquery.artistNames
+          artistNames: subquery.artistNames,
+          artistIds: subquery.artistIds,
         })
         .from(tracks)
         .orderBy(asc(tracks.id))
@@ -311,14 +338,17 @@ export const libraryRouter = createTRPCRouter({
       return query;
     }),
   getTrack: publicProcedure.input(z.number()).query(async ({ ctx, input }) => {
-    console.log(await getServerAuthSession())
     return (
       (
         await ctx.db
           .select({
             ...getTableColumns(tracks),
             albumName: albums.name,
-            artistNames: sql<string>`string_agg(${artists.name}, ', ') AS artistNames`,
+            artistNames: sql<string>`string_agg(${artists.name}, ';') AS artistNames`,
+            artistIds:
+              sql<string>`string_agg(cast(${artists.id} AS TEXT), ';')`.as(
+                "artistIds",
+              ),
           })
           .from(tracks)
           .where(eq(tracks.id, input))
