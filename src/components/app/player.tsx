@@ -29,37 +29,32 @@ function PlayerBody({ children }: { children: React.ReactNode }) {
   );
 }
 
+
 export default function Player() {
   const {
     track,
     playing,
-    setPlaying,
     position,
     setPosition,
     maxPosition,
     volume,
     loop,
-    setLoop,
     audioRef,
     handlePlayPause,
     handleVolumeChange,
-    handleTrackComplete,
     handleLoopBtnClick,
-    handleTimeChange,
-    setMaxPosition,
   } = useContext(PlayerContext);
 
   if (track === null) {
-    return (
+    return ( // replace with skeleton
       <div className="select-none">
-        <PlayerBody>{null}</PlayerBody>
+        <PlayerBody>{null}</PlayerBody> 
       </div>
     );
   }
 
   return (
     <div className="select-none">
-
       <div className="w-screen">
         <TrackSlider
           defaultValue={position}
@@ -137,3 +132,6 @@ export default function Player() {
     </div>
   );
 }
+
+
+

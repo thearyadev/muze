@@ -47,7 +47,6 @@ function usePlayerState() {
   };
 
   const handlePlayPause = () => {
-    console.log("pp trigger");
     setPlaying((prevPlaying) => !prevPlaying);
     if (!audioRef.current) return;
     if (audioRef.current.paused) {
@@ -157,8 +156,7 @@ export default function PlayerContextProvider({
       <audio
         id={"audo"}
         ref={value.audioRef}
-        title="Billie Eilish - listen before i go"
-        src={`/api/track_data?id=${value.track?.id}`}
+        src={value.track ? `/api/track_data?id=${value.track?.id}` : undefined}
         onTimeUpdate={value.handleTimeChange}
         onCanPlay={() => {
           if (!value.audioRef.current) return;

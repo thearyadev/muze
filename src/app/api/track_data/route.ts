@@ -2,9 +2,13 @@ import { existsSync, statSync, createReadStream } from "fs";
 import { NextRequest, NextResponse } from "next/server";
 import { api } from "~/trpc/server";
 import mime from "mime";
+import path from "path";
 
 interface TrackData {
   path: string;
+}
+function sanitizePath(path: string): string {
+  return path.replace(/\/\.\.\//g, "/");
 }
 
 export async function GET(request: NextRequest): Promise<NextResponse> {
@@ -15,19 +19,19 @@ export async function GET(request: NextRequest): Promise<NextResponse> {
       status: 404,
     });
   }
-  const track_data: TrackData | null = await api.library.getTrack(parseInt(trackId));
+  const track_data: TrackData | null = await api.library.getTrack(
+    parseInt(trackId),
+  );
   if (!track_data) {
     return new NextResponse("Not Found", {
       status: 404,
     });
   }
-
   if (!existsSync(track_data.path)) {
     return new NextResponse("Referenced file does not exist", {
       status: 500,
     });
   }
-
   const stat = statSync(track_data.path);
   const totalSize = stat.size;
   const headers: Record<string, string> = {
@@ -35,7 +39,10 @@ export async function GET(request: NextRequest): Promise<NextResponse> {
   };
 
   if (request.headers.get("range")) {
-    const parts = request.headers.get("range")!.replace(/bytes=/, "").split("-");
+    const parts = request.headers
+      .get("range")!
+      .replace(/bytes=/, "")
+      .split("-");
     const start = parseInt(parts[0] as string);
     const end = parts[1] ? parseInt(parts[1]) : totalSize - 1;
     const chunkSize = end - start + 1;
@@ -45,15 +52,19 @@ export async function GET(request: NextRequest): Promise<NextResponse> {
     headers["Content-Length"] = chunkSize.toString();
 
     const stream = createReadStream(track_data.path, { start, end });
+    // @ts-ignore
     return new NextResponse(stream, {
       headers,
       status: 206,
     });
   } else {
-    const contentType = mime.getType(track_data.path) || "application/octet-stream";
+    const contentType =
+      mime.getType(track_data.path) || "application/octet-stream";
     headers["Content-Type"] = contentType;
 
     const stream = createReadStream(track_data.path);
+
+    // @ts-ignore
     return new NextResponse(stream, {
       headers,
       status: 200,

@@ -42,7 +42,6 @@ export default function RegisterForm({ error }: { error?: string }) {
 
   }
   useEffect(() =>{
-    console.log(registerMutation.status)
     if (registerMutation.isSuccess){
       router.push("/login")
     }
