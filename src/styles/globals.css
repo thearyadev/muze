@@ -5,3 +5,7 @@
 body {
   @apply overflow-hidden bg-zinc-850;
 }
+html {
+  scrollbar-color: #444 #333;
+  scrollbar-width: thin;
+}
