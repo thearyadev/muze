@@ -41,8 +41,7 @@ export function AccountButton({ username }: { username: string }) {
     <DropdownMenu>
       <DropdownMenuTrigger asChild>
         <Button
-          variant="outline"
-          className="w-full border-0 bg-zinc-600 text-white"
+          className="w-full border-0"
         >
           {username}
         </Button>

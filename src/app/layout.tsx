@@ -23,7 +23,7 @@ export default function RootLayout({
   children: React.ReactNode;
 }) {
   return (
-    <html lang="en">
+    <html lang="en" className="dark">
       <body className={`font-sans ${inter.variable}`}>
         <Toaster richColors className="bg-zinc-900 text-white" />
         <TRPCReactProvider>

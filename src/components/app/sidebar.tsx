@@ -1,6 +1,5 @@
 "use client";
 
-import { Input } from "../ui/searchInput";
 import Link from "next/link";
 import {
   HomeIcon,
@@ -21,6 +20,7 @@ import { AccountButton } from "./accountButton";
 import { api } from "~/trpc/react";
 import { PlayerContext } from "./player_context";
 import { SearchContext } from "./searchContext";
+import { useHotkeys } from "@mantine/hooks";
 
 function SidebarButton({
   href,
@@ -35,15 +35,34 @@ function SidebarButton({
 }) {
   const pathname = usePathname();
   const router = useRouter();
+  router.prefetch(href);
+  useHotkeys(
+    [
+      [
+        commandKey,
+        () => {
+          router.push(href);
+        },
+      ],
+    ],
+    ["INPUT", "TEXTAREA"],
+  );
 
   return (
     <div className="pb-1">
       <Link
         href={href}
-        className={`flex flex-row items-center rounded-md p-2 text-sm text-white transition-all duration-100 hover:bg-zinc-300 hover:bg-opacity-30 ${pathname === href ? "bg-zinc-300 bg-opacity-30 text-gray-100" : null}`}
+        className={`flex flex-row items-center rounded-md p-2 text-sm text-white transition-all duration-100  ${pathname === href ? "bg-orange-400 bg-opacity-80" : null}`}
       >
         {children}
-        <span className="ml-2">{label}</span>
+        <div className="ml-2 flex w-full flex-row justify-between">
+          <span>{label}</span>
+          <span
+            className={`text-gray-500 ${pathname === href ? "hidden" : null}`}
+          >
+            {commandKey}
+          </span>
+        </div>
       </Link>
     </div>
   );
@@ -65,9 +84,9 @@ export default function Sidebar({
         <div>
           <div className="pb-4">
             <Button
-              variant="outline"
+              variant="ghost"
               size="sm"
-              className="flex w-full flex-row justify-between border-gray-600 bg-transparent text-gray-400 hover:bg-gray-400 hover:bg-opacity-20 hover:text-white"
+              className="flex w-full flex-row justify-between  text-gray-400  hover:text-white"
               onMouseDown={() => {
                 setOpen(true);
               }}
@@ -82,7 +101,7 @@ export default function Sidebar({
           <SidebarButton href="/app/queue" label="Queue" commandKey="2">
             <ListBulletIcon />
           </SidebarButton>
-          <SidebarButton href="/app/all_songs" label="All Songs" commandKey="3">
+          <SidebarButton href="/app/all_songs" label="Library" commandKey="3">
             <ArchiveIcon />
           </SidebarButton>
           <SidebarButton href="/app/albums" label="Albums" commandKey="4">
