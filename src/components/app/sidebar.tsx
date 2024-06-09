@@ -9,15 +9,18 @@ import {
   CardStackIcon,
   PersonIcon,
   TableIcon,
+  CalendarIcon,
 } from "@radix-ui/react-icons";
 import { usePathname, useRouter } from "next/navigation";
 import { Separator } from "../ui/separator";
 import { Button } from "../ui/button";
 import CommandLabel from "./command_label";
-import { useContext, useEffect } from "react";
-import { sync } from "~/lib/actions";
-import { signOut, useSession } from "next-auth/react";
+import { useContext, useEffect, useState } from "react";
 import { AccountButton } from "./accountButton";
+
+import { api } from "~/trpc/react";
+import { PlayerContext } from "./player_context";
+import { SearchContext } from "./searchContext";
 
 function SidebarButton({
   href,
@@ -46,42 +49,54 @@ function SidebarButton({
   );
 }
 
-export default function Sidebar({ className, username }: { className?: string, username: string }) {
+export default function Sidebar({
+  className,
+  username,
+}: {
+  className?: string;
+  username: string;
+}) {
+  const { setOpen } = useContext(SearchContext);
   return (
-    <div
-      className={`flex h-screen w-64 flex-col justify-between bg-zinc-800 p-5 pb-24 ${className}`}
-    >
-      <div>
-        <div className="pb-4">
-          <Button
-            variant="outline"
-            size="sm"
-            className="flex w-full flex-row justify-between border-gray-600 bg-transparent text-gray-400 hover:bg-gray-400 hover:bg-opacity-20 hover:text-white"
-          >
-            Search...
-            <CommandLabel commandKeyChain="K" />
-          </Button>
+    <>
+      <div
+        className={`flex h-screen w-64 flex-col justify-between bg-zinc-800 p-5 pb-24 ${className}`}
+      >
+        <div>
+          <div className="pb-4">
+            <Button
+              variant="outline"
+              size="sm"
+              className="flex w-full flex-row justify-between border-gray-600 bg-transparent text-gray-400 hover:bg-gray-400 hover:bg-opacity-20 hover:text-white"
+              onMouseDown={() => {
+                setOpen(true);
+              }}
+            >
+              Search...
+              <CommandLabel commandKeyChain="K" />
+            </Button>
+          </div>
+          <SidebarButton href="/app/home" label="Home" commandKey="1">
+            <HomeIcon />
+          </SidebarButton>
+          <SidebarButton href="/app/queue" label="Queue" commandKey="2">
+            <ListBulletIcon />
+          </SidebarButton>
+          <SidebarButton href="/app/all_songs" label="All Songs" commandKey="3">
+            <ArchiveIcon />
+          </SidebarButton>
+          <SidebarButton href="/app/albums" label="Albums" commandKey="4">
+            <CardStackIcon />
+          </SidebarButton>
+          <SidebarButton href="/app/artists" label="Artists" commandKey="5">
+            <PersonIcon />
+          </SidebarButton>
+          <SidebarButton href="/app/genres" label="Genres" commandKey="6">
+            <TableIcon />
+          </SidebarButton>
         </div>
-        <SidebarButton href="/app/home" label="Home" commandKey="1">
-          <HomeIcon />
-        </SidebarButton>
-        <SidebarButton href="/app/queue" label="Queue" commandKey="2">
-          <ListBulletIcon />
-        </SidebarButton>
-        <SidebarButton href="/app/all_songs" label="All Songs" commandKey="3">
-          <ArchiveIcon />
-        </SidebarButton>
-        <SidebarButton href="/app/albums" label="Albums" commandKey="4">
-          <CardStackIcon />
-        </SidebarButton>
-        <SidebarButton href="/app/artists" label="Artists" commandKey="5">
-          <PersonIcon />
-        </SidebarButton>
-        <SidebarButton href="/app/genres" label="Genres" commandKey="6">
-          <TableIcon />
-        </SidebarButton>
+        <AccountButton username={username} />
       </div>
-      <AccountButton username={username} />
-    </div>
+    </>
   );
 }
