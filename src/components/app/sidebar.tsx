@@ -79,7 +79,7 @@ export default function Sidebar({
   return (
     <>
       <div
-        className={`flex h-screen w-64 flex-col justify-between bg-zinc-800 p-5 pb-24 ${className}`}
+        className={`flex h-screen w-64 flex-col justify-between bg-zinc-800 p-5 pb-32 ${className}`}
       >
         <div>
           <div className="pb-4">
