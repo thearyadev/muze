@@ -51,8 +51,12 @@ function usePlayerState() {
     if (!audioRef.current) return;
     if (audioRef.current.paused) {
       audioRef.current.play();
+
+      if (trackData)
+        document.title = `${trackData.name} - ${trackData.artistNames}`;
     } else {
       audioRef.current.pause();
+      document.title = "Muze";
     }
   };
 
@@ -92,6 +96,9 @@ function usePlayerState() {
     if (navigator) {
       navigator.mediaSession.setActionHandler("play", handlePlayPause);
       navigator.mediaSession.setActionHandler("pause", handlePlayPause);
+    }
+
+    if (trackData) {
     }
 
     return () => {
@@ -165,6 +172,11 @@ export default function PlayerContextProvider({
         }}
         onEnded={value.handleTrackComplete}
       />
+      <div className="z-10000 pointer-events-none fixed left-0 top-0 h-full w-full overflow-hidden bg-cover bg-center bg-no-repeat opacity-10 blur-2xl"
+        style={{
+          backgroundImage:`url('/api/covers/?id=${value.track?.id})`
+        }}
+      ></div>
       <PlayerContext.Provider value={value}>{children}</PlayerContext.Provider>
     </>
   );

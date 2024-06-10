@@ -23,7 +23,7 @@ import { PlayerContext } from "./player_context";
 
 function PlayerBody({ children }: { children: React.ReactNode }) {
   return (
-    <div className="grid min-h-20 w-screen grid-cols-3 bg-zinc-800 p-4 shadow-3xl shadow-slate-950">
+    <div className="grid min-h-20 w-screen grid-cols-3 bg-zinc-800 pl-4 pr-4 shadow-3xl shadow-slate-950">
       {children}
     </div>
   );
@@ -74,10 +74,9 @@ export default function Player() {
           className="flex flex-row items-center"
           // Track Info
         >
-          <Avatar className="">
+          <Avatar className="block">
             <AvatarImage
-              src="https://music.aryankothari.dev/img/covers/d96271a849821b3301316c614285feec6b0d37b6.jpeg"
-              loading="lazy"
+              src={`/api/covers?id=${track.id}`}
             />
           </Avatar>
           <div className="hidden pl-3 sm:block">
