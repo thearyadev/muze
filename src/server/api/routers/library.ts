@@ -13,7 +13,7 @@ import {
   genres,
   genreTrack,
 } from "~/server/db/schema";
-import { eq, and, asc, getTableColumns, sql } from "drizzle-orm";
+import { eq, and, asc, getTableColumns, sql, ilike, like } from "drizzle-orm";
 import { getServerAuthSession } from "~/server/auth";
 
 async function getTracks(dir: string): Promise<string[]> {
@@ -293,6 +293,13 @@ export const libraryRouter = createTRPCRouter({
             .execute();
         }
       });
+      if (metadata.COVER) {
+        const cover_path = path.join(
+          path.resolve(env.COVER_ART_PATH),
+          metadata.MB_TRACK_ID + ".jpg",
+        );
+        fs.writeFileSync(cover_path, metadata.COVER);
+      }
     }
   }),
 
@@ -359,4 +366,38 @@ export const libraryRouter = createTRPCRouter({
       )[0] || null
     );
   }),
+  searchTrack: publicProcedure
+    .input(z.string())
+    .query(async ({ ctx, input }) => {
+      const subquery = ctx.db
+        .select({
+          trackId: artistTracks.trackId,
+          artistNames: sql<string>`string_agg(${artists.name}, ';')`.as(
+            "artistNames",
+          ),
+          artistIds:
+            sql<string>`string_agg(cast(${artists.id} AS TEXT), ';')`.as(
+              "artistIds",
+            ),
+        })
+        .from(artistTracks)
+        .innerJoin(artists, eq(artistTracks.artistId, artists.id))
+        .groupBy(artistTracks.trackId)
+        .as("artists");
+
+      const query = await ctx.db
+        .selectDistinct({
+          ...getTableColumns(tracks),
+          albumName: albums.name,
+          artistNames: subquery.artistNames,
+          artistIds: subquery.artistIds,
+        })
+        .from(tracks)
+        .where(like(tracks.name, `%${input}%`))
+        .innerJoin(albums, eq(tracks.albumId, albums.id))
+        .innerJoin(artistTracks, eq(tracks.id, artistTracks.trackId))
+        .innerJoin(subquery, eq(tracks.id, subquery.trackId))
+        .execute();
+      return query;
+    }),
 });
