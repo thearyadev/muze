@@ -11,7 +11,6 @@ import { users } from "~/server/db/schema";
 export const userRouter = createTRPCRouter({
   isAuthenticated: publicProcedure.query(({ ctx }) => {
     if (!ctx.session || !ctx.session.user) return false;
-    console.log(ctx.session)
     return true;
   }),
   register: publicProcedure

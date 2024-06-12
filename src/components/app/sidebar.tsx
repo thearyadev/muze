@@ -76,6 +76,7 @@ export default function Sidebar({
   username: string;
 }) {
   const { setOpen } = useContext(SearchContext);
+  const { queue, queuePlayed } = useContext(PlayerContext);
   return (
     <>
       <div
@@ -113,6 +114,14 @@ export default function Sidebar({
           <SidebarButton href="/app/genres" label="Genres" commandKey="6">
             <TableIcon />
           </SidebarButton>
+          <h1>queue</h1>
+          {queue.map((track) => {
+            return <div>{track?.name}</div>;
+          })}
+          <h1>queue played</h1>
+          {queuePlayed.map((track) => {
+            return <div>{track?.name}</div>;
+          })}
         </div>
         <AccountButton username={username} />
       </div>

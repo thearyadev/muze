@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useContext, useEffect } from "react";
+import React, { useContext } from "react";
 import { Avatar } from "../ui/avatar";
 import { AvatarImage } from "@radix-ui/react-avatar";
 import Link from "next/link";
@@ -8,17 +8,17 @@ import Link from "next/link";
 import { VolumeSlider, TrackSlider } from "../ui/slider";
 
 import {
-  PlayCircleOutlined,
-  PauseCircleOutlined,
-  StepBackwardFilled,
-  StepForwardFilled,
-} from "@ant-design/icons";
-import { LoopIcon, SpeakerLoudIcon } from "@radix-ui/react-icons";
+  LoopIcon as LoopIcon,
+  SpeakerLoudIcon as SpeakerIcon,
+} from "@radix-ui/react-icons";
+
 import {
-  HoverCard,
-  HoverCardContent,
-  HoverCardTrigger,
-} from "../ui/hover-card";
+  PlayCircleOutlined as PlayIcon,
+  PauseCircleOutlined as PauseIcon,
+  StepBackwardFilled as StepBackwardIcon,
+  StepForwardFilled as StepForwardIcon,
+} from "@ant-design/icons";
+
 import { PlayerContext } from "./player_context";
 
 function PlayerBody({ children }: { children: React.ReactNode }) {
@@ -28,7 +28,6 @@ function PlayerBody({ children }: { children: React.ReactNode }) {
     </div>
   );
 }
-
 
 export default function Player() {
   const {
@@ -43,12 +42,15 @@ export default function Player() {
     handlePlayPause,
     handleVolumeChange,
     handleLoopBtnClick,
+    handleNext,
+    handlePrevious,
   } = useContext(PlayerContext);
 
   if (track === null) {
-    return ( // replace with skeleton
+    return (
+      // replace with skeleton
       <div className="select-none">
-        <PlayerBody>{null}</PlayerBody> 
+        <PlayerBody>{null}</PlayerBody>
       </div>
     );
   }
@@ -75,9 +77,7 @@ export default function Player() {
           // Track Info
         >
           <Avatar className="block">
-            <AvatarImage
-              src={`/api/covers?id=${track.id}`}
-            />
+            <AvatarImage src={`/api/covers?id=${track.id}`} />
           </Avatar>
           <div className="hidden pl-3 sm:block">
             <p className="text-sm leading-tight text-white">{track.name}</p>
@@ -96,17 +96,23 @@ export default function Player() {
           className="flex flex-row items-center justify-center space-x-10 align-middle"
           // controls
         >
-          <StepBackwardFilled className="text-xl text-white transition duration-100 hover:text-orange-400" />
-          <PauseCircleOutlined
+          <StepBackwardIcon
+            className="text-xl text-white transition duration-100 hover:text-orange-400"
+            onMouseDown={handlePrevious}
+          />
+          <PauseIcon
             className={`text-4xl text-white transition duration-100 hover:text-orange-400 ${!playing ? "hidden" : null}`}
             onMouseDown={handlePlayPause}
           />
-          <PlayCircleOutlined
+          <PlayIcon
             className={`text-4xl text-white transition duration-100 hover:text-orange-400 ${!playing ? null : "hidden"}`}
             onMouseDown={handlePlayPause}
           />
           <div className="flex flex-row items-center space-x-5 ">
-            <StepForwardFilled className="text-xl text-white transition duration-100 hover:text-orange-400" />
+            <StepForwardIcon
+              className="text-xl text-white transition duration-100 hover:text-orange-400"
+              onMouseDown={handleNext}
+            />
             <LoopIcon
               className={`text-xs text-gray-400 hover:text-orange-400 ${loop ? "text-orange-400" : null}`}
               onMouseDown={handleLoopBtnClick}
@@ -117,7 +123,7 @@ export default function Player() {
           className="hidden flex-row items-center justify-end space-x-4 sm:flex"
           // volume
         >
-          <SpeakerLoudIcon className="text-white" />
+          <SpeakerIcon className="text-white" />
           <VolumeSlider
             defaultValue={[volume]}
             value={[volume]}
@@ -131,6 +137,3 @@ export default function Player() {
     </div>
   );
 }
-
-
-

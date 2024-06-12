@@ -23,6 +23,9 @@ function usePlayerState() {
   const [maxPosition, setMaxPosition] = React.useState(0);
   const [volume, setVolume] = React.useState(0);
   const [loop, setLoop] = React.useState(false);
+  const [queue, setQueue] = React.useState<TrackQuery[]>([]);
+  const [queuePlayed, setQueuePlayed] = React.useState<TrackQuery[]>([]);
+
   const audioRef = React.useRef<HTMLAudioElement>(null);
   const changeTrack = async (trackData: TrackQuery, play: boolean) => {
     setTrackData(trackData);
@@ -34,6 +37,7 @@ function usePlayerState() {
       setTimeout(() => {
         if (!audioRef.current) return;
         audioRef.current.play();
+        audioRef.current.currentTime = 0;
         setPlaying(true);
       }, 10);
     }
@@ -48,6 +52,7 @@ function usePlayerState() {
 
   const handlePlayPause = () => {
     setPlaying((prevPlaying) => !prevPlaying);
+
     if (!audioRef.current) return;
     if (audioRef.current.paused) {
       audioRef.current.play();
@@ -60,17 +65,19 @@ function usePlayerState() {
     }
   };
 
-  const handleTrackComplete = () => {
+  const handleTrackComplete = (forward?: boolean) => {
     setPlaying(false);
     if (loop) {
-      if (!audioRef.current) return;
-      audioRef.current.play();
-      setPlaying(true);
+      if (audioRef.current) {
+        audioRef.current.currentTime = 0;
+        audioRef.current.play();
+        setPlaying(true);
+      }
     }
-    // if no repeat, check queue
-    // if no queue, do nothing
+    handleNext();
   };
   const handleTimeChange = () => {
+    //
     if (!audioRef.current) return;
 
     setPosition([audioRef.current.currentTime]);
@@ -80,7 +87,54 @@ function usePlayerState() {
     setLoop((prevLoop) => !prevLoop);
     localStorage.setItem("loop", loop ? "false" : "true");
   };
-  useHotkeys([["space", handlePlayPause]], ["INPUT", "TEXTAREA"]);
+
+  const addToQueue = (track: TrackQuery) => {
+    setQueue([...queue, track]);
+  };
+
+  const handleNext = () => {
+    if (queue.length === 0) return;
+    const nextTrack = queue.shift();
+    if (nextTrack) {
+      setQueuePlayed([...queuePlayed, trackData]);
+      changeTrack(nextTrack, true);
+    }
+  };
+
+  const handlePrevious = () => {
+    if (queuePlayed.length === 0) return;
+    const prevTrack = queuePlayed.pop();
+    if (prevTrack) {
+      setQueue([trackData, ...queue]);
+      changeTrack(prevTrack, true);
+    }
+  };
+
+  const handleSkipBackward = () => {
+    setPosition((prevPosition) => {
+      return [(prevPosition[0] as number) - 5];
+    });
+
+    if (!audioRef.current) return;
+    audioRef.current.currentTime -= 5;
+  };
+
+  const handleSkipForward = () => {
+    setPosition((prevPosition) => {
+      return [(prevPosition[0] as number) + 5];
+    });
+
+    if (!audioRef.current) return;
+    audioRef.current.currentTime += 5;
+  };
+  useHotkeys(
+    [
+      ["space", handlePlayPause],
+      ["ArrowLeft", handleSkipBackward],
+      ["ArrowRight", handleSkipForward],
+    ],
+    ["INPUT", "TEXTAREA"],
+  );
 
   useEffect(() => {
     const { track, position, volume } = readTrackFromLocalStorage();
@@ -128,6 +182,11 @@ function usePlayerState() {
     handleTrackComplete: handleTrackComplete,
     handleLoopBtnClick: handleLoopBtnClick,
     handleTimeChange: handleTimeChange,
+    queue: queue,
+    addToQueue: addToQueue,
+    queuePlayed: queuePlayed,
+    handleNext: handleNext,
+    handlePrevious: handlePrevious,
   };
 }
 
@@ -172,9 +231,10 @@ export default function PlayerContextProvider({
         }}
         onEnded={value.handleTrackComplete}
       />
-      <div className="z-10000 pointer-events-none fixed left-0 top-0 h-full w-full overflow-hidden bg-cover bg-center bg-no-repeat opacity-10 blur-2xl"
+      <div
+        className="z-10000 pointer-events-none fixed left-0 top-0 h-full w-full overflow-hidden bg-cover bg-center bg-no-repeat opacity-10 blur-xl"
         style={{
-          backgroundImage:`url('/api/covers/?id=${value.track?.id})`
+          backgroundImage: `url('/api/covers/?id=${value.track?.id})`,
         }}
       ></div>
       <PlayerContext.Provider value={value}>{children}</PlayerContext.Provider>
