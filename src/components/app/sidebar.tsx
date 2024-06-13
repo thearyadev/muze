@@ -76,11 +76,10 @@ export default function Sidebar({
   username: string;
 }) {
   const { setOpen } = useContext(SearchContext);
-  const { queue, queuePlayed } = useContext(PlayerContext);
   return (
     <>
       <div
-        className={`flex h-screen w-64 flex-col justify-between bg-zinc-800 p-5 pb-32 ${className}`}
+        className={`flex h-screen w-64 flex-col justify-between bg-zinc-800 p-5 pb-24 ${className}`}
       >
         <div>
           <div className="pb-4">
@@ -102,7 +101,11 @@ export default function Sidebar({
           <SidebarButton href="/app/queue" label="Queue" commandKey="2">
             <ListBulletIcon />
           </SidebarButton>
-          <SidebarButton href="/app/all_songs" label="Library" commandKey="3">
+          <SidebarButton
+            href="/app/all_tracks"
+            label="All Tracks"
+            commandKey="3"
+          >
             <ArchiveIcon />
           </SidebarButton>
           <SidebarButton href="/app/albums" label="Albums" commandKey="4">
@@ -114,14 +117,6 @@ export default function Sidebar({
           <SidebarButton href="/app/genres" label="Genres" commandKey="6">
             <TableIcon />
           </SidebarButton>
-          <h1>queue</h1>
-          {queue.map((track) => {
-            return <div>{track?.name}</div>;
-          })}
-          <h1>queue played</h1>
-          {queuePlayed.map((track) => {
-            return <div>{track?.name}</div>;
-          })}
         </div>
         <AccountButton username={username} />
       </div>
