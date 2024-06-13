@@ -1,3 +1,10 @@
-export default function Home() {
-  return <p>Artists</p>;
+
+import PageHeading from "~/components/app/page_heading";
+
+export default function Artists() {
+  return (
+    <>
+      <PageHeading>Artists</PageHeading>
+    </>
+  );
 }

@@ -1,5 +1,10 @@
 
+import PageHeading from "~/components/app/page_heading";
 
-export default async function Home() {
-  return <p>Genres</p>;
+export default function Genres() {
+  return (
+    <>
+      <PageHeading>Genres</PageHeading>
+    </>
+  );
 }

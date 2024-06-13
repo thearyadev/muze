@@ -1,3 +1,9 @@
-export default function Home() {
-  return <p>Albums</p>;
+import PageHeading from "~/components/app/page_heading";
+
+export default function Albums() {
+  return (
+    <>
+      <PageHeading>Albums</PageHeading>
+    </>
+  );
 }
