@@ -76,9 +76,8 @@ export default function Player() {
           className="flex flex-row items-center"
           // Track Info
         >
-          <Avatar className="block">
-            <AvatarImage src={`/api/covers?id=${track.id}`} />
-          </Avatar>
+          <img src={`/api/covers?id=${track.id}`}  className="h-16 w-16 rounded-md"/>
+
           <div className="hidden pl-3 sm:block">
             <p className="text-sm leading-tight text-white">{track.name}</p>
             {track.artistIds.split(";").map((artistId, index) => (
