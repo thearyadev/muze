@@ -21,6 +21,7 @@ import { api } from "~/trpc/react";
 import { PlayerContext } from "./player_context";
 import { SearchContext } from "./searchContext";
 import { useHotkeys } from "@mantine/hooks";
+import { usePosition } from "./providers/position";
 
 function SidebarButton({
   href,
@@ -76,6 +77,7 @@ export default function Sidebar({
   username: string;
 }) {
   const { setOpen } = useContext(SearchContext);
+
   return (
     <>
       <div

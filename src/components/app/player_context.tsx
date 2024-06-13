@@ -65,7 +65,7 @@ function usePlayerState() {
     }
   };
 
-  const handleTrackComplete = (forward?: boolean) => {
+  const handleTrackComplete = () => {
     setPlaying(false);
     if (loop) {
       if (audioRef.current) {
@@ -194,6 +194,7 @@ export const PlayerContext = React.createContext<PlayerContextType>(
   {} as PlayerContextType,
 );
 
+
 function writeTrackToLocalStorage(track: TrackQuery) {
   localStorage.setItem("track", JSON.stringify(track));
 }
@@ -203,6 +204,11 @@ function writePositionToLocalStorage(position: number) {
 function readTrackFromLocalStorage(): ResumeData {
   const track = localStorage.getItem("track");
   const position = localStorage.getItem("position");
+
+
+
+
+
   const volume = localStorage.getItem("volume");
   return {
     track: track ? JSON.parse(track) : null,

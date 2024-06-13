@@ -5,7 +5,7 @@ import { Inter } from "next/font/google";
 import { TRPCReactProvider } from "~/trpc/react";
 import Player from "~/components/app/player";
 import Sidebar from "~/components/app/sidebar";
-import PlayerContextProvider from "~/components/app/player_context";
+import PlayerContextProvider from "~/components/app/providers/player";
 
 import Header from "~/components/app/header";
 import { SessionProvider } from "next-auth/react";
@@ -34,10 +34,6 @@ export default async function AppLayout({
         <div className="flex">
           <div className="hidden flex-none sm:block">
             <Sidebar username={session.user.name as string} />
-          </div>
-
-          <div className="sm:hidden">
-            <Header />
           </div>
 
           <div className="grow">

@@ -20,6 +20,11 @@ import {
 } from "@ant-design/icons";
 
 import { PlayerContext } from "./player_context";
+import { useTrack } from "./providers/track";
+import { useVolume } from "./providers/volume";
+import { useLoop } from "./providers/loop";
+import { usePlaying } from "./providers/playing";
+import { usePosition } from "./providers/position";
 
 function PlayerBody({ children }: { children: React.ReactNode }) {
   return (
@@ -29,22 +34,29 @@ function PlayerBody({ children }: { children: React.ReactNode }) {
   );
 }
 
+function TrackSliderPosition() {
+  const { position, changePosition, maxposition } = usePosition()!;
+  return (
+    <TrackSlider
+      defaultValue={position}
+      max={maxposition}
+      value={position}
+      step={0.1}
+      onValueChange={(value) => {
+        changePosition(value);
+        // if (!audioRef.current) return;
+        // audioRef.current.currentTime = value[0] as number;
+      }}
+      className="w-screen transition duration-75"
+    />
+  );
+}
+
 export default function Player() {
-  const {
-    track,
-    playing,
-    position,
-    setPosition,
-    maxPosition,
-    volume,
-    loop,
-    audioRef,
-    handlePlayPause,
-    handleVolumeChange,
-    handleLoopBtnClick,
-    handleNext,
-    handlePrevious,
-  } = useContext(PlayerContext);
+  const { track } = useTrack()!;
+  const { volume, changeVolume } = useVolume()!;
+  const { loop } = useLoop()!;
+  const { playing, setPlayingTrue, setPlayingFalse } = usePlaying()!;
 
   if (track === null) {
     return (
@@ -57,26 +69,18 @@ export default function Player() {
 
   return (
     <div className="select-none">
-      <div className="w-screen">
-        <TrackSlider
-          defaultValue={position}
-          max={maxPosition}
-          value={position}
-          step={0.1}
-          onValueChange={(value) => {
-            setPosition(value);
-            if (!audioRef.current) return;
-            audioRef.current.currentTime = value[0] as number;
-          }}
-          className="w-screen transition duration-75"
-        />
-      </div>
+      <div className="w-screen"></div>
+      <TrackSliderPosition />
       <PlayerBody>
         <div
           className="flex flex-row items-center"
           // Track Info
         >
-          <img src={`/api/covers?id=${track.id}`}  className="h-16 w-16 rounded-md"/>
+          <img
+            src={`/api/covers?id=${track.id}`}
+            className="h-16 w-16 rounded-md"
+            loading="eager"
+          />
 
           <div className="hidden pl-3 sm:block">
             <p className="text-sm leading-tight text-white">{track.name}</p>
@@ -95,26 +99,19 @@ export default function Player() {
           className="flex flex-row items-center justify-center space-x-10 align-middle"
           // controls
         >
-          <StepBackwardIcon
-            className="text-xl text-white transition duration-100 hover:text-orange-400"
-            onMouseDown={handlePrevious}
-          />
+          <StepBackwardIcon className="text-xl text-white transition duration-100 hover:text-orange-400" />
           <PauseIcon
             className={`text-4xl text-white transition duration-100 hover:text-orange-400 ${!playing ? "hidden" : null}`}
-            onMouseDown={handlePlayPause}
+            onMouseDown={setPlayingFalse}
           />
           <PlayIcon
             className={`text-4xl text-white transition duration-100 hover:text-orange-400 ${!playing ? null : "hidden"}`}
-            onMouseDown={handlePlayPause}
+            onMouseDown={setPlayingTrue}
           />
           <div className="flex flex-row items-center space-x-5 ">
-            <StepForwardIcon
-              className="text-xl text-white transition duration-100 hover:text-orange-400"
-              onMouseDown={handleNext}
-            />
+            <StepForwardIcon className="text-xl text-white transition duration-100 hover:text-orange-400" />
             <LoopIcon
               className={`text-xs text-gray-400 hover:text-orange-400 ${loop ? "text-orange-400" : null}`}
-              onMouseDown={handleLoopBtnClick}
             />
           </div>
         </div>
@@ -129,7 +126,7 @@ export default function Player() {
             max={100}
             step={1}
             className="w-[30%]"
-            onValueChange={handleVolumeChange}
+            onValueChange={(v) => changeVolume(v[0] as number)}
           />
         </div>
       </PlayerBody>
