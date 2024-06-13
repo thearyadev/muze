@@ -122,26 +122,27 @@ export default function Sidebar({
           </SidebarButton>
         </div>
         <AccountButton username={username} />
-        <div className="flex flex-row justify-between text-xs text-gray-500"> 
-          
-          <div>
-            queue
-            {queue.queue.map((track) => (
-              <div className="text-xs text-gray-500">
-                {track.name}
               </div>
-            ))}
-          </div>
-         <div>
-            queue played
-            {queue.queuePlayed.map((track) => (
-              <div className="text-xs text-gray-500">
-                {track.name}
-              </div>
-            ))}
-          </div>
-        </div>
-      </div>
     </>
   );
 }
+// <div className="flex flex-row justify-between text-xs text-gray-500"> 
+          
+//           <div>
+//             queue
+//             {queue.queue.map((track) => (
+//               <div className="text-xs text-gray-500">
+//                 {track.name}
+//               </div>
+//             ))}
+//           </div>
+//          <div>
+//             queue played
+//             {queue.queuePlayed.map((track) => (
+//               <div className="text-xs text-gray-500">
+//                 {track.name}
+//               </div>
+//             ))}
+//           </div>
+//         </div>
+
