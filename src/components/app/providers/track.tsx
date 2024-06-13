@@ -9,6 +9,7 @@ import type { inferRouterOutputs } from "@trpc/server";
 import { AppRouter } from "~/server/api/root";
 import { usePosition } from "./position";
 import { usePlaying } from "./playing";
+import { useQueue } from "./queue";
 
 type RouterOutput = inferRouterOutputs<AppRouter>;
 type TrackQuery = RouterOutput["library"]["getTrack"];
@@ -43,6 +44,7 @@ const TrackProvider: React.FC<{
       }, 10);
     }
   };
+  
   return (
     <TrackContext.Provider
       value={React.useMemo(

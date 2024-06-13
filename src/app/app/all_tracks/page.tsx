@@ -12,7 +12,7 @@ export default async function AllSongsPage() {
   };
   const tracks = await api.library.allSongs({
     page: querySettings.page,
-    pageSize: querySettings.page,
+    pageSize: querySettings.pageSize,
   });
   return (
     <>

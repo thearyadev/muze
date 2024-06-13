@@ -22,6 +22,7 @@ import { PlayerContext } from "./player_context";
 import { SearchContext } from "./searchContext";
 import { useHotkeys } from "@mantine/hooks";
 import { usePosition } from "./providers/position";
+import { useQueue } from "./providers/queue";
 
 function SidebarButton({
   href,
@@ -77,7 +78,7 @@ export default function Sidebar({
   username: string;
 }) {
   const { setOpen } = useContext(SearchContext);
-
+  const queue = useQueue()!;
   return (
     <>
       <div
@@ -121,6 +122,25 @@ export default function Sidebar({
           </SidebarButton>
         </div>
         <AccountButton username={username} />
+        <div className="flex flex-row justify-between text-xs text-gray-500"> 
+          
+          <div>
+            queue
+            {queue.queue.map((track) => (
+              <div className="text-xs text-gray-500">
+                {track.name}
+              </div>
+            ))}
+          </div>
+         <div>
+            queue played
+            {queue.queuePlayed.map((track) => (
+              <div className="text-xs text-gray-500">
+                {track.name}
+              </div>
+            ))}
+          </div>
+        </div>
       </div>
     </>
   );

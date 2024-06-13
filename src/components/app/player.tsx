@@ -25,6 +25,7 @@ import { useVolume } from "./providers/volume";
 import { useLoop } from "./providers/loop";
 import { usePlaying } from "./providers/playing";
 import { usePosition } from "./providers/position";
+import { useQueue } from "./providers/queue";
 
 function PlayerBody({ children }: { children: React.ReactNode }) {
   return (
@@ -57,6 +58,7 @@ export default function Player() {
   const { volume, changeVolume } = useVolume()!;
   const { loop, changeLoop } = useLoop()!;
   const { playing, setPlayingTrue, setPlayingFalse } = usePlaying()!;
+  const { nextTrack, previousTrack } = useQueue()!;
 
   if (track === null) {
     return (
@@ -99,7 +101,10 @@ export default function Player() {
           className="flex flex-row items-center justify-center space-x-10 align-middle"
           // controls
         >
-          <StepBackwardIcon className="text-xl text-white transition duration-100 hover:text-orange-400" />
+          <StepBackwardIcon
+            className="text-xl text-white transition duration-100 hover:text-orange-400"
+            onMouseDown={previousTrack}
+          />
           <PauseIcon
             className={`text-4xl text-white transition duration-100 hover:text-orange-400 ${!playing ? "hidden" : null}`}
             onMouseDown={setPlayingFalse}
@@ -109,7 +114,10 @@ export default function Player() {
             onMouseDown={setPlayingTrue}
           />
           <div className="flex flex-row items-center space-x-5 ">
-            <StepForwardIcon className="text-xl text-white transition duration-100 hover:text-orange-400" />
+            <StepForwardIcon
+              className="text-xl text-white transition duration-100 hover:text-orange-400"
+              onMouseDown={nextTrack}
+            />
             <LoopIcon
               className={`text-xs text-gray-400 hover:text-orange-400 ${loop ? "text-orange-400" : null}`}
               onMouseDown={() => {

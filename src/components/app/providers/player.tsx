@@ -5,12 +5,14 @@ import { PlayingProvider } from "./playing";
 import { PositionProvider, usePosition } from "./position";
 import { TrackProvider, useTrack } from "./track";
 import { VolumeProvider, useVolume } from "./volume";
+import { QueueProvider, useQueue } from "./queue";
 function ContextRichAudio({
   audioRef,
 }: {
   audioRef: React.RefObject<HTMLAudioElement>;
 }) {
   const { setMaxPosition, reactPosition } = usePosition()!;
+  const { trackComplete } = useQueue()!;
   return (
     <audio
       ref={audioRef}
@@ -20,6 +22,9 @@ function ContextRichAudio({
       onCanPlay={() => {
         if (!audioRef.current) return;
         setMaxPosition(audioRef.current.duration);
+      }}
+      onEnded={() => {
+        trackComplete();
       }}
       className="hidden"
     />
@@ -41,7 +46,7 @@ function ContextRichLocalStorageLoader() {
   const { changeTrack } = useTrack()!;
   const { changePosition } = usePosition()!;
   const { changeVolume } = useVolume()!;
-  const { changeLoop} = useLoop()!;
+  const { changeLoop } = useLoop()!;
 
   useEffect(() => {
     const track = localStorage.getItem("track")
@@ -64,10 +69,10 @@ function ContextRichLocalStorageLoader() {
       changeVolume(volume);
     }
     if (loop) {
-     changeLoop(loop === "true");
+      changeLoop(loop === "true");
     }
   }, []);
-  return null; 
+  return null;
 }
 
 export default function PlayerContextProvider({
@@ -82,10 +87,12 @@ export default function PlayerContextProvider({
         <VolumeProvider audioRef={audioRef}>
           <PositionProvider audioRef={audioRef}>
             <TrackProvider audioRef={audioRef}>
-              <ContextRichAudio audioRef={audioRef} />
-              <ContextRichOverlay />
-              <ContextRichLocalStorageLoader />
-              {children}
+              <QueueProvider>
+                <ContextRichAudio audioRef={audioRef} />
+                <ContextRichOverlay />
+                <ContextRichLocalStorageLoader />
+                {children}
+              </QueueProvider>
             </TrackProvider>
           </PositionProvider>
         </VolumeProvider>

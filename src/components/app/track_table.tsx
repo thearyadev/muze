@@ -9,6 +9,7 @@ import { Separator } from "~/components/ui/separator";
 import Link from "next/link";
 import { PlayerContext } from "./player_context";
 import { useTrack } from "./providers/track";
+import { useQueue } from "./providers/queue";
 type RouterOutput = inferRouterOutputs<AppRouter>;
 
 type TrackQuery = RouterOutput["library"]["getTrack"];
@@ -33,15 +34,20 @@ export function TrackTableScrollPaginatedU(
   const [tracks, setTracks] = useState<TrackQuery[]>(props.initialTracks);
   const [page, setPage] = useState(props.page + 1);
   const { changeTrack } = useTrack()!;
-
+  const { addTrackPrevious } = useQueue()!;
+  const { track: currentTrack } = useTrack()!;
   const { data } = api.library.allSongs.useQuery({
     page: page,
     pageSize: props.pageSize,
   });
+  const handleTrackSwitch = (track: TrackQuery) => {
+    if (currentTrack) addTrackPrevious(currentTrack);
+    changeTrack(track, true);
+  };
 
   const handleScroll = (currentPosition: number, maxPosition: number) => {
     const percentageScrolled = maxPosition - currentPosition;
-    if (percentageScrolled >= 200 && heightRef.current < maxPosition) {
+    if (percentageScrolled <= 200 && heightRef.current < maxPosition) {
       setPage((prevPage) => prevPage + 1);
       heightRef.current = maxPosition;
     }
@@ -50,7 +56,7 @@ export function TrackTableScrollPaginatedU(
   useEffect(() => {
     if (data) setTracks((prevTracks) => [...prevTracks, ...data]);
   }, [data]);
-  console.log("rendah")
+  console.log("rendah");
 
   return (
     <>
@@ -74,7 +80,7 @@ export function TrackTableScrollPaginatedU(
           return (
             <div
               className="grid grid-cols-12 grid-rows-1 gap-4 p-3 hover:bg-zinc-700 "
-              onMouseDown={() => changeTrack(track, true)}
+              onMouseDown={() => handleTrackSwitch(track)}
             >
               <div className="col-span-6 flex flex-row space-x-3 text-sm">
                 <div>
