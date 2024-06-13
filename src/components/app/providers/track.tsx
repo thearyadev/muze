@@ -28,10 +28,11 @@ const TrackProvider: React.FC<{
   const playing = usePlaying()!;
   const changeTrack = (newTrack: TrackQuery, play: boolean) => {
     setTrack(newTrack);
-    playing.setPlayingTrue();
+    playing.setPlayingFalse();
     position.changePosition([0]);
     if (!audioRef.current) return;
     audioRef.current.src = "/api/track_data?id=" + newTrack!.id;
+    localStorage.setItem("track", JSON.stringify(newTrack));
 
     if (play) {
       setTimeout(() => {

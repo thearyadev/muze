@@ -55,7 +55,7 @@ function TrackSliderPosition() {
 export default function Player() {
   const { track } = useTrack()!;
   const { volume, changeVolume } = useVolume()!;
-  const { loop } = useLoop()!;
+  const { loop, changeLoop } = useLoop()!;
   const { playing, setPlayingTrue, setPlayingFalse } = usePlaying()!;
 
   if (track === null) {
@@ -112,6 +112,9 @@ export default function Player() {
             <StepForwardIcon className="text-xl text-white transition duration-100 hover:text-orange-400" />
             <LoopIcon
               className={`text-xs text-gray-400 hover:text-orange-400 ${loop ? "text-orange-400" : null}`}
+              onMouseDown={() => {
+                loop ? changeLoop(false) : changeLoop(true);
+              }}
             />
           </div>
         </div>

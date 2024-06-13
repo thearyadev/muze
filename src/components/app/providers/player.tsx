@@ -1,24 +1,21 @@
 "use client";
-import { useRef } from "react";
-import { LoopProvider } from "./loop";
+import { useEffect, useRef } from "react";
+import { LoopProvider, useLoop } from "./loop";
 import { PlayingProvider } from "./playing";
 import { PositionProvider, usePosition } from "./position";
 import { TrackProvider, useTrack } from "./track";
-import { VolumeProvider } from "./volume";
+import { VolumeProvider, useVolume } from "./volume";
 function ContextRichAudio({
   audioRef,
 }: {
   audioRef: React.RefObject<HTMLAudioElement>;
 }) {
-  const { position, maxposition, setMaxPosition, changePosition } =
-    usePosition()!;
+  const { setMaxPosition, reactPosition } = usePosition()!;
   return (
     <audio
       ref={audioRef}
       onTimeUpdate={() => {
-        if (!audioRef.current) return;
-
-        changePosition([audioRef.current.currentTime]);
+        reactPosition();
       }}
       onCanPlay={() => {
         if (!audioRef.current) return;
@@ -40,6 +37,38 @@ function ContextRichOverlay() {
     ></div>
   );
 }
+function ContextRichLocalStorageLoader() {
+  const { changeTrack } = useTrack()!;
+  const { changePosition } = usePosition()!;
+  const { changeVolume } = useVolume()!;
+  const { changeLoop} = useLoop()!;
+
+  useEffect(() => {
+    const track = localStorage.getItem("track")
+      ? JSON.parse(localStorage.getItem("track")!)
+      : null;
+    const position = localStorage.getItem("position")
+      ? parseInt(localStorage.getItem("position")!)
+      : null;
+    const volume = localStorage.getItem("volume")
+      ? parseInt(localStorage.getItem("volume")!)
+      : null;
+    const loop = localStorage.getItem("loop");
+    if (track) {
+      changeTrack(track, false);
+    }
+    if (position) {
+      changePosition([position]);
+    }
+    if (volume) {
+      changeVolume(volume);
+    }
+    if (loop) {
+     changeLoop(loop === "true");
+    }
+  }, []);
+  return null; 
+}
 
 export default function PlayerContextProvider({
   children,
@@ -55,6 +84,7 @@ export default function PlayerContextProvider({
             <TrackProvider audioRef={audioRef}>
               <ContextRichAudio audioRef={audioRef} />
               <ContextRichOverlay />
+              <ContextRichLocalStorageLoader />
               {children}
             </TrackProvider>
           </PositionProvider>

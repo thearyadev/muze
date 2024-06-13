@@ -15,6 +15,7 @@ const VolumeProvider: React.FC<{
     if (!audioRef.current) return;
     audioRef.current.volume = newVolume / 100;
     setVolume(newVolume);
+    localStorage.setItem("volume", newVolume.toString());
   };
   return (
     <VolumeContext.Provider
