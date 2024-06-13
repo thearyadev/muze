@@ -16,6 +16,8 @@ import {
 import { eq, and, asc, getTableColumns, sql, ilike, like } from "drizzle-orm";
 import { getServerAuthSession } from "~/server/auth";
 
+import sharp from "sharp";
+
 async function getTracks(dir: string): Promise<string[]> {
   let files: string[] = [];
   const contents = fs.readdirSync(dir);
@@ -298,7 +300,8 @@ export const libraryRouter = createTRPCRouter({
           path.resolve(env.COVER_ART_PATH),
           metadata.MB_TRACK_ID + ".jpg",
         );
-        fs.writeFileSync(cover_path, metadata.COVER);
+
+         await sharp(metadata.COVER).resize(50, 50).jpeg({quality: 80}).toFile(cover_path).catch()
       }
     }
   }),
