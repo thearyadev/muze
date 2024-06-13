@@ -15,6 +15,7 @@ import Command from "~/components/app/command";
 import SearchContextProvider, {
   SearchContext,
 } from "~/components/app/searchContext";
+import PageWrapper from "~/components/app/page_wrapper";
 
 export default async function AppLayout({
   children,
@@ -39,7 +40,9 @@ export default async function AppLayout({
             <Header />
           </div>
 
-          <div className="grow">{children}</div>
+          <div className="grow">
+            <PageWrapper>{children}</PageWrapper>
+          </div>
         </div>
         <div className="fixed bottom-0">
           <Player />
