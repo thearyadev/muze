@@ -9,7 +9,7 @@ import { libraryRouter } from "./routers/library";
  */
 export const appRouter = createTRPCRouter({
   user: userRouter,
-  library: libraryRouter
+  library: libraryRouter,
 });
 
 // export type definition of API

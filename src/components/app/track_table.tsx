@@ -1,7 +1,7 @@
 "use client";
 import type { inferRouterOutputs } from "@trpc/server";
 import { type AppRouter } from "~/server/api/root";
-import { useEffect, useRef, useState} from "react";
+import { useEffect, useRef, useState } from "react";
 import { api } from "~/trpc/react";
 import { ScrollArea } from "~/components/ui/scroll-area";
 
@@ -128,9 +128,9 @@ export function TrackTableScrollPaginated(
       <ScrollArea
         className="h-full w-full rounded-md"
         onScrollCapture={(e) => {
-          // @ts-expect-error scroll event "doent have" this property 
+          // @ts-expect-error scroll event "doent have" this property
           const maxScroll = e.target.scrollHeight - e.target.clientHeight;
-          // @ts-expect-error scroll event "doent have" this property 
+          // @ts-expect-error scroll event "doent have" this property
           const cur = e.target.scrollTop as number;
           handleScroll(cur, maxScroll);
         }}

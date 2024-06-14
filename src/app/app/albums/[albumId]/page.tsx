@@ -18,7 +18,7 @@ export default async function Home({
           <Image
             alt={albumQuery!.album.name}
             src={`/api/covers?id=${tracks[0]!.id}`}
-            className="h-24 w-24 rounded-md mr-5"
+            className="mr-5 h-24 w-24 rounded-md"
             loading="eager"
             width={40}
             height={40}

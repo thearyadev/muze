@@ -12,7 +12,7 @@ import {
 import { usePathname, useRouter } from "next/navigation";
 import { Button } from "../ui/button";
 import CommandLabel from "./command_label";
-import { useContext, } from "react";
+import { useContext } from "react";
 import { AccountButton } from "./accountButton";
 
 import { SearchContext } from "./searchContext";
@@ -115,12 +115,12 @@ export default function Sidebar({
           </SidebarButton>
         </div>
         <AccountButton username={username} />
-              </div>
+      </div>
     </>
   );
 }
-// <div className="flex flex-row justify-between text-xs text-gray-500"> 
-          
+// <div className="flex flex-row justify-between text-xs text-gray-500">
+
 //           <div>
 //             queue
 //             {queue.queue.map((track) => (
@@ -138,4 +138,3 @@ export default function Sidebar({
 //             ))}
 //           </div>
 //         </div>
-

@@ -29,7 +29,9 @@ const PlayingProvider: React.FC<{
   const setPlayingTrue = () => {
     if (!audioRef.current) return;
     setPlaying(true);
-    audioRef.current.play().catch(() => {return});
+    audioRef.current.play().catch(() => {
+      return;
+    });
   };
 
   const setPlayingFalse = () => {

@@ -9,5 +9,5 @@ export default {
     url: env.DATABASE_URL,
   },
   tablesFilter: ["lyzard_*"],
-  out: "./"
+  out: "./",
 } satisfies Config;

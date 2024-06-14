@@ -6,8 +6,7 @@ await import("./src/env.js");
 
 /** @type {import("next").NextConfig} */
 const config = {
-  experimental: {
-  }
+  experimental: {},
 };
 
 export default config;

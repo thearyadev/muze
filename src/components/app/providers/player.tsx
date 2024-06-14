@@ -61,8 +61,7 @@ function ContextRichLocalStorageLoader() {
       : null;
     const loop = localStorage.getItem("loop");
     if (track) {
-
-    // eslint-disable-next-line @typescript-eslint/no-unsafe-argument
+      // eslint-disable-next-line @typescript-eslint/no-unsafe-argument
       changeTrack(track, false);
     }
     if (position) {
@@ -74,7 +73,7 @@ function ContextRichLocalStorageLoader() {
     if (loop) {
       changeLoop(loop === "true");
     }
-  // eslint-disable-next-line react-hooks/exhaustive-deps
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
   return null;
 }

@@ -1,8 +1,4 @@
-import React, {
-  useState,
-  useContext,
-  createContext,
-} from "react";
+import React, { useState, useContext, createContext } from "react";
 import type { inferRouterOutputs } from "@trpc/server";
 import { type AppRouter } from "~/server/api/root";
 import { usePosition } from "./position";
@@ -35,13 +31,15 @@ const TrackProvider: React.FC<{
     if (play) {
       setTimeout(() => {
         if (!audioRef.current) return;
-        audioRef.current.play().catch(() => {return})
+        audioRef.current.play().catch(() => {
+          return;
+        });
         audioRef.current.currentTime = 0;
         playing.setPlayingTrue();
       }, 10);
     }
   };
-  
+
   return (
     <TrackContext.Provider
       value={React.useMemo(

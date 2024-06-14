@@ -16,16 +16,17 @@ import { toast } from "sonner";
 import { sync } from "~/lib/actions";
 export function AccountButton({ username }: { username: string }) {
   const handleSignout = () => {
-    signOut().catch(() => {return});
+    signOut().catch(() => {
+      return;
+    });
   };
 
   const handleSync = async () => {
     toast.promise(sync(), {
       loading: "Library sync in progress...",
       success: "Library sync complete. Please refresh the page.",
-      error: "Library sync failed. Please check logs."
-    })
-
+      error: "Library sync failed. Please check logs.",
+    });
   };
   useHotkeys(
     [
@@ -38,11 +39,7 @@ export function AccountButton({ username }: { username: string }) {
   return (
     <DropdownMenu>
       <DropdownMenuTrigger asChild>
-        <Button
-          className="w-full border-0"
-        >
-          {username}
-        </Button>
+        <Button className="w-full border-0">{username}</Button>
       </DropdownMenuTrigger>
       <DropdownMenuContent className="" side="top">
         <DropdownMenuGroup>

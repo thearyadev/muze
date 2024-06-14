@@ -43,12 +43,17 @@ export default function Command() {
 
   useEffect(() => {
     if (searchQuery.length) {
-      utils.library.searchTrack.fetch(searchQuery).then((data) => {
-        setTrackResults(data);
-        setLoading(false);
-      }).catch(() => {return});
+      utils.library.searchTrack
+        .fetch(searchQuery)
+        .then((data) => {
+          setTrackResults(data);
+          setLoading(false);
+        })
+        .catch(() => {
+          return;
+        });
     }
-  // eslint-disable-next-line react-hooks/exhaustive-deps
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [searchQuery]);
   return (
     <>
