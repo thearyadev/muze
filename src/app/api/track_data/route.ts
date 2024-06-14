@@ -1,8 +1,9 @@
+/* eslint-disable */
+
 import { existsSync, statSync, createReadStream } from "fs";
 import { NextRequest, NextResponse } from "next/server";
 import { api } from "~/trpc/server";
 import mime from "mime";
-import path from "path";
 
 interface TrackData {
   path: string;

@@ -1,15 +1,15 @@
 "use client";
 import type { inferRouterOutputs } from "@trpc/server";
-import { AppRouter } from "~/server/api/root";
-import { useContext, useEffect, useRef, useState, memo } from "react";
+import { type AppRouter } from "~/server/api/root";
+import { useEffect, useRef, useState} from "react";
 import { api } from "~/trpc/react";
 import { ScrollArea } from "~/components/ui/scroll-area";
 
 import { Separator } from "~/components/ui/separator";
 import Link from "next/link";
-import { PlayerContext } from "./player_context";
 import { useTrack } from "./providers/track";
 import { useQueue } from "./providers/queue";
+import Image from "next/image";
 type RouterOutput = inferRouterOutputs<AppRouter>;
 
 type TrackQuery = RouterOutput["library"]["getTrack"];
@@ -39,10 +39,13 @@ function TrackCell({
     >
       <div className="col-span-6 flex flex-row space-x-3 text-sm">
         <div>
-          <img
-            src={`/api/covers?id=${track!.id}]`}
+          <Image
+            alt={track!.name!}
+            src={`/api/covers?id=${track!.id}`}
             className="h-10 w-10 rounded-md"
             loading={index <= 20 ? "eager" : "lazy"}
+            width={40}
+            height={40}
           />
         </div>
         <div>
@@ -50,6 +53,7 @@ function TrackCell({
           <div className="">
             {track!.artistIds.split(";").map((artistId, index) => (
               <Link
+                key={artistId}
                 href={`/artist/${artistId}`}
                 className="text-xs text-gray-500 transition-all fade-in-100 fade-out-100 hover:text-orange-400 "
               >
@@ -69,17 +73,17 @@ function TrackCell({
         </Link>
       </div>
       <div className="col-span-2 content-center text-xs text-gray-500">
-        {secondsToTimeString(track!.duration as number)}
+        {secondsToTimeString(track!.duration!)}
       </div>
     </div>
   );
 }
 
 function secondsToTimeString(seconds: number) {
-  var minutes = Math.floor(seconds / 60);
-  var remainingSeconds = Math.floor(seconds % 60);
+  const minutes = Math.floor(seconds / 60);
+  const remainingSeconds = Math.floor(seconds % 60);
 
-  var timeString =
+  const timeString =
     minutes + ":" + (remainingSeconds < 10 ? "0" : "") + remainingSeconds;
   return timeString;
 }
@@ -90,7 +94,7 @@ export function TrackTableScrollPaginated(
   const [tracks, setTracks] = useState<TrackQuery[]>(props.initialTracks);
   const [page, setPage] = useState(props.page + 1);
   const { changeTrack } = useTrack()!;
-  const { addTrackPrevious, addTrack } = useQueue()!;
+  const { addTrackPrevious } = useQueue()!;
   const { track: currentTrack } = useTrack()!;
   const { data } = api.library.allSongs.useQuery({
     page: page,
@@ -112,7 +116,7 @@ export function TrackTableScrollPaginated(
   useEffect(() => {
     if (data) setTracks((prevTracks) => [...prevTracks, ...data]);
   }, [data]);
-
+  console.log("renduh");
   return (
     <>
       <div className="grid grid-cols-12 grid-rows-1 gap-4 p-3  text-gray-500">
@@ -124,16 +128,17 @@ export function TrackTableScrollPaginated(
       <ScrollArea
         className="h-full w-full rounded-md"
         onScrollCapture={(e) => {
-          // @ts-ignore
+          // @ts-expect-error scroll event "doent have" this property 
           const maxScroll = e.target.scrollHeight - e.target.clientHeight;
-          // @ts-ignore
-          const cur = e.target.scrollTop;
+          // @ts-expect-error scroll event "doent have" this property 
+          const cur = e.target.scrollTop as number;
           handleScroll(cur, maxScroll);
         }}
       >
         {tracks.map((track, index) => {
           return (
             <TrackCell
+              key={track!.id}
               track={track}
               clickFn={handleTrackSwitch}
               index={index}
@@ -167,6 +172,7 @@ export function TrackTableScroll(props: TrackTableScroll) {
         {props.tracks.map((track, index) => {
           return (
             <TrackCell
+              key={track!.id}
               track={track}
               clickFn={handleTrackSwitch}
               index={index}

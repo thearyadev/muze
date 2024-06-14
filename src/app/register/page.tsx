@@ -3,28 +3,9 @@ import RegisterForm from "~/components/app/register_form";
 import { api } from "~/trpc/server";
 import * as React from "react";
 
-import { Button } from "~/components/ui/button";
-import {
-  Card,
-  CardContent,
-  CardDescription,
-  CardFooter,
-  CardHeader,
-  CardTitle,
-} from "~/components/ui/card";
-import { Input } from "~/components/ui/input";
-import { Label } from "~/components/ui/label";
+import { Card, CardContent, CardHeader, CardTitle } from "~/components/ui/card";
 
-type LoginInput = {
-  username: string;
-  password: string;
-};
-
-type PageProps = {
-  searchParams: { error?: string };
-};
-
-export default async function LoginPage({ searchParams }: PageProps) {
+export default async function LoginPage() {
   const isAuthenticated = await api.user.isAuthenticated();
   if (isAuthenticated) {
     redirect("/app/home");
@@ -37,7 +18,7 @@ export default async function LoginPage({ searchParams }: PageProps) {
           <CardTitle></CardTitle>
         </CardHeader>
         <CardContent>
-          <RegisterForm error={searchParams.error}></RegisterForm>
+          <RegisterForm></RegisterForm>
         </CardContent>
       </Card>
     </div>

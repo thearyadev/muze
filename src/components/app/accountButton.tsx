@@ -1,7 +1,6 @@
 "use client";
 import { signOut } from "next-auth/react";
 
-import { useEffect, useRef, useState } from "react";
 import { Button } from "~/components/ui/button";
 import {
   DropdownMenu,
@@ -13,12 +12,11 @@ import {
   DropdownMenuTrigger,
 } from "~/components/ui/dropdown-menu";
 import { useHotkeys } from "@mantine/hooks";
-import { api } from "~/trpc/react";
 import { toast } from "sonner";
 import { sync } from "~/lib/actions";
 export function AccountButton({ username }: { username: string }) {
   const handleSignout = () => {
-    signOut();
+    signOut().catch(() => {return});
   };
 
   const handleSync = async () => {

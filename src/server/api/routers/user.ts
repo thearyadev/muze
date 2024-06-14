@@ -1,9 +1,7 @@
-import { createTRPCClient } from "@trpc/client";
 import { z } from "zod";
 
 import {
   createTRPCRouter,
-  protectedProcedure,
   publicProcedure,
 } from "~/server/api/trpc";
 import { users } from "~/server/db/schema";

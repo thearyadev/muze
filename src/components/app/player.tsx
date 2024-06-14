@@ -1,8 +1,6 @@
 "use client";
 
-import React, { useContext } from "react";
-import { Avatar } from "../ui/avatar";
-import { AvatarImage } from "@radix-ui/react-avatar";
+import React from "react";
 import Link from "next/link";
 
 import { VolumeSlider, TrackSlider } from "../ui/slider";
@@ -19,13 +17,13 @@ import {
   StepForwardFilled as StepForwardIcon,
 } from "@ant-design/icons";
 
-import { PlayerContext } from "./player_context";
 import { useTrack } from "./providers/track";
 import { useVolume } from "./providers/volume";
 import { useLoop } from "./providers/loop";
 import { usePlaying } from "./providers/playing";
 import { usePosition } from "./providers/position";
 import { useQueue } from "./providers/queue";
+import Image from "next/image";
 
 function PlayerBody({ children }: { children: React.ReactNode }) {
   return (
@@ -78,16 +76,20 @@ export default function Player() {
           className="flex flex-row items-center"
           // Track Info
         >
-          <img
+          <Image
+            alt={track.name!}
             src={`/api/covers?id=${track.id}`}
             className="h-16 w-16 rounded-md"
             loading="eager"
+            width={40}
+            height={40}
           />
 
           <div className="hidden pl-3 sm:block">
             <p className="text-sm leading-tight text-white">{track.name}</p>
             {track.artistIds.split(";").map((artistId, index) => (
               <Link
+                key={artistId}
                 href={`/artist/${artistId}`}
                 className="text-xs text-gray-500 transition-all fade-in-100 fade-out-100 hover:text-orange-400 "
               >
@@ -137,7 +139,7 @@ export default function Player() {
             max={100}
             step={1}
             className="w-[30%]"
-            onValueChange={(v) => changeVolume(v[0] as number)}
+            onValueChange={(v) => changeVolume(v[0]!)}
           />
         </div>
       </PlayerBody>

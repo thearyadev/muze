@@ -1,10 +1,10 @@
 "use client";
-import React, { useEffect } from "react";
+import React from "react";
 
-export const SearchContext = React.createContext({
-  open: false,
-  setOpen: (open: boolean) => {},
-});
+export const SearchContext = React.createContext<{
+  open: boolean;
+  setOpen: (open: boolean) => void;
+} | null>(null);
 
 export default function SearchContextProvider({
   children,

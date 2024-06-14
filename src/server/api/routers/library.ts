@@ -13,12 +13,9 @@ import {
   genres,
   genreTrack,
 } from "~/server/db/schema";
-import { eq, and, asc, getTableColumns, sql, ilike, like } from "drizzle-orm";
-import { getServerAuthSession } from "~/server/auth";
+import { eq, and, asc, getTableColumns, sql, like } from "drizzle-orm";
 
 import sharp from "sharp";
-import { Play } from "next/font/google";
-import { TRPCError } from "@trpc/server";
 
 async function getTracks(dir: string): Promise<string[]> {
   let files: string[] = [];
@@ -126,8 +123,8 @@ export const libraryRouter = createTRPCRouter({
       const artistIds = await Promise.all(
         // get all referenced artists
         metadata.MB_ARTIST_ID.map(async (artistId, index) => {
-          // @ts-ignore
-          const artistName = metadata.ARTIST_NAME[index] as string;
+          // @ts-expect-error name exists if id exists
+          const artistName = metadata.ARTIST_NAME[index];
           const artistQuery = await ctx.db
             .select()
             .from(artists)
@@ -152,16 +149,17 @@ export const libraryRouter = createTRPCRouter({
           const newRecord = await ctx.db
             .insert(artists)
             .values({
-              name: artistName,
+              name: artistName!,
               mbid: artistId,
             })
             .returning({ newRecordId: artists.id })
             .execute();
+          // eslint-disable-next-line @typescript-eslint/no-non-null-asserted-optional-chain
           return newRecord[0]?.newRecordId!;
         }),
       );
 
-      var album_id = -1;
+      let album_id = -1;
       if (metadata.ALBUM_NAME !== undefined) {
         if (metadata.MB_ALBUM_ID === undefined) {
           console.log(
@@ -173,7 +171,7 @@ export const libraryRouter = createTRPCRouter({
             .where(eq(albums.name, metadata.ALBUM_NAME))
             .execute();
           if (albums_found.length > 0) {
-            album_id = albums_found[0]!.id as number;
+            album_id = albums_found[0]!.id;
           }
         } else {
           // track has an MBID
@@ -189,17 +187,19 @@ export const libraryRouter = createTRPCRouter({
               .insert(albums)
               .values({
                 name: metadata.ALBUM_NAME,
-                artistId: artistIds[0] as number, // TODO: discover correct album artist
+                artistId: artistIds[0]!, // TODO: discover correct album artist
                 mbid: metadata.MB_ALBUM_ID,
               })
               .returning({ newRecordId: albums.id })
               .execute();
+
+            // eslint-disable-next-line @typescript-eslint/no-non-null-asserted-optional-chain
             album_id = newRecord[0]?.newRecordId!;
           }
         }
       }
 
-      var track_id = -1;
+      let track_id = -1;
       const track_data = await ctx.db
         .select()
         .from(tracks)
@@ -240,7 +240,7 @@ export const libraryRouter = createTRPCRouter({
           .execute();
         track_id = newRecord[0]!.newRecordId;
       }
-
+      // eslint-disable-next-line @typescript-eslint/no-misused-promises
       metadata.GENRE?.forEach(async (genre_name) => {
         // look up the genre
         // if its there, use its id
@@ -249,14 +249,14 @@ export const libraryRouter = createTRPCRouter({
           // improper tagging
           return;
         }
-        var genre_id = -1;
+        let genre_id = -1;
         const genre_query = await ctx.db
           .select()
           .from(genres)
           .where(eq(genres.name, genre_name))
           .execute();
         if (genre_query.length > 0) {
-          genre_id = genre_query[0]?.id as number;
+          genre_id = genre_query[0]!.id;
         } else {
           const newRecord = await ctx.db
             .insert(genres)
@@ -275,6 +275,7 @@ export const libraryRouter = createTRPCRouter({
       });
 
       // track artist
+      // eslint-disable-next-line @typescript-eslint/no-misused-promises
       artistIds.forEach(async (item) => {
         const relationQuery = await ctx.db
           .select()
@@ -372,7 +373,8 @@ export const libraryRouter = createTRPCRouter({
           .innerJoin(artistTracks, eq(artistTracks.trackId, tracks.id))
           .innerJoin(artists, eq(artists.id, artistTracks.artistId))
           .execute()
-      )[0] || null
+      )[// eslint-disable-next-line @typescript-eslint/prefer-nullish-coalescing
+      0] || null
     );
   }),
   searchTrack: publicProcedure
@@ -410,7 +412,6 @@ export const libraryRouter = createTRPCRouter({
       return query;
     }),
   albumDetail: publicProcedure
-
     .input(z.number())
     .query(async ({ ctx, input }) => {
       const subquery = ctx.db
@@ -451,13 +452,12 @@ export const libraryRouter = createTRPCRouter({
       return {
         album: query[0]!.album,
         tracks: query.map((track) => {
-          // @ts-ignore
           return {
-            ...track!.track,
-            albumName: track!.album.name,
-            albumId: track!.album.id,
-            artistNames: track!.artistNames,
-            artistIds: track!.artistIds,
+            ...track.track,
+            albumName: track.album.name,
+            albumId: track.album.id,
+            artistNames: track.artistNames,
+            artistIds: track.artistIds,
           };
         }),
       };

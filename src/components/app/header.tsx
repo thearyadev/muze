@@ -18,7 +18,7 @@ function Header() {
         <SheetContent side="left" className="bg-zinc-800">
           <SheetHeader>
             <SheetDescription>
-              <Sidebar className="w-full p-2" />
+              <Sidebar className="w-full p-2" username="error" />
             </SheetDescription>
           </SheetHeader>
         </SheetContent>

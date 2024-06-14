@@ -1,10 +1,4 @@
-import React, {
-  useState,
-  useContext,
-  useEffect,
-  createContext,
-  useRef,
-} from "react";
+import React, { useState, useContext, createContext } from "react";
 
 const PlayingContext = createContext<{
   playing: boolean;
@@ -24,7 +18,9 @@ const PlayingProvider: React.FC<{
 
     if (!audioRef.current) return;
     if (audioRef.current.paused) {
-      audioRef.current.play();
+      audioRef.current.play().catch(() => {
+        return;
+      });
       return;
     }
     audioRef.current.pause();
@@ -33,7 +29,7 @@ const PlayingProvider: React.FC<{
   const setPlayingTrue = () => {
     if (!audioRef.current) return;
     setPlaying(true);
-    audioRef.current.play();
+    audioRef.current.play().catch(() => {return});
   };
 
   const setPlayingFalse = () => {

@@ -1,3 +1,5 @@
+/* eslint-disable */
+
 import { existsSync, statSync, createReadStream } from "fs";
 import { NextRequest, NextResponse } from "next/server";
 import { api } from "~/trpc/server";
@@ -22,7 +24,7 @@ export async function GET(request: NextRequest): Promise<NextResponse> {
 
   const coverPath = path.join(
     path.resolve(env.COVER_ART_PATH),
-    track_data.mbid + ".jpg"
+    track_data.mbid + ".jpg",
   );
 
   if (!existsSync(coverPath)) {

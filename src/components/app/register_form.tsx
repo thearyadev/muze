@@ -1,6 +1,5 @@
 "use client";
-import { signIn } from "next-auth/react";
-import { FormEvent, useEffect, useState } from "react";
+import { useEffect} from "react";
 import { Button } from "../ui/button";
 import { z } from "zod";
 import { useForm } from "react-hook-form";
@@ -8,7 +7,6 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import {
   Form,
   FormControl,
-  FormDescription,
   FormField,
   FormItem,
   FormLabel,
@@ -23,7 +21,7 @@ const formSchema = z.object({
   password: z.string().min(2).max(256),
 });
 
-export default function RegisterForm({ error }: { error?: string }) {
+export default function RegisterForm() {
   const router = useRouter()
   const registerMutation = api.user.register.useMutation()
   const form = useForm<z.infer<typeof formSchema>>({
@@ -46,7 +44,7 @@ export default function RegisterForm({ error }: { error?: string }) {
       router.push("/login")
     }
 
-  }, [registerMutation.status])
+  }, [registerMutation, router])
 
 
   return (

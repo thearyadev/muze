@@ -1,5 +1,5 @@
 "use client";
-import { useMemo, memo, useEffect, useRef } from "react";
+import { useEffect, useRef } from "react";
 import { LoopProvider, useLoop } from "./loop";
 import { PlayingProvider } from "./playing";
 import { PositionProvider, usePosition } from "./position";
@@ -49,6 +49,7 @@ function ContextRichLocalStorageLoader() {
   const { changeLoop } = useLoop()!;
 
   useEffect(() => {
+    // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
     const track = localStorage.getItem("track")
       ? JSON.parse(localStorage.getItem("track")!)
       : null;
@@ -60,6 +61,8 @@ function ContextRichLocalStorageLoader() {
       : null;
     const loop = localStorage.getItem("loop");
     if (track) {
+
+    // eslint-disable-next-line @typescript-eslint/no-unsafe-argument
       changeTrack(track, false);
     }
     if (position) {
@@ -71,6 +74,7 @@ function ContextRichLocalStorageLoader() {
     if (loop) {
       changeLoop(loop === "true");
     }
+  // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
   return null;
 }

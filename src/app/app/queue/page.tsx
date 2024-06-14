@@ -4,7 +4,7 @@ import { useQueue } from "~/components/app/providers/queue";
 import { TrackTableScroll } from "~/components/app/track_table";
 
 export default function Queue() {
-  const { queue } = useQueue();
+  const { queue } = useQueue()!;
   return (
     <>
       <PageHeading>Queue</PageHeading>

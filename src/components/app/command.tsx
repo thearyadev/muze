@@ -1,5 +1,5 @@
 "use client";
-import { FormEventHandler, useContext, useEffect, useState } from "react";
+import { type FormEventHandler, useContext, useEffect, useState } from "react";
 
 import {
   CommandDialog,
@@ -9,26 +9,20 @@ import {
   CommandItem,
   CommandList,
   CommandSeparator,
-  CommandShortcut,
 } from "~/components/ui/command";
 import { api } from "~/trpc/react";
-import { PlayerContext } from "./player_context";
-import { Button } from "../ui/button";
 import { SearchContext } from "./searchContext";
 import { useDebouncedState, useHotkeys } from "@mantine/hooks";
-import { useQuery } from "@tanstack/react-query";
-import { ApiFilled } from "@ant-design/icons";
 import type { inferRouterOutputs } from "@trpc/server";
-import { AppRouter } from "~/server/api/root";
+import { type AppRouter } from "~/server/api/root";
 import { CommandLoading } from "cmdk";
 type RouterOutput = inferRouterOutputs<AppRouter>;
 type TrackQuery = RouterOutput["library"]["searchTrack"];
 export default function Command() {
-  const { open, setOpen } = useContext(SearchContext);
+  const { open, setOpen } = useContext(SearchContext)!;
   const [searchQuery, setSearchQuery] = useDebouncedState("", 500);
   const [trackResults, setTrackResults] = useState<TrackQuery>([]);
   const [loading, setLoading] = useState(false);
-  const { changeTrack } = useContext(PlayerContext);
   const utils = api.useUtils();
   useHotkeys(
     [
@@ -42,8 +36,8 @@ export default function Command() {
     ["INPUT", "TEXTAREA"],
   );
 
-  const handleInput: FormEventHandler<HTMLInputElement> = async (event) => {
-    setLoading(true)
+  const handleInput: FormEventHandler<HTMLInputElement> = (event) => {
+    setLoading(true);
     setSearchQuery(event.currentTarget.value);
   };
 
@@ -51,9 +45,10 @@ export default function Command() {
     if (searchQuery.length) {
       utils.library.searchTrack.fetch(searchQuery).then((data) => {
         setTrackResults(data);
-        setLoading(false)
-      });
+        setLoading(false);
+      }).catch(() => {return});
     }
+  // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [searchQuery]);
   return (
     <>
@@ -69,8 +64,9 @@ export default function Command() {
             {trackResults?.map((track) => {
               return (
                 <CommandItem
+                  key={track.id}
                   onSelect={() => {
-                    changeTrack(track, true);
+                    // changeTrack(track, true);
                     setOpen(false);
                   }}
                   className="text-lg dark:data-[selected=true]:font-extrabold"

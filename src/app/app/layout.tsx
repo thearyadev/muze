@@ -1,20 +1,13 @@
 import "~/styles/globals.css";
 
-import { Inter } from "next/font/google";
-
-import { TRPCReactProvider } from "~/trpc/react";
 import Player from "~/components/app/player";
 import Sidebar from "~/components/app/sidebar";
 import PlayerContextProvider from "~/components/app/providers/player";
 
-import Header from "~/components/app/header";
-import { SessionProvider } from "next-auth/react";
 import { redirect } from "next/navigation";
 import { getServerAuthSession } from "~/server/auth";
 import Command from "~/components/app/command";
-import SearchContextProvider, {
-  SearchContext,
-} from "~/components/app/searchContext";
+import SearchContextProvider from "~/components/app/searchContext";
 import PageWrapper from "~/components/app/page_wrapper";
 
 export default async function AppLayout({
@@ -33,7 +26,7 @@ export default async function AppLayout({
         <Command />
         <div className="flex">
           <div className="hidden flex-none sm:block">
-            <Sidebar username={session.user.name as string} />
+            <Sidebar username={session.user.name!} />
           </div>
 
           <div className="grow">

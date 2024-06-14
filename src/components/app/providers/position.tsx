@@ -24,9 +24,9 @@ const PositionProvider: React.FC<{
 
   const changePosition = (newPosition: number[]) => {
     if (!audioRef.current) return;
-    audioRef.current.currentTime = newPosition[0] as number;
+    audioRef.current.currentTime = newPosition[0]! ;
     setPosition(newPosition);
-    localStorage.setItem("position", (newPosition[0] as number).toString());
+    localStorage.setItem("position", (newPosition[0]!).toString());
   };
   return (
     <PositionContext.Provider

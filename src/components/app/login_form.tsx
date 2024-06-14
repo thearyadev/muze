@@ -1,6 +1,5 @@
 "use client";
 import { signIn } from "next-auth/react";
-import { FormEvent, useState } from "react";
 import { Button } from "../ui/button";
 import { z } from "zod";
 import { useForm } from "react-hook-form";
@@ -8,7 +7,6 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import {
   Form,
   FormControl,
-  FormDescription,
   FormField,
   FormItem,
   FormLabel,
@@ -16,14 +14,13 @@ import {
 } from "~/components/ui/form";
 import { Input } from "~/components/ui/input";
 import { useRouter } from "next/navigation";
-import { api } from "~/trpc/react";
 
 const formSchema = z.object({
   username: z.string().min(2).max(256),
   password: z.string().min(2).max(256),
 });
 
-export default function LoginForm({ error }: { error?: string }) {
+export default function LoginForm() {
   const router = useRouter()
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),

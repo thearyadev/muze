@@ -1,16 +1,12 @@
-import { DrizzleAdapter } from "@auth/drizzle-adapter";
-
 import {
   getServerSession,
   type DefaultSession,
   type NextAuthOptions,
 } from "next-auth";
-import { type Adapter } from "next-auth/adapters";
 
 import { db } from "~/server/db";
 import { users } from "~/server/db/schema";
 import Credentials from "next-auth/providers/credentials";
-import { exit } from "process";
 import { eq } from "drizzle-orm";
 
 declare module "next-auth" {
@@ -30,12 +26,15 @@ export const authOptions: NextAuthOptions = {
     error: "/login",
   },
   callbacks: {
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars
     async jwt({ token, account, profile }) {
       if (account && account.type === "credentials") {
         token.userId = account.providerAccountId;
       }
       return token;
     },
+
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars
     async session({ session, token, user }) {
       session.user.id = parseInt(token.userId as string);
       return session;
@@ -47,8 +46,9 @@ export const authOptions: NextAuthOptions = {
         username: { label: "Username", type: "text", placeholder: "Username" },
         password: { label: "Password", type: "password" },
       },
-      async authorize(credentials, req) {
 
+      // eslint-disable-next-line @typescript-eslint/no-unused-vars
+      async authorize(credentials, req) {
         const { username, password } = credentials as {
           username: string;
           password: string;

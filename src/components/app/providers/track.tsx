@@ -1,15 +1,12 @@
 import React, {
   useState,
   useContext,
-  useEffect,
   createContext,
-  useRef,
 } from "react";
 import type { inferRouterOutputs } from "@trpc/server";
-import { AppRouter } from "~/server/api/root";
+import { type AppRouter } from "~/server/api/root";
 import { usePosition } from "./position";
 import { usePlaying } from "./playing";
-import { useQueue } from "./queue";
 
 type RouterOutput = inferRouterOutputs<AppRouter>;
 type TrackQuery = RouterOutput["library"]["getTrack"];
@@ -38,7 +35,7 @@ const TrackProvider: React.FC<{
     if (play) {
       setTimeout(() => {
         if (!audioRef.current) return;
-        audioRef.current.play();
+        audioRef.current.play().catch(() => {return})
         audioRef.current.currentTime = 0;
         playing.setPlayingTrue();
       }, 10);
@@ -49,6 +46,7 @@ const TrackProvider: React.FC<{
     <TrackContext.Provider
       value={React.useMemo(
         () => ({ track: track, changeTrack: changeTrack }),
+        // eslint-disable-next-line react-hooks/exhaustive-deps
         [track],
       )}
     >

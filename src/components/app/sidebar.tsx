@@ -8,21 +8,15 @@ import {
   CardStackIcon,
   PersonIcon,
   TableIcon,
-  CalendarIcon,
 } from "@radix-ui/react-icons";
 import { usePathname, useRouter } from "next/navigation";
-import { Separator } from "../ui/separator";
 import { Button } from "../ui/button";
 import CommandLabel from "./command_label";
-import { useContext, useEffect, useState } from "react";
+import { useContext, } from "react";
 import { AccountButton } from "./accountButton";
 
-import { api } from "~/trpc/react";
-import { PlayerContext } from "./player_context";
 import { SearchContext } from "./searchContext";
 import { useHotkeys } from "@mantine/hooks";
-import { usePosition } from "./providers/position";
-import { useQueue } from "./providers/queue";
 
 function SidebarButton({
   href,
@@ -77,8 +71,7 @@ export default function Sidebar({
   className?: string;
   username: string;
 }) {
-  const { setOpen } = useContext(SearchContext);
-  const queue = useQueue()!;
+  const { setOpen } = useContext(SearchContext)!;
   return (
     <>
       <div

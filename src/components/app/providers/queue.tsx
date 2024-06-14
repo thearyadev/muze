@@ -1,6 +1,6 @@
-import React, { useContext, createContext, useState } from "react";
+import React, { useContext, createContext } from "react";
 import type { inferRouterOutputs } from "@trpc/server";
-import { AppRouter } from "~/server/api/root";
+import { type AppRouter } from "~/server/api/root";
 import { useTrack } from "./track";
 import { usePlaying } from "./playing";
 
@@ -25,7 +25,7 @@ const QueueProvider: React.FC<{
   const [queue, setQueue] = React.useState<TrackQuery[]>([]);
   const [queuePlayed, setQueuePlayed] = React.useState<TrackQuery[]>([]);
   const { changeTrack, track } = useTrack()!;
-  const { playing, setPlayingTrue, setPlayingFalse } = usePlaying()!;
+  const { setPlayingFalse } = usePlaying()!;
 
   const nextTrack = () => {
     if (queue.length === 0) return;
