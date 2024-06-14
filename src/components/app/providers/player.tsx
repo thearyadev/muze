@@ -1,5 +1,5 @@
 "use client";
-import { useEffect, useRef } from "react";
+import { useMemo, memo, useEffect, useRef } from "react";
 import { LoopProvider, useLoop } from "./loop";
 import { PlayingProvider } from "./playing";
 import { PositionProvider, usePosition } from "./position";

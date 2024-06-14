@@ -17,6 +17,8 @@ import { eq, and, asc, getTableColumns, sql, ilike, like } from "drizzle-orm";
 import { getServerAuthSession } from "~/server/auth";
 
 import sharp from "sharp";
+import { Play } from "next/font/google";
+import { TRPCError } from "@trpc/server";
 
 async function getTracks(dir: string): Promise<string[]> {
   let files: string[] = [];
@@ -301,7 +303,11 @@ export const libraryRouter = createTRPCRouter({
           metadata.MB_TRACK_ID + ".jpg",
         );
 
-         await sharp(metadata.COVER).resize(50, 50).jpeg({quality: 80}).toFile(cover_path).catch()
+        await sharp(metadata.COVER)
+          .resize(50, 50)
+          .jpeg({ quality: 80 })
+          .toFile(cover_path)
+          .catch();
       }
     }
   }),
@@ -402,5 +408,58 @@ export const libraryRouter = createTRPCRouter({
         .innerJoin(subquery, eq(tracks.id, subquery.trackId))
         .execute();
       return query;
+    }),
+  albumDetail: publicProcedure
+
+    .input(z.number())
+    .query(async ({ ctx, input }) => {
+      const subquery = ctx.db
+        .select({
+          trackId: artistTracks.trackId,
+          artistNames: sql<string>`string_agg(${artists.name}, ';')`.as(
+            "artistNames",
+          ),
+          artistIds:
+            sql<string>`string_agg(cast(${artists.id} AS TEXT), ';')`.as(
+              "artistIds",
+            ),
+        })
+        .from(artistTracks)
+        .innerJoin(artists, eq(artistTracks.artistId, artists.id))
+        .groupBy(artistTracks.trackId)
+        .as("artists");
+      const query = await ctx.db
+        .selectDistinct({
+          track: {
+            ...getTableColumns(tracks),
+          },
+          album: {
+            ...getTableColumns(albums),
+          },
+          artistNames: subquery.artistNames,
+          artistIds: subquery.artistIds,
+        })
+        .from(albums)
+        .where(eq(albums.id, input))
+        .innerJoin(tracks, eq(tracks.albumId, albums.id))
+        .innerJoin(artistTracks, eq(tracks.id, artistTracks.trackId))
+        .innerJoin(subquery, eq(tracks.id, subquery.trackId))
+        .execute();
+      if (query.length === 0) {
+        return null;
+      }
+      return {
+        album: query[0]!.album,
+        tracks: query.map((track) => {
+          // @ts-ignore
+          return {
+            ...track!.track,
+            albumName: track!.album.name,
+            albumId: track!.album.id,
+            artistNames: track!.artistNames,
+            artistIds: track!.artistIds,
+          };
+        }),
+      };
     }),
 });

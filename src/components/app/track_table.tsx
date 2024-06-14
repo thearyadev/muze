@@ -62,7 +62,7 @@ function TrackCell({
       </div>
       <div className="col-span-3 content-center">
         <Link
-          href={`/album/${track!.albumId}`}
+          href={`/app/albums/${track!.albumId}`}
           className="text-xs text-gray-500 transition-all fade-in-100 fade-out-100 hover:text-orange-400"
         >
           {track!.albumName}
@@ -97,9 +97,8 @@ export function TrackTableScrollPaginated(
     pageSize: props.pageSize,
   });
   const handleTrackSwitch = (track: TrackQuery) => {
-    // if (currentTrack) addTrackPrevious(currentTrack);
-    // changeTrack(track, true);
-    addTrack(track)
+    if (currentTrack) addTrackPrevious(currentTrack);
+    changeTrack(track, true);
   };
 
   const handleScroll = (currentPosition: number, maxPosition: number) => {
@@ -141,6 +140,8 @@ export function TrackTableScrollPaginated(
             />
           );
         })}
+
+        <div className="pb-52" />
       </ScrollArea>
     </>
   );
@@ -148,6 +149,7 @@ export function TrackTableScrollPaginated(
 export function TrackTableScroll(props: TrackTableScroll) {
   const { changeTrack } = useTrack()!;
   const { addTrackPrevious } = useQueue()!;
+  const { track: currentTrack } = useTrack()!;
   const handleTrackSwitch = (track: TrackQuery) => {
     if (currentTrack) addTrackPrevious(currentTrack);
     changeTrack(track, true);
@@ -171,6 +173,8 @@ export function TrackTableScroll(props: TrackTableScroll) {
             />
           );
         })}
+
+        <div className="pb-52" />
       </ScrollArea>
     </>
   );
