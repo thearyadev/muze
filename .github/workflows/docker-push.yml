@@ -1,4 +1,4 @@
-name: docker build
+name: docker build and push
 
 on:
   release:
@@ -31,7 +31,5 @@ jobs:
         uses: docker/build-push-action@v5
         with:
           push: true
-          tags: 
-            - thearyadev/muze:amd64-latest
-            - thearyadev/muze:amd64-${{ env.CLEAN_TAG_NAME }}
+          tags: thearyadev/muze:amd64-latest,thearyadev/muze:amd64-${{ env.CLEAN_TAG_NAME }}
 
