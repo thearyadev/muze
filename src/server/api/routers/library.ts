@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/prefer-nullish-coalescing */
 import { z } from "zod";
 import { env } from "~/env";
 
@@ -373,7 +374,7 @@ export const libraryRouter = createTRPCRouter({
           .innerJoin(artistTracks, eq(artistTracks.trackId, tracks.id))
           .innerJoin(artists, eq(artists.id, artistTracks.artistId))
           .execute()
-      )[0] || null // eslint-disable-next-line @typescript-eslint/prefer-nullish-coalescing
+      )[0] || null
     );
   }),
   searchTrack: publicProcedure
