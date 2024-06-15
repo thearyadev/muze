@@ -1,0 +1,15 @@
+services: 
+  muze:
+    build: .
+    ports:
+      - "3000:3000"
+    volumes:
+      - ./data:/data # the database lives here
+      - ./music:/music # your music library
+    environment:
+      # This url is used as a callback during authentication. 
+      # Set this to the public URL of your app. 
+      NEXTAUTH_URL: "http://192.168.1.191:3000"
+
+
+

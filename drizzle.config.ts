@@ -8,6 +8,6 @@ export default {
   dbCredentials: {
     url: env.DATABASE_URL,
   },
-  tablesFilter: ["lyzard_*"],
-  out: "./",
+  tablesFilter: ["muze_*"],
+  out: "./drizzle",
 } satisfies Config;
