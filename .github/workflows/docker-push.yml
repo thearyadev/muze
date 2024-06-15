@@ -31,5 +31,5 @@ jobs:
         uses: docker/build-push-action@v5
         with:
           push: true
-          tags: thearyadev0/muze:amd64-latest,thearyadev/muze:amd64-${{ env.CLEAN_TAG_NAME }}
+          tags: thearyadev0/muze:amd64-latest,thearyadev0/muze:amd64-${{ env.CLEAN_TAG_NAME }}
 
