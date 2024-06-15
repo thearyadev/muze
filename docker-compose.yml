@@ -1,6 +1,6 @@
 services: 
   muze:
-    build: .
+    image: thearyadev0/muze:amd64-latest
     ports:
       - "3000:3000"
     volumes:
