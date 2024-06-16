@@ -10,6 +10,12 @@ import { env } from "~/env";
 export async function GET(request: NextRequest): Promise<NextResponse> {
   const { searchParams } = new URL(request.url);
   const trackId = searchParams.get("id");
+  const size = searchParams.get("size");
+  if (!size) {
+    return new NextResponse("Not Found", {
+      status: 404,
+    });
+  }
   if (!trackId) {
     return new NextResponse("Not Found", {
       status: 404,
@@ -24,8 +30,9 @@ export async function GET(request: NextRequest): Promise<NextResponse> {
 
   const coverPath = path.join(
     path.resolve(env.COVER_ART_PATH),
-    track_data.mbid + ".jpg",
+    track_data.mbid + `.${size}.jpg`,
   );
+  console.log(coverPath)
 
   if (!existsSync(coverPath)) {
     return new NextResponse("Referenced file does not exist", {
