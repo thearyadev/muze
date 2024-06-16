@@ -35,6 +35,32 @@ async function getTracks(dir: string): Promise<string[]> {
   }
   return files;
 }
+enum CoverSize {
+  SMALL = 50,
+  MEDIUM = 100,
+  LARGE = 250,
+  XLARGE = 450,
+}
+
+async function createCoverFile(
+  quality: number,
+  metadata: Metadata,
+  size: CoverSize,
+  label: string,
+) {
+  const coverPath = path.join(
+    path.resolve(env.COVER_ART_PATH),
+    metadata.MB_TRACK_ID + `.${label}.jpg`,
+  );
+  if (fs.existsSync(coverPath)) {
+    return;
+  }
+  await sharp(metadata.COVER)
+    .resize(size, size)
+    .jpeg({ quality: quality })
+    .toFile(coverPath)
+    .catch();
+}
 
 type Metadata = {
   MB_ALBUM_ID?: string;
@@ -300,16 +326,10 @@ export const libraryRouter = createTRPCRouter({
         }
       });
       if (metadata.COVER) {
-        const cover_path = path.join(
-          path.resolve(env.COVER_ART_PATH),
-          metadata.MB_TRACK_ID + ".jpg",
-        );
-
-        await sharp(metadata.COVER)
-          .resize(50, 50)
-          .jpeg({ quality: 80 })
-          .toFile(cover_path)
-          .catch();
+        await createCoverFile(100, metadata, CoverSize.SMALL, "sm");
+        await createCoverFile(100, metadata, CoverSize.MEDIUM, "md");
+        await createCoverFile(100, metadata, CoverSize.LARGE, "lg");
+        await createCoverFile(100, metadata, CoverSize.XLARGE, "xl");
       }
     }
   }),

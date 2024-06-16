@@ -17,7 +17,7 @@ export default async function Home({
         <div className="flex flex-row items-center">
           <Image
             alt={albumQuery!.album.name}
-            src={`/api/covers?id=${tracks[0]!.id}`}
+            src={`/api/covers?id=${tracks[0]!.id}&size=xl`}
             className="mr-5 h-24 w-24 rounded-md"
             loading="eager"
             width={40}

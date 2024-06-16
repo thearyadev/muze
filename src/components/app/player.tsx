@@ -78,7 +78,7 @@ export default function Player() {
         >
           <Image
             alt={track.name!}
-            src={`/api/covers?id=${track.id}`}
+            src={`/api/covers?id=${track.id}&size=md`}
             className="h-16 w-16 rounded-md"
             loading="eager"
             width={40}

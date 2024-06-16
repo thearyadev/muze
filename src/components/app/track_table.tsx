@@ -41,7 +41,7 @@ function TrackCell({
         <div>
           <Image
             alt={track!.name!}
-            src={`/api/covers?id=${track!.id}`}
+            src={`/api/covers?id=${track!.id}&size=sm`}
             className="h-10 w-10 rounded-md"
             loading={index <= 20 ? "eager" : "lazy"}
             width={40}
