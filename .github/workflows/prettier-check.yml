@@ -1,4 +1,4 @@
-name: prettier-check 
+name: prettier-check
 on:
   push:
     branches:
@@ -24,6 +24,6 @@ jobs:
         with:
           node-version: "lts/*"
       - name: Install dependencies
-        run: npm install prettier 
-      - name: 
+        run: npm install prettier
+      - name:
         run: npx prettier --check .

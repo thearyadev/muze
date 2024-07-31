@@ -8,7 +8,7 @@ on:
 
 jobs:
   docker:
-    runs-on: [self-hosted, Linux, X64] 
+    runs-on: [self-hosted, Linux, X64]
     steps:
       - name: Set up QEMU
         uses: docker/setup-qemu-action@v3
