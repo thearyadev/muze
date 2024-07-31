@@ -9,15 +9,17 @@ import { authOptions } from "~/server/auth";
 //
 //
 
-
-
 async function auth(req: NextRequest, res: NextResponse) {
-  const protocol = req.headers.get('x-forwarded-proto');
-  const host = req.headers.get('host');
+  const protocol = req.headers.get("x-forwarded-proto");
+  const host = req.headers.get("host");
 
   process.env.NEXTAUTH_URL = `${protocol}://${host}/api/auth`; // thanks next-auth
 
-  return await NextAuth(req as unknown as NextApiRequest, res as unknown as NextApiResponse, authOptions);
+  return await NextAuth(
+    req as unknown as NextApiRequest,
+    res as unknown as NextApiResponse,
+    authOptions,
+  );
 }
 
 export { auth as GET, auth as POST };
