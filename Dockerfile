@@ -13,7 +13,6 @@ RUN  npm i
 # Build
 FROM --platform=linux/amd64 node:20.14-alpine AS builder
 ENV DATABASE_URL db.sqlite
-ENV NEXTAUTH_URL "http://192.168.1.191:3000"
 ENV NEXTAUTH_SECRET "kRvf9Vl7K9MGvFX+/RjxaE+mmC3rQvsBMpXgsqcGwd6ACe08BidZX7HFlNA+mQk1vkM0KgUKnJm5uwN+wAO7bZZjaXfOclirNvFFB32fxEdA2A9P6l6lm0szxGq0kPWgwPtR6OeDUKlQoNlEbXXVJVnEEam3MxwL4qqzUFmXo0Ju+X+/eZeInvWKp1bvWszKD5/AMvXgsch+zVKDgtOnNkJ0IsaBgLzX1JIdg=="
 
 
