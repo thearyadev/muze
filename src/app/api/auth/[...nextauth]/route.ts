@@ -1,6 +1,6 @@
-import { NextApiRequest, NextApiResponse } from "next";
+import type { NextApiRequest, NextApiResponse } from "next";
 import NextAuth from "next-auth";
-import { NextRequest, NextResponse } from "next/server";
+import type { NextRequest, NextResponse } from "next/server";
 import { authOptions } from "~/server/auth";
 
 // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
@@ -14,7 +14,7 @@ async function auth(req: NextRequest, res: NextResponse) {
   const host = req.headers.get("host");
 
   process.env.NEXTAUTH_URL = `${protocol}://${host}/api/auth`; // thanks next-auth
-
+  // eslint-disable-next-line @typescript-eslint/no-unsafe-return
   return await NextAuth(
     req as unknown as NextApiRequest,
     res as unknown as NextApiResponse,
