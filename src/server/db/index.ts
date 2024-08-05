@@ -17,4 +17,4 @@ const conn = globalForDb.conn ?? postgres(env.DATABASE_URL);
 if (env.NODE_ENV !== "production") globalForDb.conn = conn;
 
 export const db = drizzle(conn, { schema });
-migrate(db, { migrationsFolder: "./drizzle" });
+await migrate(db, { migrationsFolder: "./drizzle" });
