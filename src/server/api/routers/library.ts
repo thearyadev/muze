@@ -364,15 +364,19 @@ export const libraryRouter = createTRPCRouter({
       try {
         const artist_ids = await upsert_artists(ctx.db, metadata);
         const album_id = await upsert_albums(ctx.db, metadata, artist_ids[0]!); // todo: determine album artist
-        const track_id = await upsert_track(ctx.db, metadata, album_id, track_i);
+        const track_id = await upsert_track(
+          ctx.db,
+          metadata,
+          album_id,
+          track_i,
+        );
         await upsert_genre_and_track_relation(ctx.db, metadata, track_id);
         await upsert_artist_track_relation(ctx.db, artist_ids, track_id);
         await create_cover_files(metadata);
-      } catch(e) {
-        console.log("Failed to process track", track_i)
-        console.error(e)
+      } catch (e) {
+        console.log("Failed to process track", track_i);
+        console.error(e);
       }
-
     }
   }),
 
