@@ -1,6 +1,6 @@
 {
-  "id": "34831b4f-d31f-4e8d-85bb-9eb05f58dedb",
-  "prevId": "00000000-0000-0000-0000-000000000000",
+  "id": "6c0ec283-6914-4e20-86f0-f4ace31e4ef5",
+  "prevId": "34831b4f-d31f-4e8d-85bb-9eb05f58dedb",
   "version": "6",
   "dialect": "postgresql",
   "tables": {
@@ -121,6 +121,52 @@
       "indexes": {},
       "foreignKeys": {},
       "compositePrimaryKeys": {},
+      "uniqueConstraints": {}
+    },
+    "public.muze_genre_track": {
+      "name": "muze_genre_track",
+      "schema": "",
+      "columns": {
+        "track_id": {
+          "name": "track_id",
+          "type": "varchar(256)",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "genre_id": {
+          "name": "genre_id",
+          "type": "varchar(265)",
+          "primaryKey": false,
+          "notNull": false
+        }
+      },
+      "indexes": {},
+      "foreignKeys": {
+        "muze_genre_track_track_id_muze_track_id_fk": {
+          "name": "muze_genre_track_track_id_muze_track_id_fk",
+          "tableFrom": "muze_genre_track",
+          "tableTo": "muze_track",
+          "columnsFrom": ["track_id"],
+          "columnsTo": ["id"],
+          "onDelete": "no action",
+          "onUpdate": "no action"
+        },
+        "muze_genre_track_genre_id_muze_genre_id_fk": {
+          "name": "muze_genre_track_genre_id_muze_genre_id_fk",
+          "tableFrom": "muze_genre_track",
+          "tableTo": "muze_genre",
+          "columnsFrom": ["genre_id"],
+          "columnsTo": ["id"],
+          "onDelete": "no action",
+          "onUpdate": "no action"
+        }
+      },
+      "compositePrimaryKeys": {
+        "muze_genre_track_track_id_genre_id_pk": {
+          "name": "muze_genre_track_track_id_genre_id_pk",
+          "columns": ["track_id", "genre_id"]
+        }
+      },
       "uniqueConstraints": {}
     },
     "public.muze_genre": {
