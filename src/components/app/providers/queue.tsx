@@ -3,6 +3,7 @@ import type { inferRouterOutputs } from "@trpc/server";
 import { type AppRouter } from "~/server/api/root";
 import { useTrack } from "./track";
 import { usePlaying } from "./playing";
+import { useLoop } from "./loop";
 
 type RouterOutput = inferRouterOutputs<AppRouter>;
 
@@ -26,6 +27,7 @@ const QueueProvider: React.FC<{
   const [queuePlayed, setQueuePlayed] = React.useState<TrackQuery[]>([]);
   const { changeTrack, track } = useTrack()!;
   const { setPlayingFalse } = usePlaying()!;
+  const {loop} = useLoop()!;
 
   const nextTrack = () => {
     if (queue.length === 0) return;
@@ -54,6 +56,11 @@ const QueueProvider: React.FC<{
   };
 
   const trackComplete = () => {
+    if (loop) {
+      changeTrack(track, true);
+      return;
+    } // no need to add this to queue
+
     setQueuePlayed([...queuePlayed, track]);
     if (queue.length === 0) {
       setPlayingFalse();
