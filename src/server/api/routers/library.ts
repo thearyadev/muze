@@ -360,8 +360,8 @@ export const libraryRouter = createTRPCRouter({
     const targetDirectory = env.MUSIC_PATH;
     const tracks_fs = await getTracks(targetDirectory);
     for (const track_i of tracks_fs) {
-      const metadata = await extractMetadata(track_i);
       try {
+        const metadata = await extractMetadata(track_i);
         const artist_ids = await upsert_artists(ctx.db, metadata);
         const album_id = await upsert_albums(ctx.db, metadata, artist_ids[0]!); // todo: determine album artist
         const track_id = await upsert_track(
