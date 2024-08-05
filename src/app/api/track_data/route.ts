@@ -17,9 +17,7 @@ export async function GET(request: NextRequest): Promise<NextResponse> {
       status: 404,
     });
   }
-  const track_data: TrackData | null = await api.library.getTrack(
-    trackId,
-  );
+  const track_data: TrackData | null = await api.library.getTrack(trackId);
   if (!track_data) {
     return new NextResponse("Not Found", {
       status: 404,
