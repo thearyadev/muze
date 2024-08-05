@@ -41,7 +41,7 @@ function ContextRichOverlay() {
     <div
       className="z-10000 pointer-events-none fixed left-0 top-0 h-full w-full overflow-hidden bg-cover bg-center bg-no-repeat opacity-10 blur-xl"
       style={{
-        backgroundImage: `url('/api/covers/?id=${track?.id})`,
+        backgroundImage: `url('/api/covers/?id=${track?.id}&size=xl')`,
       }}
     />
   )
