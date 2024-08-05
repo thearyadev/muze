@@ -8,9 +8,6 @@ import mime from "mime";
 interface TrackData {
   path: string;
 }
-function sanitizePath(path: string): string {
-  return path.replace(/\/\.\.\//g, "/");
-}
 
 export async function GET(request: NextRequest): Promise<NextResponse> {
   const { searchParams } = new URL(request.url);
@@ -21,7 +18,7 @@ export async function GET(request: NextRequest): Promise<NextResponse> {
     });
   }
   const track_data: TrackData | null = await api.library.getTrack(
-    parseInt(trackId),
+    trackId,
   );
   if (!track_data) {
     return new NextResponse("Not Found", {

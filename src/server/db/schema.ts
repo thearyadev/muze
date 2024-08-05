@@ -2,11 +2,12 @@
 // https://orm.drizzle.team/docs/sql-schema-declaration
 
 import {
-  int,
+  integer,
   primaryKey,
-  sqliteTableCreator,
-  text,
-} from "drizzle-orm/sqlite-core";
+  pgTableCreator,
+  varchar,
+  serial,
+} from "drizzle-orm/pg-core";
 
 /**
  * This is an example of how to use the multi-project schema feature of Drizzle ORM. Use the same
@@ -14,52 +15,67 @@ import {
  *
  * @see https://orm.drizzle.team/docs/goodies#multi-project-schema
  */
-export const createTable = sqliteTableCreator((name) => `muze_${name}`);
+export const createTable = pgTableCreator((name) => `muze_${name}`);
 
 export const users = createTable("user", {
-  id: int("id", { mode: "number" }).primaryKey({ autoIncrement: true }),
-  username: text("username", { length: 256 }).notNull(),
-  password: text("password", { length: 256 }).notNull(),
+  id: varchar("id", { length: 256 })
+    .notNull()
+    .primaryKey()
+    .$defaultFn(() => crypto.randomUUID()),
+  username: varchar("username", { length: 256 }).notNull(),
+  password: varchar("password", { length: 256 }).notNull(),
 });
 
 export const playlists = createTable("playlist", {
-  id: int("id", { mode: "number" }).primaryKey({ autoIncrement: true }),
-  name: text("name", { length: 256 }),
-  userId: int("user_id", { mode: "number" }).notNull(),
+  id: varchar("id", { length: 256 })
+    .notNull()
+    .primaryKey()
+    .$defaultFn(() => crypto.randomUUID()),
+  name: varchar("name", { length: 256 }),
+  userId: integer("user_id").notNull(),
 });
 
 export const tracks = createTable("track", {
-  id: int("id", { mode: "number" }).primaryKey({ autoIncrement: true }),
-  name: text("name", { length: 256 }),
-  albumId: int("album_id", { mode: "number" }).references(() => albums.id),
-  duration: int("duration", { mode: "number" }),
-  trackNumber: int("track_number", { mode: "number" }),
-  discNumber: int("disc_number", { mode: "number" }),
-  year: int("year", { mode: "number" }),
-  path: text("path", { length: 256 }).notNull(),
-  mbid: text("mbid").notNull(),
+  id: varchar("id", { length: 256 })
+    .notNull()
+    .primaryKey()
+    .$defaultFn(() => crypto.randomUUID()),
+  name: varchar("name", { length: 256 }),
+  albumId: varchar("album_id", { length: 256 }).references(() => albums.id),
+  duration: integer("duration"),
+  trackNumber: integer("track_number"),
+  discNumber: integer("disc_number"),
+  year: integer("year"),
+  path: varchar("path").notNull(),
+  mbid: varchar("mbid", { length: 256 }).notNull(),
 });
 
 export const albums = createTable("album", {
-  id: int("id", { mode: "number" }).primaryKey({ autoIncrement: true }),
-  name: text("name", { length: 256 }).notNull(),
-  artistId: int("artist_id", { mode: "number" })
+  id: varchar("id", { length: 256 })
+    .notNull()
+    .primaryKey()
+    .$defaultFn(() => crypto.randomUUID()),
+  name: varchar("name", { length: 256 }).notNull(),
+  artistId: varchar("artist_id", { length: 256 })
     .references(() => artists.id)
     .notNull(),
-  mbid: text("mbid").notNull(),
+  mbid: varchar("mbid", { length: 256 }).notNull(),
 });
 
 export const genres = createTable("genre", {
-  id: int("id", { mode: "number" }).primaryKey({ autoIncrement: true }),
-  name: text("name", { length: 256 }).notNull(),
+  id: varchar("id", { length: 256 })
+    .notNull()
+    .primaryKey()
+    .$defaultFn(() => crypto.randomUUID()),
+  name: varchar("name", { length: 256 }).notNull(),
 });
 
 export const genreTrack = createTable(
   "genre_track",
   {
     // TODO: convert the fks to a joined pk to avoid duplicates
-    trackId: int("track_id", { mode: "number" }).references(() => tracks.id),
-    genreId: int("genre_id", { mode: "number" }).references(() => genres.id),
+    trackId: varchar("track_id", { length: 256 }).references(() => tracks.id),
+    genreId: varchar("genre_id", { length: 265 }).references(() => genres.id),
   },
   (table) => {
     return {
@@ -69,47 +85,62 @@ export const genreTrack = createTable(
 );
 
 export const artists = createTable("artist", {
-  id: int("id", { mode: "number" }).primaryKey({ autoIncrement: true }),
-  name: text("name", { length: 256 }).notNull(),
-  mbid: text("mbid").notNull(),
+  id: varchar("id", { length: 256 })
+    .notNull()
+    .primaryKey()
+    .$defaultFn(() => crypto.randomUUID()),
+  name: varchar("name", { length: 256 }).notNull(),
+  mbid: varchar("mbid", { length: 256 }).notNull(),
 });
 
 export const artistTracks = createTable("artist_track", {
-  id: int("id", { mode: "number" }).primaryKey({ autoIncrement: true }),
-  artistId: int("artist_id", { mode: "number" })
+  id: varchar("id", { length: 256 })
+    .notNull()
+    .primaryKey()
+    .$defaultFn(() => crypto.randomUUID()),
+  artistId: varchar("artist_id", { length: 256 })
     .references(() => artists.id)
     .notNull(),
-  trackId: int("track_id", { mode: "number" })
+  trackId: varchar("track_id", { length: 256 })
     .references(() => tracks.id)
     .notNull(),
 });
 
 export const playlistTracks = createTable("playlist_track", {
-  id: int("id", { mode: "number" }).primaryKey({ autoIncrement: true }),
-  playlistId: int("playlist_id", { mode: "number" })
+  id: varchar("id", { length: 256 })
+    .notNull()
+    .primaryKey()
+    .$defaultFn(() => crypto.randomUUID()),
+  playlistId: varchar("playlist_id", { length: 256 })
     .references(() => playlists.id)
     .notNull(),
-  trackId: int("track_id", { mode: "number" })
+  trackId: varchar("track_id", { length: 256 })
     .references(() => tracks.id)
     .notNull(),
 });
 export const userListens = createTable("user_listen", {
-  id: int("id", { mode: "number" }).primaryKey({ autoIncrement: true }),
-  userId: int("user_id", { mode: "number" })
+  id: varchar("id", { length: 256 })
+    .notNull()
+    .primaryKey()
+    .$defaultFn(() => crypto.randomUUID()),
+  userId: varchar("user_id", { length: 256 })
     .references(() => users.id)
     .notNull(),
-  trackId: int("track_id", { mode: "number" })
+  trackId: varchar("track_id", { length: 256 })
     .references(() => tracks.id)
     .notNull(),
-  listens: int("listens", { mode: "number" }).notNull(),
+  listens: integer("listens").notNull(),
 });
 
 export const userPlaylists = createTable("user_playlist", {
-  id: int("id", { mode: "number" }).primaryKey({ autoIncrement: true }),
-  userId: int("user_id", { mode: "number" })
+  id: varchar("id", { length: 256 })
+    .notNull()
+    .primaryKey()
+    .$defaultFn(() => crypto.randomUUID()),
+  userId: varchar("user_id", { length: 256 })
     .references(() => users.id)
     .notNull(),
-  playlistId: int("playlist_id", { mode: "number" })
+  playlistId: varchar("playlist_id", { length: 256 })
     .references(() => playlists.id)
     .notNull(),
 });
