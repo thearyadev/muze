@@ -9,7 +9,7 @@ const config = {
   experimental: {},
   eslint: {
     ignoreDuringBuilds: true,
-  }
+  },
 }
 
 export default config
