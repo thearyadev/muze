@@ -25,6 +25,6 @@
     }
   },
   "files": {
-    "ignore": [".next/**"]
+    "ignore": [".next/**", "package.json"]
   }
 }
