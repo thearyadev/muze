@@ -12,7 +12,7 @@ RUN  npm i
 
 # Build
 FROM --platform=linux/amd64 node:20.14-alpine AS builder
-ENV DATABASE_URL db.sqlite
+ENV DATABASE_URL "postgres://root:root@localhos2:5432/muze"
 ENV NEXTAUTH_SECRET "kRvf9Vl7K9MGvFX+/RjxaE+mmC3rQvsBMpXgsqcGwd6ACe08BidZX7HFlNA+mQk1vkM0KgUKnJm5uwN+wAO7bZZjaXfOclirNvFFB32fxEdA2A9P6l6lm0szxGq0kPWgwPtR6OeDUKlQoNlEbXXVJVnEEam3MxwL4qqzUFmXo0Ju+X+/eZeInvWKp1bvWszKD5/AMvXgsch+zVKDgtOnNkJ0IsaBgLzX1JIdg=="
 
 
@@ -29,7 +29,7 @@ RUN npm run build
 # Runner
 
 FROM --platform=linux/amd64 node:20.14-alpine AS runner
-ENV DATABASE_URL "/data/db.sqlite"
+ENV DATABASE_URL "postgres://root:root@localhos2:5432/muze"
 ENV NEXTAUTH_SECRET "kRvf9Vl7K9MGvFX+/RjxaE+mmC3rQvsBMpXgsqcGwd6ACe08BidZX7HFlNA+mQk1vkM0KgUKnJm5uwN+wAO7bZZjaXfOclirNvFFB32fxEdA2A9P6l6lm0szxGq0kPWgwPtR6OeDUKlQoNlEbXXVJVnEEam3MxwL4qqzUFmXo0Ju+X+/eZeInvWKp1bvWszKD5/AMvXgsch+zVKDgtOnNkJ0IsaBgLzX1JIdg=="
 ENV MUSIC_PATH "/app/music"
 ENV COVER_ART_PATH "/app/covers"

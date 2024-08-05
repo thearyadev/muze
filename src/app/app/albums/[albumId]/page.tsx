@@ -8,7 +8,7 @@ export default async function Home({
 }: {
   params: { albumId: string };
 }) {
-  const albumQuery = await api.library.albumDetail(parseInt(params.albumId));
+  const albumQuery = await api.library.albumDetail(params.albumId);
   const tracks = albumQuery!.tracks;
   console.log(tracks);
   return (

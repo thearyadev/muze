@@ -1,4 +1,5 @@
 /* eslint-disable @typescript-eslint/prefer-nullish-coalescing */
+/* eslint-disable @typescript-eslint/consistent-type-imports */
 import { z } from "zod";
 import { env } from "~/env";
 
@@ -17,8 +18,7 @@ import {
 import { eq, and, asc, getTableColumns, sql, like } from "drizzle-orm";
 
 import sharp from "sharp";
-import { PostgresJsDatabase } from "drizzle-orm/postgres-js";
-import { error } from "console";
+import type { PostgresJsDatabase } from "drizzle-orm/postgres-js";
 
 async function getTracks(dir: string): Promise<string[]> {
   let files: string[] = [];
@@ -479,7 +479,7 @@ export const libraryRouter = createTRPCRouter({
       return query;
     }),
   albumDetail: publicProcedure
-    .input(z.number())
+    .input(z.string())
     .query(async ({ ctx, input }) => {
       const subquery = ctx.db
         .select({
