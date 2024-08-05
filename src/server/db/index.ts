@@ -17,4 +17,5 @@ const conn = globalForDb.conn ?? postgres(env.DATABASE_URL);
 if (env.NODE_ENV !== "production") globalForDb.conn = conn;
 
 export const db = drizzle(conn, { schema });
-await migrate(db, { migrationsFolder: "./drizzle" });
+// eslint-disable-next-line @typescript-eslint/no-floating-promises
+migrate(db, { migrationsFolder: "./drizzle" });
