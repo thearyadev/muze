@@ -388,10 +388,10 @@ export const libraryRouter = createTRPCRouter({
       try {
         const metadata = await extractMetadata(track_i)
         const artist_ids = await upsert_artists(ctx.db, metadata)
-        // biome-ignore lint/style/noNonNullAssertion : the length of artist_ids is guaranteed to be > 0
         const album_id = await upsert_albums(
           ctx.db,
           metadata,
+          // biome-ignore lint/style/noNonNullAssertion : the length of artist_ids is guaranteed to be > 0
           artist_ids.find(() => true)!,
         ) // todo: determine album artist
         const track_id = await upsert_track(ctx.db, metadata, album_id, track_i)
