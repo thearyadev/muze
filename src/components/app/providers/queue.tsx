@@ -27,7 +27,7 @@ const QueueProvider: React.FC<{
   const [queuePlayed, setQueuePlayed] = React.useState<TrackQuery[]>([]);
   const { changeTrack, track } = useTrack()!;
   const { setPlayingFalse } = usePlaying()!;
-  const {loop} = useLoop()!;
+  const { loop } = useLoop()!;
 
   const nextTrack = () => {
     if (queue.length === 0) return;
