@@ -1,23 +1,23 @@
-import "~/styles/globals.css";
+import '~/styles/globals.css'
 
-import Player from "~/components/app/player";
-import Sidebar from "~/components/app/sidebar";
-import PlayerContextProvider from "~/components/app/providers/player";
+import Player from '~/components/app/player'
+import Sidebar from '~/components/app/sidebar'
+import PlayerContextProvider from '~/components/app/providers/player'
 
-import { redirect } from "next/navigation";
-import { getServerAuthSession } from "~/server/auth";
-import Command from "~/components/app/command";
-import SearchContextProvider from "~/components/app/searchContext";
-import PageWrapper from "~/components/app/page_wrapper";
+import { redirect } from 'next/navigation'
+import { getServerAuthSession } from '~/server/auth'
+import Command from '~/components/app/command'
+import SearchContextProvider from '~/components/app/searchContext'
+import PageWrapper from '~/components/app/page_wrapper'
 
 export default async function AppLayout({
   children,
 }: {
-  children: React.ReactNode;
+  children: React.ReactNode
 }) {
-  const session = await getServerAuthSession();
+  const session = await getServerAuthSession()
   if (!session) {
-    redirect("/login");
+    redirect('/login')
   }
 
   return (
@@ -38,5 +38,5 @@ export default async function AppLayout({
         </div>
       </SearchContextProvider>
     </PlayerContextProvider>
-  );
+  )
 }

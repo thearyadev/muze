@@ -1,9 +1,9 @@
-"use client";
-import { signIn } from "next-auth/react";
-import { Button } from "../ui/button";
-import { z } from "zod";
-import { useForm } from "react-hook-form";
-import { zodResolver } from "@hookform/resolvers/zod";
+'use client'
+import { signIn } from 'next-auth/react'
+import { Button } from '../ui/button'
+import { z } from 'zod'
+import { useForm } from 'react-hook-form'
+import { zodResolver } from '@hookform/resolvers/zod'
 import {
   Form,
   FormControl,
@@ -11,31 +11,31 @@ import {
   FormItem,
   FormLabel,
   FormMessage,
-} from "~/components/ui/form";
-import { Input } from "~/components/ui/input";
-import { useRouter } from "next/navigation";
+} from '~/components/ui/form'
+import { Input } from '~/components/ui/input'
+import { useRouter } from 'next/navigation'
 
 const formSchema = z.object({
   username: z.string().min(2).max(256),
   password: z.string().min(2).max(256),
-});
+})
 
 export default function LoginForm() {
-  const router = useRouter();
+  const router = useRouter()
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
     defaultValues: {
-      username: "",
-      password: "",
+      username: '',
+      password: '',
     },
-  });
+  })
 
   async function onSubmit(values: z.infer<typeof formSchema>) {
-    await signIn("credentials", {
+    await signIn('credentials', {
       username: values.username,
       password: values.password,
-      callback: "/app/home",
-    });
+      callback: '/app/home',
+    })
   }
 
   return (
@@ -82,7 +82,7 @@ export default function LoginForm() {
           <Button
             variant="link"
             onClick={() => {
-              router.push("/register");
+              router.push('/register')
             }}
           >
             Register
@@ -90,5 +90,5 @@ export default function LoginForm() {
         </div>
       </form>
     </Form>
-  );
+  )
 }

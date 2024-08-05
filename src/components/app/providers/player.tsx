@@ -1,38 +1,38 @@
-"use client";
-import { useEffect, useRef } from "react";
-import { LoopProvider, useLoop } from "./loop";
-import { PlayingProvider } from "./playing";
-import { PositionProvider, usePosition } from "./position";
-import { TrackProvider, useTrack } from "./track";
-import { VolumeProvider, useVolume } from "./volume";
-import { QueueProvider, useQueue } from "./queue";
+'use client'
+import { useEffect, useRef } from 'react'
+import { LoopProvider, useLoop } from './loop'
+import { PlayingProvider } from './playing'
+import { PositionProvider, usePosition } from './position'
+import { TrackProvider, useTrack } from './track'
+import { VolumeProvider, useVolume } from './volume'
+import { QueueProvider, useQueue } from './queue'
 function ContextRichAudio({
   audioRef,
 }: {
-  audioRef: React.RefObject<HTMLAudioElement>;
+  audioRef: React.RefObject<HTMLAudioElement>
 }) {
-  const { setMaxPosition, reactPosition } = usePosition()!;
-  const { trackComplete } = useQueue()!;
+  const { setMaxPosition, reactPosition } = usePosition()!
+  const { trackComplete } = useQueue()!
   return (
     <audio
       ref={audioRef}
       onTimeUpdate={() => {
-        reactPosition();
+        reactPosition()
       }}
       onCanPlay={() => {
-        if (!audioRef.current) return;
-        setMaxPosition(audioRef.current.duration);
+        if (!audioRef.current) return
+        setMaxPosition(audioRef.current.duration)
       }}
       onEnded={() => {
-        trackComplete();
+        trackComplete()
       }}
       className="hidden"
     />
-  );
+  )
 }
 
 function ContextRichOverlay() {
-  const { track } = useTrack()!;
+  const { track } = useTrack()!
   return (
     <div
       className="z-10000 pointer-events-none fixed left-0 top-0 h-full w-full overflow-hidden bg-cover bg-center bg-no-repeat opacity-10 blur-xl"
@@ -40,50 +40,50 @@ function ContextRichOverlay() {
         backgroundImage: `url('/api/covers/?id=${track?.id})`,
       }}
     ></div>
-  );
+  )
 }
 function ContextRichLocalStorageLoader() {
-  const { changeTrack } = useTrack()!;
-  const { changePosition } = usePosition()!;
-  const { changeVolume } = useVolume()!;
-  const { changeLoop } = useLoop()!;
+  const { changeTrack } = useTrack()!
+  const { changePosition } = usePosition()!
+  const { changeVolume } = useVolume()!
+  const { changeLoop } = useLoop()!
 
   useEffect(() => {
     // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
-    const track = localStorage.getItem("track")
-      ? JSON.parse(localStorage.getItem("track")!)
-      : null;
-    const position = localStorage.getItem("position")
-      ? parseInt(localStorage.getItem("position")!)
-      : null;
-    const volume = localStorage.getItem("volume")
-      ? parseInt(localStorage.getItem("volume")!)
-      : null;
-    const loop = localStorage.getItem("loop");
+    const track = localStorage.getItem('track')
+      ? JSON.parse(localStorage.getItem('track')!)
+      : null
+    const position = localStorage.getItem('position')
+      ? parseInt(localStorage.getItem('position')!)
+      : null
+    const volume = localStorage.getItem('volume')
+      ? parseInt(localStorage.getItem('volume')!)
+      : null
+    const loop = localStorage.getItem('loop')
     if (track) {
       // eslint-disable-next-line @typescript-eslint/no-unsafe-argument
-      changeTrack(track, false);
+      changeTrack(track, false)
     }
     if (position) {
-      changePosition([position]);
+      changePosition([position])
     }
     if (volume) {
-      changeVolume(volume);
+      changeVolume(volume)
     }
     if (loop) {
-      changeLoop(loop === "true");
+      changeLoop(loop === 'true')
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, []);
-  return null;
+  }, [])
+  return null
 }
 
 export default function PlayerContextProvider({
   children,
 }: {
-  children: React.ReactNode;
+  children: React.ReactNode
 }) {
-  const audioRef = useRef<HTMLAudioElement>(null);
+  const audioRef = useRef<HTMLAudioElement>(null)
   return (
     <PlayingProvider audioRef={audioRef}>
       <LoopProvider>
@@ -101,5 +101,5 @@ export default function PlayerContextProvider({
         </VolumeProvider>
       </LoopProvider>
     </PlayingProvider>
-  );
+  )
 }

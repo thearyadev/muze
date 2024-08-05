@@ -4,9 +4,9 @@ import {
   SheetHeader,
   SheetTrigger,
   SheetDescription,
-} from "~/components/ui/sheet";
-import Sidebar from "./sidebar";
-import { HamburgerMenuIcon } from "@radix-ui/react-icons";
+} from '~/components/ui/sheet'
+import Sidebar from './sidebar'
+import { HamburgerMenuIcon } from '@radix-ui/react-icons'
 
 function Header() {
   return (
@@ -24,7 +24,7 @@ function Header() {
         </SheetContent>
       </Sheet>
     </div>
-  );
+  )
 }
 
-export default Header;
+export default Header

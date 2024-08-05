@@ -1,6 +1,6 @@
-import * as React from "react";
+import * as React from 'react'
 
-import { cn } from "~/lib/utils";
+import { cn } from '~/lib/utils'
 
 // eslint-disable-next-line @typescript-eslint/no-empty-interface
 export interface InputProps
@@ -12,16 +12,16 @@ const Input = React.forwardRef<HTMLInputElement, InputProps>(
       <input
         type={type}
         className={cn(
-          "flex h-9 w-full rounded-md bg-zinc-700 px-3 py-1 text-sm text-white shadow-sm transition-colors file:border-0 file:bg-transparent file:text-sm file:font-medium placeholder:text-zinc-500 focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-zinc-950 disabled:cursor-not-allowed disabled:opacity-50 dark:border-zinc-800 dark:placeholder:text-zinc-400 dark:focus-visible:ring-zinc-300",
+          'flex h-9 w-full rounded-md bg-zinc-700 px-3 py-1 text-sm text-white shadow-sm transition-colors file:border-0 file:bg-transparent file:text-sm file:font-medium placeholder:text-zinc-500 focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-zinc-950 disabled:cursor-not-allowed disabled:opacity-50 dark:border-zinc-800 dark:placeholder:text-zinc-400 dark:focus-visible:ring-zinc-300',
           className,
         )}
         ref={ref}
         placeholder="Search"
         {...props}
       />
-    );
+    )
   },
-);
-Input.displayName = "Input";
+)
+Input.displayName = 'Input'
 
-export { Input };
+export { Input }

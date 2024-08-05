@@ -1,16 +1,16 @@
-import Image from "next/image";
-import PageHeading from "~/components/app/page_heading";
-import { TrackTableScroll } from "~/components/app/track_table";
-import { api } from "~/trpc/server";
+import Image from 'next/image'
+import PageHeading from '~/components/app/page_heading'
+import { TrackTableScroll } from '~/components/app/track_table'
+import { api } from '~/trpc/server'
 
 export default async function Home({
   params,
 }: {
-  params: { albumId: string };
+  params: { albumId: string }
 }) {
-  const albumQuery = await api.library.albumDetail(params.albumId);
-  const tracks = albumQuery!.tracks;
-  console.log(tracks);
+  const albumQuery = await api.library.albumDetail(params.albumId)
+  const tracks = albumQuery!.tracks
+  console.log(tracks)
   return (
     <>
       <PageHeading>
@@ -28,5 +28,5 @@ export default async function Home({
       </PageHeading>
       <TrackTableScroll tracks={tracks} />
     </>
-  );
+  )
 }

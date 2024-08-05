@@ -1,17 +1,17 @@
-"use client";
-import React from "react";
+'use client'
+import React from 'react'
 
 export const SearchContext = React.createContext<{
-  open: boolean;
-  setOpen: (open: boolean) => void;
-} | null>(null);
+  open: boolean
+  setOpen: (open: boolean) => void
+} | null>(null)
 
 export default function SearchContextProvider({
   children,
 }: {
-  children: React.ReactNode;
+  children: React.ReactNode
 }) {
-  const [open, setOpen] = React.useState(false);
+  const [open, setOpen] = React.useState(false)
   return (
     <>
       <SearchContext.Provider
@@ -23,5 +23,5 @@ export default function SearchContextProvider({
         {children}
       </SearchContext.Provider>
     </>
-  );
+  )
 }

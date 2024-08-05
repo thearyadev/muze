@@ -1,14 +1,14 @@
-import { redirect } from "next/navigation";
-import LoginForm from "~/components/app/login_form";
-import { api } from "~/trpc/server";
-import * as React from "react";
+import { redirect } from 'next/navigation'
+import LoginForm from '~/components/app/login_form'
+import { api } from '~/trpc/server'
+import * as React from 'react'
 
-import { Card, CardContent, CardHeader, CardTitle } from "~/components/ui/card";
+import { Card, CardContent, CardHeader, CardTitle } from '~/components/ui/card'
 
 export default async function LoginPage() {
-  const isAuthenticated = await api.user.isAuthenticated();
+  const isAuthenticated = await api.user.isAuthenticated()
   if (isAuthenticated) {
-    redirect("/app/home");
+    redirect('/app/home')
   }
 
   return (
@@ -22,5 +22,5 @@ export default async function LoginPage() {
         </CardContent>
       </Card>
     </div>
-  );
+  )
 }

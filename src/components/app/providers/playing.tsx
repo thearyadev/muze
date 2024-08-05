@@ -1,44 +1,44 @@
-import React, { useState, useContext, createContext } from "react";
+import React, { useState, useContext, createContext } from 'react'
 
 const PlayingContext = createContext<{
-  playing: boolean;
-  togglePlayPause: () => void;
-  setPlayingTrue: () => void;
-  setPlayingFalse: () => void;
-} | null>(null);
-const usePlaying = () => useContext(PlayingContext);
+  playing: boolean
+  togglePlayPause: () => void
+  setPlayingTrue: () => void
+  setPlayingFalse: () => void
+} | null>(null)
+const usePlaying = () => useContext(PlayingContext)
 
 const PlayingProvider: React.FC<{
-  audioRef: React.RefObject<HTMLAudioElement>;
-  children: React.ReactNode;
+  audioRef: React.RefObject<HTMLAudioElement>
+  children: React.ReactNode
 }> = ({ audioRef, children }) => {
-  const [playing, setPlaying] = useState(false);
+  const [playing, setPlaying] = useState(false)
   const togglePlayPause = () => {
-    setPlaying((prevPlaying) => !prevPlaying);
+    setPlaying((prevPlaying) => !prevPlaying)
 
-    if (!audioRef.current) return;
+    if (!audioRef.current) return
     if (audioRef.current.paused) {
       audioRef.current.play().catch(() => {
-        return;
-      });
-      return;
+        return
+      })
+      return
     }
-    audioRef.current.pause();
-  };
+    audioRef.current.pause()
+  }
 
   const setPlayingTrue = () => {
-    if (!audioRef.current) return;
-    setPlaying(true);
+    if (!audioRef.current) return
+    setPlaying(true)
     audioRef.current.play().catch(() => {
-      return;
-    });
-  };
+      return
+    })
+  }
 
   const setPlayingFalse = () => {
-    if (!audioRef.current) return;
-    setPlaying(false);
-    audioRef.current.pause();
-  };
+    if (!audioRef.current) return
+    setPlaying(false)
+    audioRef.current.pause()
+  }
   return (
     <PlayingContext.Provider
       value={{
@@ -50,7 +50,7 @@ const PlayingProvider: React.FC<{
     >
       {children}
     </PlayingContext.Provider>
-  );
-};
+  )
+}
 
-export { usePlaying, PlayingProvider };
+export { usePlaying, PlayingProvider }

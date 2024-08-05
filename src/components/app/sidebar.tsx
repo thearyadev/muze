@@ -1,6 +1,6 @@
-"use client";
+'use client'
 
-import Link from "next/link";
+import Link from 'next/link'
 import {
   HomeIcon,
   ListBulletIcon,
@@ -8,15 +8,15 @@ import {
   CardStackIcon,
   PersonIcon,
   TableIcon,
-} from "@radix-ui/react-icons";
-import { usePathname, useRouter } from "next/navigation";
-import { Button } from "../ui/button";
-import CommandLabel from "./command_label";
-import { useContext } from "react";
-import { AccountButton } from "./accountButton";
+} from '@radix-ui/react-icons'
+import { usePathname, useRouter } from 'next/navigation'
+import { Button } from '../ui/button'
+import CommandLabel from './command_label'
+import { useContext } from 'react'
+import { AccountButton } from './accountButton'
 
-import { SearchContext } from "./searchContext";
-import { useHotkeys } from "@mantine/hooks";
+import { SearchContext } from './searchContext'
+import { useHotkeys } from '@mantine/hooks'
 
 function SidebarButton({
   href,
@@ -24,54 +24,54 @@ function SidebarButton({
   children,
   commandKey,
 }: {
-  href: string;
-  label: string;
-  children: React.ReactNode;
-  commandKey: string;
+  href: string
+  label: string
+  children: React.ReactNode
+  commandKey: string
 }) {
-  const pathname = usePathname();
-  const router = useRouter();
-  router.prefetch(href);
+  const pathname = usePathname()
+  const router = useRouter()
+  router.prefetch(href)
   useHotkeys(
     [
       [
         commandKey,
         () => {
-          router.push(href);
+          router.push(href)
         },
       ],
     ],
-    ["INPUT", "TEXTAREA"],
-  );
+    ['INPUT', 'TEXTAREA'],
+  )
 
   return (
     <div className="pb-1">
       <Link
         href={href}
-        className={`flex flex-row items-center rounded-md p-2 text-sm text-white transition-all duration-100  ${pathname === href ? "bg-orange-400 bg-opacity-80" : null}`}
+        className={`flex flex-row items-center rounded-md p-2 text-sm text-white transition-all duration-100  ${pathname === href ? 'bg-orange-400 bg-opacity-80' : null}`}
       >
         {children}
         <div className="ml-2 flex w-full flex-row justify-between">
           <span>{label}</span>
           <span
-            className={`text-gray-500 ${pathname === href ? "hidden" : null}`}
+            className={`text-gray-500 ${pathname === href ? 'hidden' : null}`}
           >
             {commandKey}
           </span>
         </div>
       </Link>
     </div>
-  );
+  )
 }
 
 export default function Sidebar({
   className,
   username,
 }: {
-  className?: string;
-  username: string;
+  className?: string
+  username: string
 }) {
-  const { setOpen } = useContext(SearchContext)!;
+  const { setOpen } = useContext(SearchContext)!
   return (
     <>
       <div
@@ -84,7 +84,7 @@ export default function Sidebar({
               size="sm"
               className="flex w-full flex-row justify-between  text-gray-400  hover:text-white"
               onMouseDown={() => {
-                setOpen(true);
+                setOpen(true)
               }}
             >
               Search...
@@ -117,7 +117,7 @@ export default function Sidebar({
         <AccountButton username={username} />
       </div>
     </>
-  );
+  )
 }
 // <div className="flex flex-row justify-between text-xs text-gray-500">
 
