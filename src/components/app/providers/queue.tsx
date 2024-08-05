@@ -1,6 +1,6 @@
 import React, { useContext, createContext } from 'react'
 import type { inferRouterOutputs } from '@trpc/server'
-import { type AppRouter } from '~/server/api/root'
+import type { AppRouter } from '~/server/api/root'
 import { useTrack } from './track'
 import { usePlaying } from './playing'
 import { useLoop } from './loop'
@@ -25,8 +25,11 @@ const QueueProvider: React.FC<{
 }> = ({ children }) => {
   const [queue, setQueue] = React.useState<TrackQuery[]>([])
   const [queuePlayed, setQueuePlayed] = React.useState<TrackQuery[]>([])
+  // biome-ignore lint/style/noNonNullAssertion :
   const { changeTrack, track } = useTrack()!
+  // biome-ignore lint/style/noNonNullAssertion :
   const { setPlayingFalse } = usePlaying()!
+  // biome-ignore lint/style/noNonNullAssertion :
   const { loop } = useLoop()!
 
   const nextTrack = () => {

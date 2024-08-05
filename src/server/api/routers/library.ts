@@ -1,11 +1,9 @@
-/* eslint-disable @typescript-eslint/prefer-nullish-coalescing */
-/* eslint-disable @typescript-eslint/consistent-type-imports */
 import { z } from 'zod'
 import { env } from '~/env'
 
 import { createTRPCRouter, publicProcedure } from '~/server/api/trpc'
-import fs from 'fs'
-import path from 'path'
+import fs from 'node:fs'
+import path from 'node:path'
 import * as mm from 'music-metadata'
 import {
   tracks,
@@ -52,7 +50,7 @@ async function createCoverFile(
 ) {
   const coverPath = path.join(
     path.resolve(env.COVER_ART_PATH),
-    metadata.MB_TRACK_ID + `.${label}.jpg`,
+    `${metadata.MB_TRACK_ID}.${label}.jpg`,
   )
   if (fs.existsSync(coverPath)) {
     return
@@ -125,15 +123,20 @@ async function upsert_genre_and_track_relation(
       .from(genres)
       .where(eq(genres.name, genre_name))
       .execute()
-    if (genre_query.length > 0)
-      return upsert_genre_track(db, genre_query[0]!.id, trackId)
+    const genreExisting = genre_query.find(() => true)
+    if (genreExisting) {
+      return upsert_genre_track(db, genreExisting.id, trackId)
+    }
 
     const newRecord = await db
       .insert(genres)
       .values({ name: genre_name })
       .returning({ newRecordId: genres.id })
       .execute()
-    return upsert_genre_track(db, newRecord[0]!.newRecordId, trackId)
+    const genreNew = newRecord.find(() => true)
+    if (genreNew) {
+      return upsert_genre_track(db, genreNew.newRecordId, trackId)
+    }
   }
 }
 
@@ -146,9 +149,11 @@ async function upsert_track(
   const track_data = await db
     .select()
     .from(tracks)
-    .where(eq(tracks.mbid, metadata.MB_TRACK_ID!))
+    .where(eq(tracks.mbid, metadata.MB_TRACK_ID || ''))
     .execute()
-  if (track_data.length > 0) {
+
+  const trackExisting = track_data.find(() => true)
+  if (trackExisting) {
     // track exists in db
     await db
       .update(tracks)
@@ -162,26 +167,30 @@ async function upsert_track(
         path: path,
         mbid: metadata.MB_TRACK_ID,
       })
-      .where(eq(tracks.id, track_data[0]!.id))
+      .where(eq(tracks.id, trackExisting.id))
       .execute()
-    return track_data[0]!.id
+    return trackExisting.id
   }
   // couldnt find in db, create a new one
   const newRecord = await db
     .insert(tracks)
     .values({
-      name: metadata.TRACK_NAME!,
+      name: metadata.TRACK_NAME,
       albumId: albumId,
-      duration: metadata.DURATION!,
-      trackNumber: metadata.TRACK_NUMBER!,
-      discNumber: metadata.DISC_NUMBER!,
-      year: metadata.YEAR!,
+      duration: metadata.DURATION,
+      trackNumber: metadata.TRACK_NUMBER,
+      discNumber: metadata.DISC_NUMBER,
+      year: metadata.YEAR,
       path: path,
-      mbid: metadata.MB_TRACK_ID!,
+      mbid: metadata.MB_TRACK_ID || crypto.randomUUID(),
     })
     .returning({ newRecordId: tracks.id })
     .execute()
-  return newRecord[0]!.newRecordId
+  const trackNew = newRecord.find(() => true)
+  if (trackNew) {
+    return trackNew.newRecordId
+  }
+  throw Error('Failed to create track')
 }
 
 async function upsert_albums(
@@ -189,6 +198,10 @@ async function upsert_albums(
   metadata: Metadata,
   albumArtistId: string,
 ): Promise<string | null> {
+  if (metadata.ALBUM_NAME === undefined || metadata.MB_ALBUM_ID === undefined) {
+    return null
+  }
+
   if (metadata.ALBUM_NAME !== undefined && metadata.MB_ALBUM_ID === undefined) {
     // no mbid, but album name exists. match by name
     const albums_found = await db
@@ -196,34 +209,36 @@ async function upsert_albums(
       .from(albums)
       .where(eq(albums.name, metadata.ALBUM_NAME))
       .execute()
-    if (albums_found.length > 0) {
-      return albums_found[0]!.id
+    const albumExistingName = albums_found.find(() => true)
+    if (albumExistingName) {
+      return albumExistingName.id
     }
   }
-  // track has an MBID
-  const albumRecord = await db // look for it in the database
-    .select()
-    .from(albums)
-    .where(eq(albums.mbid, metadata.MB_ALBUM_ID!))
-    .execute()
-  if (albumRecord.length > 0) {
-    // if it exists, return it
-    return albumRecord[0]!.id
-  } else {
-    // if it doesnt exist, create then return
-    const newRecord = await db
-      .insert(albums)
-      .values({
-        name: metadata.ALBUM_NAME!,
-        artistId: albumArtistId,
-        mbid: metadata.MB_ALBUM_ID!,
-      })
-      .returning({ newRecordId: albums.id })
-      .execute()
 
-    // eslint-disable-next-line @typescript-eslint/no-non-null-asserted-optional-chain
-    return newRecord[0]?.newRecordId!
+  // track has an MBID
+  if (metadata.MB_ALBUM_ID !== undefined) {
+    const albumRecord = await db // look for it in the database
+      .select()
+      .from(albums)
+      .where(eq(albums.mbid, metadata.MB_ALBUM_ID))
+      .execute()
+    const albumExistingMbid = albumRecord.find(() => true)
+    if (albumExistingMbid) {
+      return albumExistingMbid.id
+    }
   }
+
+  // if it doesnt exist, create then return
+  const newRecord = await db
+    .insert(albums)
+    .values({
+      name: metadata.ALBUM_NAME,
+      artistId: albumArtistId,
+      mbid: metadata.MB_ALBUM_ID,
+    })
+    .returning({ newRecordId: albums.id })
+    .execute()
+  return newRecord.find(() => true)?.newRecordId || null
 }
 
 async function create_cover_files(metadata: Metadata) {
@@ -280,45 +295,54 @@ async function upsert_artists(
       'Error: The metadata for track is not vaild. Please tag using MusicBrainz Picard',
     )
   }
+  const artistIds = []
 
-  const artistIds = await Promise.all(
-    // get all referenced artists
-    metadata.MB_ARTIST_ID.map(async (artistId, index) => {
-      // @ts-expect-error name exists if id exists
-      const artistName = metadata.ARTIST_NAME[index]
-      const artistQuery = await db
-        .select()
-        .from(artists)
-        .where(eq(artists.mbid, artistId))
-        .execute()
-      if (artistQuery.length > 0) {
-        // artist already exists
-        const artistData = artistQuery[0]!
-        if (artistName !== artistData.name) {
-          // update the data
-          await db
-            .update(artists)
-            .set({
-              name: artistName,
-            })
-            .where(eq(artists.id, artistData.id))
-            .execute()
-        }
-        return artistData.id
+  for (const [index, artistId] of metadata.MB_ARTIST_ID.entries()) {
+    const artistName = metadata.ARTIST_NAME[index]
+
+    if (artistName === undefined) {
+      console.warn(
+        'Artist MBID array has more elements than artist name array. Skipping artist. Mapping is ambiguous.',
+      )
+      continue
+    }
+
+    const artistQuery = await db
+      .select()
+      .from(artists)
+      .where(eq(artists.mbid, artistId))
+      .execute()
+    const artistExisting = artistQuery.find(() => true)
+    if (artistExisting) {
+      if (artistName !== artistExisting.name) {
+        await db
+          .update(artists)
+          .set({
+            name: artistName,
+          })
+          .where(eq(artists.id, artistExisting.id))
+          .execute()
       }
-      const newRecord = await db
-        .insert(artists)
-        .values({
-          name: artistName!,
-          mbid: artistId,
-        })
-        .returning({ newRecordId: artists.id })
-        .execute()
-      // eslint-disable-next-line @typescript-eslint/no-non-null-asserted-optional-chain
-      return newRecord[0]?.newRecordId!
-    }),
-  )
-  if (artistIds.length === 0) throw Error('Unable to find any artists')
+      artistIds.push(artistExisting.id)
+      continue
+    }
+    const newRecord = await db
+      .insert(artists)
+      .values({
+        name: artistName,
+        mbid: artistId,
+      })
+      .returning({ newRecordId: artists.id })
+      .execute()
+    const artistNew = newRecord.find(() => true)
+    if (artistNew) {
+      artistIds.push(artistNew.newRecordId)
+    }
+  }
+
+  if (artistIds.length === 0) {
+    throw Error('Failed to create artists, none were found')
+  }
   return artistIds
 }
 
@@ -355,6 +379,7 @@ async function extractMetadata(file_path: string): Promise<Metadata> {
       : undefined,
   }
 }
+
 export const libraryRouter = createTRPCRouter({
   sync: publicProcedure.mutation(async ({ ctx }) => {
     const targetDirectory = env.MUSIC_PATH
@@ -363,7 +388,12 @@ export const libraryRouter = createTRPCRouter({
       try {
         const metadata = await extractMetadata(track_i)
         const artist_ids = await upsert_artists(ctx.db, metadata)
-        const album_id = await upsert_albums(ctx.db, metadata, artist_ids[0]!) // todo: determine album artist
+        // biome-ignore lint/style/noNonNullAssertion : the length of artist_ids is guaranteed to be > 0
+        const album_id = await upsert_albums(
+          ctx.db,
+          metadata,
+          artist_ids.find(() => true)!,
+        ) // todo: determine album artist
         const track_id = await upsert_track(ctx.db, metadata, album_id, track_i)
         await upsert_genre_and_track_relation(ctx.db, metadata, track_id)
         await upsert_artist_track_relation(ctx.db, artist_ids, track_id)
@@ -512,7 +542,7 @@ export const libraryRouter = createTRPCRouter({
         return null
       }
       return {
-        album: query[0]!.album,
+        album: query[0]?.album,
         tracks: query.map((track) => {
           return {
             ...track.track,

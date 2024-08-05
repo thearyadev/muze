@@ -1,14 +1,11 @@
 'use client'
 
-import React from 'react'
+import type React from 'react'
 import Link from 'next/link'
 
 import { VolumeSlider, TrackSlider } from '../ui/slider'
 
-import {
-  LoopIcon as LoopIcon,
-  SpeakerLoudIcon as SpeakerIcon,
-} from '@radix-ui/react-icons'
+import { LoopIcon, SpeakerLoudIcon as SpeakerIcon } from '@radix-ui/react-icons'
 
 import {
   PlayCircleOutlined as PlayIcon,
@@ -34,6 +31,7 @@ function PlayerBody({ children }: { children: React.ReactNode }) {
 }
 
 function TrackSliderPosition() {
+  // biome-ignore lint/style/noNonNullAssertion :
   const { position, changePosition, maxposition } = usePosition()!
   return (
     <TrackSlider
@@ -52,10 +50,15 @@ function TrackSliderPosition() {
 }
 
 export default function Player() {
+  // biome-ignore lint/style/noNonNullAssertion :
   const { track } = useTrack()!
+  // biome-ignore lint/style/noNonNullAssertion :
   const { volume, changeVolume } = useVolume()!
+  // biome-ignore lint/style/noNonNullAssertion :
   const { loop, changeLoop } = useLoop()!
+  // biome-ignore lint/style/noNonNullAssertion :
   const { playing, setPlayingTrue, setPlayingFalse } = usePlaying()!
+  // biome-ignore lint/style/noNonNullAssertion :
   const { nextTrack, previousTrack } = useQueue()!
 
   if (track === null) {
@@ -69,7 +72,7 @@ export default function Player() {
 
   return (
     <div className="select-none">
-      <div className="w-screen"></div>
+      <div className="w-screen" />
       <TrackSliderPosition />
       <PlayerBody>
         <div
@@ -77,7 +80,7 @@ export default function Player() {
           // Track Info
         >
           <Image
-            alt={track.name!}
+            alt={track.name || 'Track Cover'}
             src={`/api/covers?id=${track.id}&size=md`}
             className="h-16 w-16 rounded-md"
             loading="eager"
@@ -139,7 +142,7 @@ export default function Player() {
             max={100}
             step={1}
             className="w-[30%]"
-            onValueChange={(v) => changeVolume(v[0]!)}
+            onValueChange={(v) => changeVolume(v[0] || 0)}
           />
         </div>
       </PlayerBody>

@@ -1,4 +1,5 @@
-import React, { useState, useContext, createContext } from 'react'
+import type React from 'react'
+import { useState, useContext, createContext } from 'react'
 
 const PositionContext = createContext<{
   position: number[]
@@ -24,9 +25,9 @@ const PositionProvider: React.FC<{
 
   const changePosition = (newPosition: number[]) => {
     if (!audioRef.current) return
-    audioRef.current.currentTime = newPosition[0]!
+    audioRef.current.currentTime = newPosition[0] || 0
     setPosition(newPosition)
-    localStorage.setItem('position', newPosition[0]!.toString())
+    localStorage.setItem('position', (newPosition[0] || 0).toString())
   }
   return (
     <PositionContext.Provider

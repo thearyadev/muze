@@ -1,7 +1,7 @@
 /* eslint-disable */
 
-import { existsSync, statSync, createReadStream } from 'fs'
-import { NextRequest, NextResponse } from 'next/server'
+import { existsSync, statSync, createReadStream } from 'node:fs'
+import { type NextRequest, NextResponse } from 'next/server'
 import { api } from '~/trpc/server'
 import mime from 'mime'
 
@@ -35,12 +35,13 @@ export async function GET(request: NextRequest): Promise<NextResponse> {
   }
 
   if (request.headers.get('range')) {
+    // biome-ignore lint/style/noNonNullAssertion : dont care just error
     const parts = request.headers
       .get('range')!
       .replace(/bytes=/, '')
       .split('-')
-    const start = parseInt(parts[0] as string)
-    const end = parts[1] ? parseInt(parts[1]) : totalSize - 1
+    const start = Number.parseInt(parts[0] as string)
+    const end = parts[1] ? Number.parseInt(parts[1]) : totalSize - 1
     const chunkSize = end - start + 1
 
     headers['Content-Range'] = `bytes ${start}-${end}/${totalSize}`
@@ -53,17 +54,16 @@ export async function GET(request: NextRequest): Promise<NextResponse> {
       headers,
       status: 206,
     })
-  } else {
-    const contentType =
-      mime.getType(track_data.path) || 'application/octet-stream'
-    headers['Content-Type'] = contentType
-
-    const stream = createReadStream(track_data.path)
-
-    // @ts-ignore
-    return new NextResponse(stream, {
-      headers,
-      status: 200,
-    })
   }
+  const contentType =
+    mime.getType(track_data.path) || 'application/octet-stream'
+  headers['Content-Type'] = contentType
+
+  const stream = createReadStream(track_data.path)
+
+  // @ts-ignore
+  return new NextResponse(stream, {
+    headers,
+    status: 200,
+  })
 }

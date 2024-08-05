@@ -1,4 +1,5 @@
-import React, { useState, useContext, createContext } from 'react'
+import type React from 'react'
+import { useState, useContext, createContext } from 'react'
 
 const PlayingContext = createContext<{
   playing: boolean

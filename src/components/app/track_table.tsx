@@ -1,6 +1,6 @@
 'use client'
 import type { inferRouterOutputs } from '@trpc/server'
-import { type AppRouter } from '~/server/api/root'
+import type { AppRouter } from '~/server/api/root'
 import { useEffect, useRef, useState } from 'react'
 import { api } from '~/trpc/react'
 import { ScrollArea } from '~/components/ui/scroll-area'
@@ -40,8 +40,8 @@ function TrackCell({
       <div className="col-span-6 flex flex-row space-x-3 text-sm">
         <div>
           <Image
-            alt={track!.name!}
-            src={`/api/covers?id=${track!.id}&size=sm`}
+            alt={track?.name || 'Track Cover'}
+            src={`/api/covers?id=${track?.id}&size=sm`}
             className="h-10 w-10 rounded-md"
             loading={index <= 20 ? 'eager' : 'lazy'}
             width={40}
@@ -49,16 +49,16 @@ function TrackCell({
           />
         </div>
         <div>
-          <div>{track!.name}</div>
+          <div>{track?.name}</div>
           <div className="">
-            {track!.artistIds.split(';').map((artistId, index) => (
+            {track?.artistIds.split(';').map((artistId, index) => (
               <Link
                 key={artistId}
                 href={`/artist/${artistId}`}
                 className="text-xs text-gray-500 transition-all fade-in-100 fade-out-100 hover:text-orange-400 "
               >
-                {track!.artistNames.split(';')[index]}
-                {index < track!.artistIds.split(';').length - 1 ? ', ' : ''}
+                {track?.artistNames.split(';')[index]}
+                {index < track?.artistIds.split(';').length - 1 ? ', ' : ''}
               </Link>
             ))}
           </div>
@@ -66,14 +66,14 @@ function TrackCell({
       </div>
       <div className="col-span-3 content-center">
         <Link
-          href={`/app/albums/${track!.albumId}`}
+          href={`/app/albums/${track?.albumId}`}
           className="text-xs text-gray-500 transition-all fade-in-100 fade-out-100 hover:text-orange-400"
         >
-          {track!.albumName}
+          {track?.albumName}
         </Link>
       </div>
       <div className="col-span-2 content-center text-xs text-gray-500">
-        {secondsToTimeString(track!.duration!)}
+        {secondsToTimeString(track?.duration || 0)}
       </div>
     </div>
   )
@@ -82,9 +82,7 @@ function TrackCell({
 function secondsToTimeString(seconds: number) {
   const minutes = Math.floor(seconds / 60)
   const remainingSeconds = Math.floor(seconds % 60)
-
-  const timeString =
-    minutes + ':' + (remainingSeconds < 10 ? '0' : '') + remainingSeconds
+  const timeString = `${minutes}:${remainingSeconds < 10 ? '0' : ''}${remainingSeconds}`
   return timeString
 }
 export function TrackTableScrollPaginated(
@@ -93,8 +91,11 @@ export function TrackTableScrollPaginated(
   const heightRef = useRef<number>(0)
   const [tracks, setTracks] = useState<TrackQuery[]>(props.initialTracks)
   const [page, setPage] = useState(props.page + 1)
+  // biome-ignore lint/style/noNonNullAssertion :
   const { changeTrack } = useTrack()!
+  // biome-ignore lint/style/noNonNullAssertion :
   const { addTrackPrevious } = useQueue()!
+  // biome-ignore lint/style/noNonNullAssertion :
   const { track: currentTrack } = useTrack()!
   const { data } = api.library.allSongs.useQuery({
     page: page,
@@ -138,7 +139,7 @@ export function TrackTableScrollPaginated(
         {tracks.map((track, index) => {
           return (
             <TrackCell
-              key={track!.id}
+              key={track?.id}
               track={track}
               clickFn={handleTrackSwitch}
               index={index}
@@ -152,8 +153,11 @@ export function TrackTableScrollPaginated(
   )
 }
 export function TrackTableScroll(props: TrackTableScroll) {
+  // biome-ignore lint/style/noNonNullAssertion :
   const { changeTrack } = useTrack()!
+  // biome-ignore lint/style/noNonNullAssertion :
   const { addTrackPrevious } = useQueue()!
+  // biome-ignore lint/style/noNonNullAssertion :
   const { track: currentTrack } = useTrack()!
   const handleTrackSwitch = (track: TrackQuery) => {
     if (currentTrack) addTrackPrevious(currentTrack)
@@ -172,7 +176,7 @@ export function TrackTableScroll(props: TrackTableScroll) {
         {props.tracks.map((track, index) => {
           return (
             <TrackCell
-              key={track!.id}
+              key={track?.id}
               track={track}
               clickFn={handleTrackSwitch}
               index={index}

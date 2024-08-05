@@ -36,7 +36,7 @@ export const authOptions: NextAuthOptions = {
 
     // eslint-disable-next-line @typescript-eslint/no-unused-vars
     async session({ session, token, user }) {
-      session.user.id = parseInt(token.userId as string)
+      session.user.id = Number.parseInt(token.userId as string)
       return session
     },
   },
@@ -58,10 +58,11 @@ export const authOptions: NextAuthOptions = {
           .from(users)
           .where(eq(users.username, username))
           .execute()
-        if (userQuery.length === 0) {
+
+        const user = userQuery.find(() => true)
+        if (!user) {
           return null
         }
-        const user = userQuery[0]!
         if (user.password !== password) {
           return null
         }

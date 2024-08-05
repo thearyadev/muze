@@ -6,7 +6,7 @@ import { createTRPCReact } from '@trpc/react-query'
 import { useState } from 'react'
 import SuperJSON from 'superjson'
 
-import { type AppRouter } from '~/server/api/root'
+import type { AppRouter } from '~/server/api/root'
 
 const createQueryClient = () => new QueryClient()
 
@@ -17,6 +17,7 @@ const getQueryClient = () => {
     return createQueryClient()
   }
   // Browser: use singleton pattern to keep the same query client
+  // biome-ignore lint/suspicious/noAssignInExpressions : vendor provided
   return (clientQueryClientSingleton ??= createQueryClient())
 }
 
@@ -35,7 +36,7 @@ export function TRPCReactProvider(props: { children: React.ReactNode }) {
         }),
         unstable_httpBatchStreamLink({
           transformer: SuperJSON,
-          url: getBaseUrl() + '/api/trpc',
+          url: `${getBaseUrl()}/api/trpc`,
           headers: () => {
             const headers = new Headers()
             headers.set('x-trpc-source', 'nextjs-react')

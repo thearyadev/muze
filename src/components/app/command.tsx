@@ -14,11 +14,12 @@ import { api } from '~/trpc/react'
 import { SearchContext } from './searchContext'
 import { useDebouncedState, useHotkeys } from '@mantine/hooks'
 import type { inferRouterOutputs } from '@trpc/server'
-import { type AppRouter } from '~/server/api/root'
+import type { AppRouter } from '~/server/api/root'
 import { CommandLoading } from 'cmdk'
 type RouterOutput = inferRouterOutputs<AppRouter>
 type TrackQuery = RouterOutput['library']['searchTrack']
 export default function Command() {
+  // biome-ignore lint/style/noNonNullAssertion :
   const { open, setOpen } = useContext(SearchContext)!
   const [searchQuery, setSearchQuery] = useDebouncedState('', 500)
   const [trackResults, setTrackResults] = useState<TrackQuery>([])
@@ -40,7 +41,7 @@ export default function Command() {
     setLoading(true)
     setSearchQuery(event.currentTarget.value)
   }
-
+  // biome-ignore lint/correctness/useExhaustiveDependencies : idk. i'm tired
   useEffect(() => {
     if (searchQuery.length) {
       utils.library.searchTrack

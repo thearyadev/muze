@@ -15,10 +15,10 @@ export default async function LoginPage() {
     <div className="flex h-screen items-center justify-center justify-items-center">
       <Card className="w-[350px] border-0 bg-zinc-700">
         <CardHeader>
-          <CardTitle></CardTitle>
+          <CardTitle />
         </CardHeader>
         <CardContent>
-          <LoginForm></LoginForm>
+          <LoginForm />
         </CardContent>
       </Card>
     </div>

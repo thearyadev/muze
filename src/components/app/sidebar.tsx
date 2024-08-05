@@ -71,6 +71,7 @@ export default function Sidebar({
   className?: string
   username: string
 }) {
+  // biome-ignore lint/style/noNonNullAssertion :
   const { setOpen } = useContext(SearchContext)!
   return (
     <>

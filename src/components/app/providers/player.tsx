@@ -11,9 +11,12 @@ function ContextRichAudio({
 }: {
   audioRef: React.RefObject<HTMLAudioElement>
 }) {
+  // biome-ignore lint/style/noNonNullAssertion :
   const { setMaxPosition, reactPosition } = usePosition()!
+  // biome-ignore lint/style/noNonNullAssertion :
   const { trackComplete } = useQueue()!
   return (
+    // biome-ignore lint/a11y/useMediaCaption :
     <audio
       ref={audioRef}
       onTimeUpdate={() => {
@@ -32,6 +35,7 @@ function ContextRichAudio({
 }
 
 function ContextRichOverlay() {
+  // biome-ignore lint/style/noNonNullAssertion :
   const { track } = useTrack()!
   return (
     <div
@@ -39,29 +43,31 @@ function ContextRichOverlay() {
       style={{
         backgroundImage: `url('/api/covers/?id=${track?.id})`,
       }}
-    ></div>
+    />
   )
 }
 function ContextRichLocalStorageLoader() {
+  // biome-ignore lint/style/noNonNullAssertion :
   const { changeTrack } = useTrack()!
+  // biome-ignore lint/style/noNonNullAssertion :
   const { changePosition } = usePosition()!
+  // biome-ignore lint/style/noNonNullAssertion :
   const { changeVolume } = useVolume()!
+  // biome-ignore lint/style/noNonNullAssertion :
   const { changeLoop } = useLoop()!
-
+  // biome-ignore lint/correctness/useExhaustiveDependencies : causes infinite loop
   useEffect(() => {
-    // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
     const track = localStorage.getItem('track')
-      ? JSON.parse(localStorage.getItem('track')!)
+      ? JSON.parse(localStorage.getItem('track') as string)
       : null
     const position = localStorage.getItem('position')
-      ? parseInt(localStorage.getItem('position')!)
+      ? Number.parseInt(localStorage.getItem('position') as string)
       : null
     const volume = localStorage.getItem('volume')
-      ? parseInt(localStorage.getItem('volume')!)
+      ? Number.parseInt(localStorage.getItem('volume') as string)
       : null
     const loop = localStorage.getItem('loop')
     if (track) {
-      // eslint-disable-next-line @typescript-eslint/no-unsafe-argument
       changeTrack(track, false)
     }
     if (position) {
@@ -73,7 +79,6 @@ function ContextRichLocalStorageLoader() {
     if (loop) {
       changeLoop(loop === 'true')
     }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [])
   return null
 }

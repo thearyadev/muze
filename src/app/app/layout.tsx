@@ -26,7 +26,7 @@ export default async function AppLayout({
         <Command />
         <div className="flex">
           <div className="hidden flex-none sm:block">
-            <Sidebar username={session.user.name!} />
+            <Sidebar username={session.user.name || 'error'} />
           </div>
 
           <div className="grow">

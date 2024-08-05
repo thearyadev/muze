@@ -1,10 +1,10 @@
 /* eslint-disable */
 
-import { existsSync, statSync, createReadStream } from 'fs'
-import { NextRequest, NextResponse } from 'next/server'
+import { existsSync, statSync, createReadStream } from 'node:fs'
+import { type NextRequest, NextResponse } from 'next/server'
 import { api } from '~/trpc/server'
 import mime from 'mime'
-import path from 'path'
+import path from 'node:path'
 import { env } from '~/env'
 
 export async function GET(request: NextRequest): Promise<NextResponse> {
@@ -30,7 +30,7 @@ export async function GET(request: NextRequest): Promise<NextResponse> {
 
   const coverPath = path.join(
     path.resolve(env.COVER_ART_PATH),
-    track_data.mbid + `.${size}.jpg`,
+    `${track_data.mbid}.${size}.jpg`,
   )
   console.log(coverPath)
 

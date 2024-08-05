@@ -1,4 +1,5 @@
-import React, { useContext, createContext, useState } from 'react'
+import type React from 'react'
+import { useContext, createContext, useState } from 'react'
 
 const LoopContext = createContext<{
   loop: boolean

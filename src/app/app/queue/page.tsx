@@ -4,6 +4,7 @@ import { useQueue } from '~/components/app/providers/queue'
 import { TrackTableScroll } from '~/components/app/track_table'
 
 export default function Queue() {
+  // biome-ignore lint/style/noNonNullAssertion :
   const { queue } = useQueue()!
   return (
     <>
