@@ -70,7 +70,7 @@ const QueueProvider: React.FC<{
     }
     nextTrack()
   }
-
+  // biome-ignore lint/correctness/useExhaustiveDependencies : causes infinite loop
   useEffect(() => {
     navigator.mediaSession.setActionHandler('nexttrack', () => {
       nextTrack()
@@ -82,7 +82,7 @@ const QueueProvider: React.FC<{
       navigator.mediaSession.setActionHandler('nexttrack', null)
       navigator.mediaSession.setActionHandler('previoustrack', null)
     }
-  })
+  }, [])
 
   return (
     <QueueContext.Provider
