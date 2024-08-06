@@ -14,7 +14,7 @@ function ContextRichAudio({
   // biome-ignore lint/style/noNonNullAssertion :
   const { setMaxPosition, reactPosition } = usePosition()!
   // biome-ignore lint/style/noNonNullAssertion :
-  const { trackComplete } = useQueue()!
+  const { trackComplete, nextTrack } = useQueue()!
   return (
     // biome-ignore lint/a11y/useMediaCaption :
     <audio
@@ -30,6 +30,11 @@ function ContextRichAudio({
         trackComplete()
       }}
       className="hidden"
+      onError={() => {
+        if (!audioRef.current) return
+        if (audioRef.current.src === "") return
+        nextTrack()
+      }}
     />
   )
 }
@@ -37,11 +42,17 @@ function ContextRichAudio({
 function ContextRichOverlay() {
   // biome-ignore lint/style/noNonNullAssertion :
   const { track } = useTrack()!
+
+
+  if (track === null) {
+    return null
+  }
+
   return (
     <div
       className="z-10000 pointer-events-none fixed left-0 top-0 h-full w-full overflow-hidden bg-cover bg-center bg-no-repeat opacity-10 blur-xl"
       style={{
-        backgroundImage: `url('/api/covers/?id=${track?.id}&size=xl')`,
+        backgroundImage: `url('/api/covers/?id=${track.id}&size=xl')`,
       }}
     />
   )

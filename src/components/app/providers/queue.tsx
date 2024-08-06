@@ -33,7 +33,10 @@ const QueueProvider: React.FC<{
   const { loop } = useLoop()!
 
   const nextTrack = () => {
-    if (queue.length === 0) return
+    if (queue.length === 0) {
+      changeTrack(null, false)
+      return
+    } 
     const nextTrack = queue.shift()
     if (nextTrack) {
       setQueuePlayed([...queuePlayed, track])

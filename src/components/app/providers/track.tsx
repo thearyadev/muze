@@ -27,7 +27,7 @@ const TrackProvider: React.FC<{
     playing.setPlayingFalse()
     position.changePosition([0])
     if (!audioRef.current) return
-    audioRef.current.src = `/api/track_data?id=${newTrack?.id}`
+    audioRef.current.src = newTrack ? `/api/track_data?id=${newTrack?.id}` : ''
     localStorage.setItem('track', JSON.stringify(newTrack))
 
     if (play) {
