@@ -14,8 +14,6 @@ import { Button } from '../ui/button'
 import CommandLabel from './command_label'
 import { useContext } from 'react'
 import { AccountButton } from './accountButton'
-
-import { SearchContext } from './searchContext'
 import { useHotkeys } from '@mantine/hooks'
 
 function SidebarButton({
@@ -71,8 +69,6 @@ export default function Sidebar({
   className?: string
   username: string
 }) {
-  // biome-ignore lint/style/noNonNullAssertion :
-  const { setOpen } = useContext(SearchContext)!
   return (
     <>
       <div
@@ -84,9 +80,9 @@ export default function Sidebar({
               variant="ghost"
               size="sm"
               className="flex w-full flex-row justify-between  text-gray-400  hover:text-white"
-              onMouseDown={() => {
-                setOpen(true)
-              }}
+              // onMouseDown={() => {
+              //   setOpen(true)
+              // }}
             >
               Search...
               <CommandLabel commandKeyChain="K" />
