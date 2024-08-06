@@ -32,7 +32,7 @@ function ContextRichAudio({
       className="hidden"
       onError={() => {
         if (!audioRef.current) return
-        if (audioRef.current.src === "") return
+        if (audioRef.current.src === '') return
         nextTrack()
       }}
     />
@@ -42,7 +42,6 @@ function ContextRichAudio({
 function ContextRichOverlay() {
   // biome-ignore lint/style/noNonNullAssertion :
   const { track } = useTrack()!
-
 
   if (track === null) {
     return null

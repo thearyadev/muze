@@ -36,7 +36,7 @@ const QueueProvider: React.FC<{
     if (queue.length === 0) {
       changeTrack(null, false)
       return
-    } 
+    }
     const nextTrack = queue.shift()
     if (nextTrack) {
       setQueuePlayed([...queuePlayed, track])

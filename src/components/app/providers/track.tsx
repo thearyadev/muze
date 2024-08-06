@@ -40,6 +40,20 @@ const TrackProvider: React.FC<{
         playing.setPlayingTrue()
       }, 10)
     }
+
+    navigator.mediaSession.metadata = new MediaMetadata({
+      title: newTrack?.name as string,
+      artist: newTrack?.artistNames.replace(';', ', ') as string,
+      album: newTrack?.albumName as string,
+      artwork: [
+        { src: `/api/covers?id=${newTrack?.id}&size=sm`, sizes: '96x96' },
+        { src: `/api/covers?id=${newTrack?.id}&size=md`, sizes: '128x128' },
+        { src: `/api/covers?id=${newTrack?.id}&size=lg`, sizes: '192x192' },
+        { src: `/api/covers?id=${newTrack?.id}&size=xl`, sizes: '256x256' },
+        { src: `/api/covers?id=${newTrack?.id}&size=xl`, sizes: '384x384' },
+        { src: `/api/covers?id=${newTrack?.id}&size=xl`, sizes: '512x512' },
+      ],
+    })
   }
   return (
     <TrackContext.Provider
