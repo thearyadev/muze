@@ -20,18 +20,18 @@ export default async function AppLayout({
 
   return (
     <PlayerContextProvider>
-        <div className="flex">
-          <div className="hidden flex-none sm:block">
-            <Sidebar username={session.user.name || 'error'} />
-          </div>
+      <div className="flex">
+        <div className="hidden flex-none sm:block">
+          <Sidebar username={session.user.name || 'error'} />
+        </div>
 
-          <div className="grow">
-            <PageWrapper>{children}</PageWrapper>
-          </div>
+        <div className="grow">
+          <PageWrapper>{children}</PageWrapper>
         </div>
-        <div className="fixed bottom-0">
-          <Player />
-        </div>
+      </div>
+      <div className="fixed bottom-0">
+        <Player />
+      </div>
     </PlayerContextProvider>
   )
 }
