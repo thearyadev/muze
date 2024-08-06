@@ -41,7 +41,6 @@ const TrackProvider: React.FC<{
       }, 10)
     }
   }
-
   return (
     <TrackContext.Provider
       // biome-ignore lint/correctness/useExhaustiveDependencies : used to optmize re-render

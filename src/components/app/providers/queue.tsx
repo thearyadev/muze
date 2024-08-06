@@ -1,4 +1,4 @@
-import React, { useContext, createContext } from 'react'
+import React, { useContext, createContext, useEffect } from 'react'
 import type { inferRouterOutputs } from '@trpc/server'
 import type { AppRouter } from '~/server/api/root'
 import { useTrack } from './track'
@@ -70,6 +70,20 @@ const QueueProvider: React.FC<{
     }
     nextTrack()
   }
+
+  useEffect(() => {
+    navigator.mediaSession.setActionHandler('nexttrack', () => {
+      nextTrack()
+    })
+    navigator.mediaSession.setActionHandler('previoustrack', () => {
+      previousTrack()
+    })
+    return () => {
+      navigator.mediaSession.setActionHandler('nexttrack', null)
+      navigator.mediaSession.setActionHandler('previoustrack', null)
+    }
+  })
+
   return (
     <QueueContext.Provider
       value={{

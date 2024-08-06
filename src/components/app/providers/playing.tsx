@@ -1,5 +1,5 @@
 import type React from 'react'
-import { useState, useContext, createContext } from 'react'
+import { useState, useContext, createContext, useEffect } from 'react'
 
 const PlayingContext = createContext<{
   playing: boolean
@@ -40,6 +40,22 @@ const PlayingProvider: React.FC<{
     setPlaying(false)
     audioRef.current.pause()
   }
+
+  // biome-ignore lint/correctness/useExhaustiveDependencies : causes infinite loop
+  useEffect(() => {
+    navigator.mediaSession.setActionHandler('play', () => {
+      setPlayingTrue()
+    })
+    navigator.mediaSession.setActionHandler('pause', () => {
+      setPlayingFalse()
+    })
+
+    return () => {
+      navigator.mediaSession.setActionHandler('play', null)
+      navigator.mediaSession.setActionHandler('pause', null)
+    }
+  }, [])
+
   return (
     <PlayingContext.Provider
       value={{
