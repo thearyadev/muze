@@ -6,7 +6,6 @@ import { api } from '~/trpc/server'
 export const revalidate = 900
 
 export default async function AllSongsPage() {
-
   const querySettings = {
     page: 1,
     pageSize: 5000,
