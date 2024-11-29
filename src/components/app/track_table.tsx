@@ -7,7 +7,7 @@ import Link from 'next/link'
 import { useTrack } from './providers/track'
 import { useQueue } from './providers/queue'
 import Image from 'next/image'
-import { allTracks } from '~/lib/actions/library'
+import type { allTracks } from '~/lib/actions/library'
 
 type TrackQuery = NonNullable<Awaited<ReturnType<typeof allTracks>>["content"]>[0];
 

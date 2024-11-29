@@ -1,4 +1,4 @@
-import { type APIResponse } from '../types';
+import type { APIResponse } from '../types';
 import { cookies } from 'next/headers';
 import * as jwt from "jsonwebtoken"
 
@@ -29,7 +29,7 @@ export function isAuthorized(): APIResponse<string> {
   }
 
 }
-
+// biome-ignore lint/suspicious/noExplicitAny : dont care
 export const protectedAction = <T, Args extends any[]>(fn: (...args: Args) => Promise<APIResponse<T>>) => {
     return async (...args: Args): Promise<APIResponse<T>> => {
         const isAuthenticated = isAuthorized();
@@ -43,6 +43,7 @@ export const protectedAction = <T, Args extends any[]>(fn: (...args: Args) => Pr
     };
 };
 
+// biome-ignore lint/suspicious/noExplicitAny : dont care
 export const openAction = <T, Args extends any[]>(fn: (...args: Args) => Promise<APIResponse<T>>) => {
     return async (...args: Args): Promise<APIResponse<T>> => {
         return await fn(...args);

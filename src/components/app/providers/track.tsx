@@ -1,7 +1,7 @@
 import React, { useState, useContext, createContext } from 'react'
 import { usePosition } from './position'
 import { usePlaying } from './playing'
-import { getTrack } from '~/lib/actions/library'
+import type { getTrack } from '~/lib/actions/library'
 
 type TrackQuery = NonNullable<Awaited<ReturnType<typeof getTrack>>["content"]>;
 const TrackContext = createContext<{
