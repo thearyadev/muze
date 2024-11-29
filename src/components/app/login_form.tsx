@@ -33,7 +33,7 @@ export default function LoginForm() {
   async function onSubmit(values: z.infer<typeof formSchema>) {
     const auth = await authorize(values.username, values.password)
     if (auth.status_code === 200) {
-      router.push("/app/home")
+      router.push('/app/home')
     }
   }
 

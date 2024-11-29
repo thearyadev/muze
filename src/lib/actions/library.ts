@@ -1,7 +1,7 @@
-"use server";
+'use server'
 
-import { db } from "~/server/db";
-import { protectedAction } from "./helper";
+import { db } from '~/server/db'
+import { protectedAction } from './helper'
 import {
   albums,
   artists,
@@ -9,14 +9,14 @@ import {
   genres,
   genreTrack,
   tracks,
-} from "~/server/db/schema";
-import { and, asc, eq, getTableColumns, sql } from "drizzle-orm";
-import { env } from "~/env";
-import fs from "node:fs";
-import path from "node:path";
-import sharp from "sharp";
-import * as mm from "music-metadata";
-import type { PostgresJsDatabase } from "drizzle-orm/postgres-js";
+} from '~/server/db/schema'
+import { and, asc, eq, getTableColumns, sql } from 'drizzle-orm'
+import { env } from '~/env'
+import fs from 'node:fs'
+import path from 'node:path'
+import sharp from 'sharp'
+import * as mm from 'music-metadata'
+import type { PostgresJsDatabase } from 'drizzle-orm/postgres-js'
 
 export const allTracks = protectedAction(
   async (page: number, pageSize: number) => {
@@ -24,16 +24,16 @@ export const allTracks = protectedAction(
       .select({
         trackId: artistTracks.trackId,
         artistNames: sql<string>`string_agg(${artists.name}, ';')`.as(
-          "artistNames",
+          'artistNames',
         ),
         artistIds: sql<string>`string_agg(cast(${artists.id} AS TEXT), ';')`.as(
-          "artistIds",
+          'artistIds',
         ),
       })
       .from(artistTracks)
       .innerJoin(artists, eq(artistTracks.artistId, artists.id))
       .groupBy(artistTracks.trackId)
-      .as("artists");
+      .as('artists')
 
     const query = await db
       .selectDistinct({
@@ -49,60 +49,64 @@ export const allTracks = protectedAction(
       .innerJoin(albums, eq(tracks.albumId, albums.id))
       .innerJoin(artistTracks, eq(tracks.id, artistTracks.trackId))
       .innerJoin(subquery, eq(tracks.id, subquery.trackId))
-      .execute();
+      .execute()
     return {
       status_code: 200,
       content: query,
-    };
+    }
   },
-);
+)
 
 export const getTrack = protectedAction(async (trackId: string) => {
-  const trackFound = (await db
-    .select({
-      ...getTableColumns(tracks),
-      albumName: albums.name,
-      artistNames: sql<string>`string_agg(${artists.name}, ';') AS artistNames`,
-      artistIds: sql<string>`string_agg(cast(${artists.id} AS TEXT), ';')`.as(
-        "artistIds",
-      ),
-    })
-    .from(tracks)
-    .where(eq(tracks.id, trackId))
-    .innerJoin(albums, eq(tracks.albumId, albums.id))
-    .innerJoin(artistTracks, eq(artistTracks.trackId, tracks.id))
-    .innerJoin(artists, eq(artists.id, artistTracks.artistId))
-    .groupBy(tracks.id, albums.name)
-    .execute())[0] || null;
+  const trackFound =
+    (
+      await db
+        .select({
+          ...getTableColumns(tracks),
+          albumName: albums.name,
+          artistNames: sql<string>`string_agg(${artists.name}, ';') AS artistNames`,
+          artistIds:
+            sql<string>`string_agg(cast(${artists.id} AS TEXT), ';')`.as(
+              'artistIds',
+            ),
+        })
+        .from(tracks)
+        .where(eq(tracks.id, trackId))
+        .innerJoin(albums, eq(tracks.albumId, albums.id))
+        .innerJoin(artistTracks, eq(artistTracks.trackId, tracks.id))
+        .innerJoin(artists, eq(artists.id, artistTracks.artistId))
+        .groupBy(tracks.id, albums.name)
+        .execute()
+    )[0] || null
   if (!trackFound) {
     return {
       status_code: 404,
-      error: "Track not found",
+      error: 'Track not found',
     }
   }
   return {
     status_code: 200,
     content: trackFound,
-  };
-});
+  }
+})
 
 export const sync = protectedAction(async () => {
   async function getTracks(dir: string): Promise<string[]> {
-    let files: string[] = [];
-    const contents = fs.readdirSync(dir);
+    let files: string[] = []
+    const contents = fs.readdirSync(dir)
 
     for (const file of contents) {
-      const fullPath = path.join(dir, file);
-      const stats = await fs.promises.lstat(fullPath);
+      const fullPath = path.join(dir, file)
+      const stats = await fs.promises.lstat(fullPath)
 
       if (stats.isDirectory()) {
-        const subFiles = await getTracks(fullPath);
-        files = files.concat(subFiles);
+        const subFiles = await getTracks(fullPath)
+        files = files.concat(subFiles)
       } else {
-        files.push(fullPath);
+        files.push(fullPath)
       }
     }
-    return files;
+    return files
   }
   enum CoverSize {
     SMALL = 50,
@@ -120,33 +124,33 @@ export const sync = protectedAction(async () => {
     const coverPath = path.join(
       path.resolve(env.COVER_ART_PATH),
       `${metadata.MB_TRACK_ID}.${label}.jpg`,
-    );
+    )
     if (fs.existsSync(coverPath)) {
-      return;
+      return
     }
     await sharp(metadata.COVER)
       .resize(size, size)
       .jpeg({ quality: quality })
       .toFile(coverPath)
-      .catch();
+      .catch()
   }
 
   type Metadata = {
-    MB_ALBUM_ID?: string;
-    MB_TRACK_ID?: string;
-    MB_RELEASE_ID?: string;
-    MB_ARTIST_ID?: string[];
-    ARTIST_NAME?: string[];
-    ALBUM_NAME?: string;
-    ALBUM_ARTIST_NAME?: string;
-    TRACK_NAME?: string;
-    DURATION?: number;
-    TRACK_NUMBER?: number;
-    DISC_NUMBER?: number;
-    GENRE?: string[];
-    YEAR?: number;
-    COVER?: Buffer;
-  };
+    MB_ALBUM_ID?: string
+    MB_TRACK_ID?: string
+    MB_RELEASE_ID?: string
+    MB_ARTIST_ID?: string[]
+    ARTIST_NAME?: string[]
+    ALBUM_NAME?: string
+    ALBUM_ARTIST_NAME?: string
+    TRACK_NAME?: string
+    DURATION?: number
+    TRACK_NUMBER?: number
+    DISC_NUMBER?: number
+    GENRE?: string[]
+    YEAR?: number
+    COVER?: Buffer
+  }
 
   const METADATA_BLANK: Metadata = {
     MB_ALBUM_ID: undefined,
@@ -163,10 +167,10 @@ export const sync = protectedAction(async () => {
     TRACK_NAME: undefined,
     YEAR: undefined,
     COVER: undefined,
-  };
+  }
 
   async function upsert_genre_track(
-    db: PostgresJsDatabase<typeof import("~/server/db/schema")>,
+    db: PostgresJsDatabase<typeof import('~/server/db/schema')>,
     genreId: string,
     trackId: string,
   ) {
@@ -174,46 +178,46 @@ export const sync = protectedAction(async () => {
       await db.insert(genreTrack).values({
         genreId: genreId,
         trackId: trackId,
-      });
+      })
     } catch {
       // genre already exists
     }
   }
 
   async function upsert_genre_and_track_relation(
-    db: PostgresJsDatabase<typeof import("~/server/db/schema")>,
+    db: PostgresJsDatabase<typeof import('~/server/db/schema')>,
     metadata: Metadata,
     trackId: string,
   ) {
     for (const genre_name of metadata.GENRE || []) {
       if (genre_name.length > 20) {
         // improper tagging
-        return;
+        return
       }
       const genre_query = await db
         .select()
         .from(genres)
         .where(eq(genres.name, genre_name))
-        .execute();
-      const genreExisting = genre_query.find(() => true);
+        .execute()
+      const genreExisting = genre_query.find(() => true)
       if (genreExisting) {
-        return upsert_genre_track(db, genreExisting.id, trackId);
+        return upsert_genre_track(db, genreExisting.id, trackId)
       }
 
       const newRecord = await db
         .insert(genres)
         .values({ name: genre_name })
         .returning({ newRecordId: genres.id })
-        .execute();
-      const genreNew = newRecord.find(() => true);
+        .execute()
+      const genreNew = newRecord.find(() => true)
       if (genreNew) {
-        return upsert_genre_track(db, genreNew.newRecordId, trackId);
+        return upsert_genre_track(db, genreNew.newRecordId, trackId)
       }
     }
   }
 
   async function upsert_track(
-    db: PostgresJsDatabase<typeof import("~/server/db/schema")>,
+    db: PostgresJsDatabase<typeof import('~/server/db/schema')>,
     metadata: Metadata,
     albumId: string | null,
     path: string,
@@ -221,10 +225,10 @@ export const sync = protectedAction(async () => {
     const track_data = await db
       .select()
       .from(tracks)
-      .where(eq(tracks.mbid, metadata.MB_TRACK_ID || ""))
-      .execute();
+      .where(eq(tracks.mbid, metadata.MB_TRACK_ID || ''))
+      .execute()
 
-    const trackExisting = track_data.find(() => true);
+    const trackExisting = track_data.find(() => true)
     if (trackExisting) {
       // track exists in db
       await db
@@ -240,8 +244,8 @@ export const sync = protectedAction(async () => {
           mbid: metadata.MB_TRACK_ID,
         })
         .where(eq(tracks.id, trackExisting.id))
-        .execute();
-      return trackExisting.id;
+        .execute()
+      return trackExisting.id
     }
     // couldnt find in db, create a new one
     const newRecord = await db
@@ -257,37 +261,39 @@ export const sync = protectedAction(async () => {
         mbid: metadata.MB_TRACK_ID || crypto.randomUUID(),
       })
       .returning({ newRecordId: tracks.id })
-      .execute();
-    const trackNew = newRecord.find(() => true);
+      .execute()
+    const trackNew = newRecord.find(() => true)
     if (trackNew) {
-      return trackNew.newRecordId;
+      return trackNew.newRecordId
     }
-    throw Error("Failed to create track");
+    throw Error('Failed to create track')
   }
 
   async function upsert_albums(
-    db: PostgresJsDatabase<typeof import("~/server/db/schema")>,
+    db: PostgresJsDatabase<typeof import('~/server/db/schema')>,
     metadata: Metadata,
     albumArtistId: string,
   ): Promise<string | null> {
     if (
-      metadata.ALBUM_NAME === undefined || metadata.MB_ALBUM_ID === undefined
+      metadata.ALBUM_NAME === undefined ||
+      metadata.MB_ALBUM_ID === undefined
     ) {
-      return null;
+      return null
     }
 
     if (
-      metadata.ALBUM_NAME !== undefined && metadata.MB_ALBUM_ID === undefined
+      metadata.ALBUM_NAME !== undefined &&
+      metadata.MB_ALBUM_ID === undefined
     ) {
       // no mbid, but album name exists. match by name
       const albums_found = await db
         .select()
         .from(albums)
         .where(eq(albums.name, metadata.ALBUM_NAME))
-        .execute();
-      const albumExistingName = albums_found.find(() => true);
+        .execute()
+      const albumExistingName = albums_found.find(() => true)
       if (albumExistingName) {
-        return albumExistingName.id;
+        return albumExistingName.id
       }
     }
 
@@ -297,10 +303,10 @@ export const sync = protectedAction(async () => {
         .select()
         .from(albums)
         .where(eq(albums.mbid, metadata.MB_ALBUM_ID))
-        .execute();
-      const albumExistingMbid = albumRecord.find(() => true);
+        .execute()
+      const albumExistingMbid = albumRecord.find(() => true)
       if (albumExistingMbid) {
-        return albumExistingMbid.id;
+        return albumExistingMbid.id
       }
     }
 
@@ -313,20 +319,20 @@ export const sync = protectedAction(async () => {
         mbid: metadata.MB_ALBUM_ID,
       })
       .returning({ newRecordId: albums.id })
-      .execute();
-    return newRecord.find(() => true)?.newRecordId || null;
+      .execute()
+    return newRecord.find(() => true)?.newRecordId || null
   }
 
   async function create_cover_files(metadata: Metadata) {
     if (metadata.COVER) {
-      await createCoverFile(100, metadata, CoverSize.SMALL, "sm");
-      await createCoverFile(100, metadata, CoverSize.MEDIUM, "md");
-      await createCoverFile(100, metadata, CoverSize.LARGE, "lg");
-      await createCoverFile(100, metadata, CoverSize.XLARGE, "xl");
+      await createCoverFile(100, metadata, CoverSize.SMALL, 'sm')
+      await createCoverFile(100, metadata, CoverSize.MEDIUM, 'md')
+      await createCoverFile(100, metadata, CoverSize.LARGE, 'lg')
+      await createCoverFile(100, metadata, CoverSize.XLARGE, 'xl')
     }
   }
   async function upsert_artist_track_relation(
-    db: PostgresJsDatabase<typeof import("~/server/db/schema")>,
+    db: PostgresJsDatabase<typeof import('~/server/db/schema')>,
     artistIds: string[],
     trackId: string,
   ) {
@@ -342,7 +348,7 @@ export const sync = protectedAction(async () => {
             eq(artistTracks.artistId, artistId),
           ),
         )
-        .execute();
+        .execute()
       if (relationQuery.length === 0) {
         // relation doesnt exist
         await db
@@ -351,13 +357,13 @@ export const sync = protectedAction(async () => {
             artistId: artistId,
             trackId: trackId,
           })
-          .execute();
+          .execute()
       }
     }
   }
 
   async function upsert_artists(
-    db: PostgresJsDatabase<typeof import("~/server/db/schema")>,
+    db: PostgresJsDatabase<typeof import('~/server/db/schema')>,
     metadata: Metadata,
   ): Promise<string[]> {
     if (
@@ -368,27 +374,27 @@ export const sync = protectedAction(async () => {
       metadata.MB_ARTIST_ID.length === 0
     ) {
       throw Error(
-        "Error: The metadata for track is not vaild. Please tag using MusicBrainz Picard",
-      );
+        'Error: The metadata for track is not vaild. Please tag using MusicBrainz Picard',
+      )
     }
-    const artistIds = [];
+    const artistIds = []
 
     for (const [index, artistId] of metadata.MB_ARTIST_ID.entries()) {
-      const artistName = metadata.ARTIST_NAME[index];
+      const artistName = metadata.ARTIST_NAME[index]
 
       if (artistName === undefined) {
         console.warn(
-          "Artist MBID array has more elements than artist name array. Skipping artist. Mapping is ambiguous.",
-        );
-        continue;
+          'Artist MBID array has more elements than artist name array. Skipping artist. Mapping is ambiguous.',
+        )
+        continue
       }
 
       const artistQuery = await db
         .select()
         .from(artists)
         .where(eq(artists.mbid, artistId))
-        .execute();
-      const artistExisting = artistQuery.find(() => true);
+        .execute()
+      const artistExisting = artistQuery.find(() => true)
       if (artistExisting) {
         if (artistName !== artistExisting.name) {
           await db
@@ -397,10 +403,10 @@ export const sync = protectedAction(async () => {
               name: artistName,
             })
             .where(eq(artists.id, artistExisting.id))
-            .execute();
+            .execute()
         }
-        artistIds.push(artistExisting.id);
-        continue;
+        artistIds.push(artistExisting.id)
+        continue
       }
       const newRecord = await db
         .insert(artists)
@@ -409,28 +415,28 @@ export const sync = protectedAction(async () => {
           mbid: artistId,
         })
         .returning({ newRecordId: artists.id })
-        .execute();
-      const artistNew = newRecord.find(() => true);
+        .execute()
+      const artistNew = newRecord.find(() => true)
       if (artistNew) {
-        artistIds.push(artistNew.newRecordId);
+        artistIds.push(artistNew.newRecordId)
       }
     }
 
     if (artistIds.length === 0) {
-      throw Error("Failed to create artists, none were found");
+      throw Error('Failed to create artists, none were found')
     }
-    return artistIds;
+    return artistIds
   }
 
   async function extractMetadata(file_path: string): Promise<Metadata> {
-    let metadata: undefined | mm.IAudioMetadata;
+    let metadata: undefined | mm.IAudioMetadata
     try {
-      metadata = await mm.parseFile(file_path);
+      metadata = await mm.parseFile(file_path)
     } catch (e) {
-      return METADATA_BLANK;
+      return METADATA_BLANK
     }
     if (metadata === undefined) {
-      return METADATA_BLANK;
+      return METADATA_BLANK
     }
     return {
       MB_ALBUM_ID: metadata.common.musicbrainz_albumid,
@@ -455,33 +461,33 @@ export const sync = protectedAction(async () => {
       COVER: metadata.common.picture
         ? metadata.common.picture[0]?.data
         : undefined,
-    };
+    }
   }
 
-  await new Promise((resolve) => setTimeout(resolve, 900000));
+  await new Promise((resolve) => setTimeout(resolve, 900000))
 
-  const targetDirectory = env.MUSIC_PATH;
-  const tracks_fs = await getTracks(targetDirectory);
+  const targetDirectory = env.MUSIC_PATH
+  const tracks_fs = await getTracks(targetDirectory)
   for (const track_i of tracks_fs) {
     try {
-      const metadata = await extractMetadata(track_i);
-      const artist_ids = await upsert_artists(db, metadata);
+      const metadata = await extractMetadata(track_i)
+      const artist_ids = await upsert_artists(db, metadata)
       const album_id = await upsert_albums(
         db,
         metadata,
         // biome-ignore lint/style/noNonNullAssertion : the length of artist_ids is guaranteed to be > 0
         artist_ids.find(() => true)!,
-      ); // todo: determine album artist
-      const track_id = await upsert_track(db, metadata, album_id, track_i);
-      await upsert_genre_and_track_relation(db, metadata, track_id);
-      await upsert_artist_track_relation(db, artist_ids, track_id);
-      await create_cover_files(metadata);
+      ) // todo: determine album artist
+      const track_id = await upsert_track(db, metadata, album_id, track_i)
+      await upsert_genre_and_track_relation(db, metadata, track_id)
+      await upsert_artist_track_relation(db, artist_ids, track_id)
+      await create_cover_files(metadata)
     } catch (e) {
-      console.log("Failed to process track", track_i);
-      console.error(e);
+      console.log('Failed to process track', track_i)
+      console.error(e)
     }
   }
   return {
     status_code: 200,
-  };
-});
+  }
+})

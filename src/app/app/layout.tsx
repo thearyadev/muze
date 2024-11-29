@@ -13,7 +13,7 @@ export default async function AppLayout({
 }: {
   children: React.ReactNode
 }) {
-  const {content: username} = await getUsername()
+  const { content: username } = await getUsername()
   return (
     <PlayerContextProvider>
       <div className="flex">

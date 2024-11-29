@@ -9,7 +9,9 @@ import { useQueue } from './providers/queue'
 import Image from 'next/image'
 import type { allTracks } from '~/lib/actions/library'
 
-type TrackQuery = NonNullable<Awaited<ReturnType<typeof allTracks>>["content"]>[0];
+type TrackQuery = NonNullable<
+  Awaited<ReturnType<typeof allTracks>>['content']
+>[0]
 
 type TrackTableScrollPaginatedProps = {
   initialTracks: TrackQuery[]
