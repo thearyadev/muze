@@ -1,14 +1,11 @@
 import React, { useContext, createContext, useEffect } from 'react'
-import type { inferRouterOutputs } from '@trpc/server'
-import type { AppRouter } from '~/server/api/root'
 import { useTrack } from './track'
 import { usePlaying } from './playing'
 import { useLoop } from './loop'
+import { getTrack } from '~/lib/actions/library';
 
-type RouterOutput = inferRouterOutputs<AppRouter>
 
-type TrackQuery = RouterOutput['library']['getTrack']
-
+type TrackQuery =  NonNullable<NonNullable<Awaited<ReturnType<typeof getTrack>>>["content"]>
 const QueueContext = createContext<{
   queue: TrackQuery[]
   queuePlayed: TrackQuery[]
@@ -38,7 +35,7 @@ const QueueProvider: React.FC<{
       return
     }
     const nextTrack = queue.shift()
-    if (nextTrack) {
+    if (nextTrack && track) {
       setQueuePlayed([...queuePlayed, track])
       changeTrack(nextTrack, true)
     }
@@ -47,7 +44,7 @@ const QueueProvider: React.FC<{
   const previousTrack = () => {
     if (queuePlayed.length === 0) return
     const prevTrack = queuePlayed.pop()
-    if (prevTrack) {
+    if (prevTrack && track) {
       setQueue([track, ...queue])
       changeTrack(prevTrack, true)
     }
@@ -62,12 +59,12 @@ const QueueProvider: React.FC<{
   }
 
   const trackComplete = () => {
-    if (loop) {
+    if (loop && track) {
       changeTrack(track, true)
       return
     } // no need to add this to queue
 
-    setQueuePlayed([...queuePlayed, track])
+    setQueuePlayed([...queuePlayed, track!])
     if (queue.length === 0) {
       setPlayingFalse()
     }

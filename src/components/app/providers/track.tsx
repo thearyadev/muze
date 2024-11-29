@@ -3,7 +3,7 @@ import { usePosition } from './position'
 import { usePlaying } from './playing'
 import type { getTrack } from '~/lib/actions/library'
 
-type TrackQuery = NonNullable<Awaited<ReturnType<typeof getTrack>>['content']>
+type TrackQuery = NonNullable<Awaited<ReturnType<typeof getTrack>>['content']> | null;
 const TrackContext = createContext<{
   track: TrackQuery | null
   changeTrack: (track: TrackQuery, play: boolean) => void
