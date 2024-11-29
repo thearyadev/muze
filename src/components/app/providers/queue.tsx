@@ -2,10 +2,11 @@ import React, { useContext, createContext, useEffect } from 'react'
 import { useTrack } from './track'
 import { usePlaying } from './playing'
 import { useLoop } from './loop'
-import { getTrack } from '~/lib/actions/library';
+import type { getTrack } from '~/lib/actions/library'
 
-
-type TrackQuery =  NonNullable<NonNullable<Awaited<ReturnType<typeof getTrack>>>["content"]>
+type TrackQuery = NonNullable<
+  NonNullable<Awaited<ReturnType<typeof getTrack>>>['content']
+>
 const QueueContext = createContext<{
   queue: TrackQuery[]
   queuePlayed: TrackQuery[]
@@ -64,6 +65,7 @@ const QueueProvider: React.FC<{
       return
     } // no need to add this to queue
 
+    // biome-ignore lint/style/noNonNullAssertion : track is probably not null
     setQueuePlayed([...queuePlayed, track!])
     if (queue.length === 0) {
       setPlayingFalse()
