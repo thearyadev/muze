@@ -1,5 +1,4 @@
 'use client'
-import { signIn } from 'next-auth/react'
 import { Button } from '../ui/button'
 import { z } from 'zod'
 import { useForm } from 'react-hook-form'
@@ -31,11 +30,7 @@ export default function LoginForm() {
   })
 
   async function onSubmit(values: z.infer<typeof formSchema>) {
-    await signIn('credentials', {
-      username: values.username,
-      password: values.password,
-      callback: '/app/home',
-    })
+
   }
 
   return (
