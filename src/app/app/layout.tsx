@@ -5,7 +5,6 @@ import Sidebar from '~/components/app/sidebar'
 import PlayerContextProvider from '~/components/app/providers/player'
 
 import { redirect } from 'next/navigation'
-import { getServerAuthSession } from '~/server/auth'
 import PageWrapper from '~/components/app/page_wrapper'
 
 export default async function AppLayout({
@@ -13,16 +12,12 @@ export default async function AppLayout({
 }: {
   children: React.ReactNode
 }) {
-  const session = await getServerAuthSession()
-  if (!session) {
-    redirect('/login')
-  }
-
+  redirect("/login")
   return (
     <PlayerContextProvider>
       <div className="flex">
         <div className="hidden flex-none sm:block">
-          <Sidebar username={session.user.name || 'error'} />
+          <Sidebar username={'error'} />
         </div>
 
         <div className="grow">
