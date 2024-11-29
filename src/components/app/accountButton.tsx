@@ -12,10 +12,25 @@ import {
 } from '~/components/ui/dropdown-menu'
 import { useHotkeys } from '@mantine/hooks'
 import { toast } from 'sonner'
+import { logout } from '~/lib/actions/user'
+import { useRouter } from 'next/navigation'
+import { sync } from '~/lib/actions/library'
 export function AccountButton({ username }: { username: string }) {
-  const handleSignout = () => {}
+  const router = useRouter()
+  const handleSignout = () => {
+    logout().then(() => {
+      toast.success('Logged out')
+      router.push('/login')
+    })
+  }
 
-  const handleSync = async () => {}
+  const handleSync = async () => {
+      toast.promise(sync(), {
+      loading: 'Library sync in progress...',
+      success: 'Library sync complete. Please refresh the page.',
+      error: 'Library sync failed. Please check logs.',
+    })
+  }
   useHotkeys(
     [
       ['ctrl+shift+Q', handleSignout],
@@ -31,7 +46,7 @@ export function AccountButton({ username }: { username: string }) {
       </DropdownMenuTrigger>
       <DropdownMenuContent className="" side="top">
         <DropdownMenuGroup>
-          <DropdownMenuItem className="w-52">
+          <DropdownMenuItem className="w-52" onClick={handleSync}>
             Sync
             <DropdownMenuShortcut>⇧⌘P</DropdownMenuShortcut>
           </DropdownMenuItem>

@@ -6,18 +6,19 @@ import PlayerContextProvider from '~/components/app/providers/player'
 
 import { redirect } from 'next/navigation'
 import PageWrapper from '~/components/app/page_wrapper'
+import { getUsername } from '~/lib/actions/user'
 
 export default async function AppLayout({
   children,
 }: {
   children: React.ReactNode
 }) {
-  redirect("/login")
+  const {content: username} = await getUsername()
   return (
     <PlayerContextProvider>
       <div className="flex">
         <div className="hidden flex-none sm:block">
-          <Sidebar username={'error'} />
+          <Sidebar username={username || 'error'} />
         </div>
 
         <div className="grow">
