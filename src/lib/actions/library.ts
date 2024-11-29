@@ -2,13 +2,20 @@
 
 import { db } from "~/server/db";
 import { protectedAction } from "./helper";
-import { albums, artists, artistTracks, genres, genreTrack, tracks } from "~/server/db/schema";
+import {
+  albums,
+  artists,
+  artistTracks,
+  genres,
+  genreTrack,
+  tracks,
+} from "~/server/db/schema";
 import { and, asc, eq, getTableColumns, sql } from "drizzle-orm";
 import { env } from "~/env";
 import fs from "fs";
 import path from "path";
 import sharp from "sharp";
-import * as mm from 'music-metadata'
+import * as mm from "music-metadata";
 import { PostgresJsDatabase } from "drizzle-orm/postgres-js";
 
 export const allTracks = protectedAction(
@@ -49,6 +56,35 @@ export const allTracks = protectedAction(
     };
   },
 );
+
+export const getTrack = protectedAction(async (trackId: string) => {
+  const trackFound = (await db
+    .select({
+      ...getTableColumns(tracks),
+      albumName: albums.name,
+      artistNames: sql<string>`string_agg(${artists.name}, ';') AS artistNames`,
+      artistIds: sql<string>`string_agg(cast(${artists.id} AS TEXT), ';')`.as(
+        "artistIds",
+      ),
+    })
+    .from(tracks)
+    .where(eq(tracks.id, trackId))
+    .innerJoin(albums, eq(tracks.albumId, albums.id))
+    .innerJoin(artistTracks, eq(artistTracks.trackId, tracks.id))
+    .innerJoin(artists, eq(artists.id, artistTracks.artistId))
+    .groupBy(tracks.id, albums.name)
+    .execute())[0] || null;
+  if (!trackFound) {
+    return {
+      status_code: 404,
+      error: "Track not found",
+    }
+  }
+  return {
+    status_code: 200,
+    content: trackFound,
+  };
+});
 
 export const sync = protectedAction(async () => {
   async function getTracks(dir: string): Promise<string[]> {
@@ -422,10 +458,8 @@ export const sync = protectedAction(async () => {
     };
   }
 
+  await new Promise((resolve) => setTimeout(resolve, 900000));
 
-  await new Promise(resolve => setTimeout(resolve, 900000))
-
-  
   const targetDirectory = env.MUSIC_PATH;
   const tracks_fs = await getTracks(targetDirectory);
   for (const track_i of tracks_fs) {

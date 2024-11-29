@@ -2,8 +2,8 @@
 
 import { existsSync, statSync, createReadStream } from 'node:fs'
 import { type NextRequest, NextResponse } from 'next/server'
-import { api } from '~/trpc/server'
 import mime from 'mime'
+import { getTrack } from '~/lib/actions/library'
 
 interface TrackData {
   path: string
@@ -17,7 +17,7 @@ export async function GET(request: NextRequest): Promise<NextResponse> {
       status: 404,
     })
   }
-  const track_data: TrackData | null = await api.library.getTrack(trackId)
+  const {content: track_data} = await getTrack(trackId)
   if (!track_data) {
     return new NextResponse('Not Found', {
       status: 404,

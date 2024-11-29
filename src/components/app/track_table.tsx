@@ -1,8 +1,5 @@
 'use client'
-import type { inferRouterOutputs } from '@trpc/server'
-import type { AppRouter } from '~/server/api/root'
 import { useEffect, useRef, useState } from 'react'
-import { api } from '~/trpc/react'
 import { ScrollArea } from '~/components/ui/scroll-area'
 
 import { Separator } from '~/components/ui/separator'
@@ -10,9 +7,9 @@ import Link from 'next/link'
 import { useTrack } from './providers/track'
 import { useQueue } from './providers/queue'
 import Image from 'next/image'
-type RouterOutput = inferRouterOutputs<AppRouter>
+import { allTracks } from '~/lib/actions/library'
 
-type TrackQuery = RouterOutput['library']['getTrack']
+type TrackQuery = NonNullable<Awaited<ReturnType<typeof allTracks>>["content"]>[0];
 
 type TrackTableScrollPaginatedProps = {
   initialTracks: TrackQuery[]
@@ -41,7 +38,7 @@ function TrackCell({
         <div>
           <Image
             alt={track?.name || 'Track Cover'}
-            src={`/api/covers?id=${track?.id}&size=sm`}
+            src={`/api/library/covers?id=${track?.id}&size=sm`}
             className="h-10 w-10 rounded-md"
             loading={index <= 20 ? 'eager' : 'lazy'}
             width={40}
@@ -97,10 +94,10 @@ export function TrackTableScrollPaginated(
   const { addTrackPrevious } = useQueue()!
   // biome-ignore lint/style/noNonNullAssertion :
   const { track: currentTrack } = useTrack()!
-  const { data } = api.library.allSongs.useQuery({
-    page: page,
-    pageSize: props.pageSize,
-  })
+  // const { data } = api.library.allSongs.useQuery({
+  //   page: page,
+  //   pageSize: props.pageSize,
+  // })
   const handleTrackSwitch = (track: TrackQuery) => {
     if (currentTrack) addTrackPrevious(currentTrack)
     changeTrack(track, true)
@@ -114,9 +111,9 @@ export function TrackTableScrollPaginated(
     }
   }
 
-  useEffect(() => {
-    if (data) setTracks((prevTracks) => [...prevTracks, ...data])
-  }, [data])
+  // useEffect(() => {
+  //   if (data) setTracks((prevTracks) => [...prevTracks, ...data])
+  // }, [data])
   console.log('renduh')
   return (
     <>
