@@ -16,12 +16,12 @@ export default async function AllSongsPage() {
   return (
     <>
       <PageHeading>All Tracks</PageHeading>
+      <TrackTableScrollPaginated
+        initialTracks={tracks.content || []}
+        page={querySettings.page}
+        pageSize={querySettings.pageSize}
+      />
     </>
   )
 }
 
-      // <TrackTableScrollPaginated
-      //   initialTracks={tracks}
-      //   page={querySettings.page}
-      //   pageSize={querySettings.pageSize}
-      // />
