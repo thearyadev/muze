@@ -21,7 +21,7 @@ export async function GET(request: NextRequest): Promise<NextResponse> {
       status: 404,
     })
   }
-  const {content: track_data}= await getTrack(trackId)
+  const { content: track_data } = await getTrack(trackId)
 
   if (!track_data) {
     return new NextResponse('Not Found', {

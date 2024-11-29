@@ -24,7 +24,7 @@ export default function RootLayout({
     <html lang="en" className="dark">
       <body className={`font-sans ${inter.variable}`}>
         <Toaster richColors className="bg-zinc-900 text-white" />
-        {children} 
+        {children}
       </body>
     </html>
   )

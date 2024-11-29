@@ -3,7 +3,7 @@ import { usePosition } from './position'
 import { usePlaying } from './playing'
 import type { getTrack } from '~/lib/actions/library'
 
-type TrackQuery = NonNullable<Awaited<ReturnType<typeof getTrack>>["content"]>;
+type TrackQuery = NonNullable<Awaited<ReturnType<typeof getTrack>>['content']>
 const TrackContext = createContext<{
   track: TrackQuery | null
   changeTrack: (track: TrackQuery, play: boolean) => void
@@ -24,7 +24,9 @@ const TrackProvider: React.FC<{
     playing.setPlayingFalse()
     position.changePosition([0])
     if (!audioRef.current) return
-    audioRef.current.src = newTrack ? `/api/library/track_data?id=${newTrack?.id}` : ''
+    audioRef.current.src = newTrack
+      ? `/api/library/track_data?id=${newTrack?.id}`
+      : ''
     localStorage.setItem('track', JSON.stringify(newTrack))
 
     if (play) {
@@ -43,12 +45,30 @@ const TrackProvider: React.FC<{
       artist: newTrack?.artistNames.replace(';', ', ') as string,
       album: newTrack?.albumName as string,
       artwork: [
-        { src: `/api/libraru/covers?id=${newTrack?.id}&size=sm`, sizes: '96x96' },
-        { src: `/api/library/covers?id=${newTrack?.id}&size=md`, sizes: '128x128' },
-        { src: `/api/libray/covers?id=${newTrack?.id}&size=lg`, sizes: '192x192' },
-        { src: `/api/library/covers?id=${newTrack?.id}&size=xl`, sizes: '256x256' },
-        { src: `/api/library/covers?id=${newTrack?.id}&size=xl`, sizes: '384x384' },
-        { src: `/api/library/covers?id=${newTrack?.id}&size=xl`, sizes: '512x512' },
+        {
+          src: `/api/libraru/covers?id=${newTrack?.id}&size=sm`,
+          sizes: '96x96',
+        },
+        {
+          src: `/api/library/covers?id=${newTrack?.id}&size=md`,
+          sizes: '128x128',
+        },
+        {
+          src: `/api/libray/covers?id=${newTrack?.id}&size=lg`,
+          sizes: '192x192',
+        },
+        {
+          src: `/api/library/covers?id=${newTrack?.id}&size=xl`,
+          sizes: '256x256',
+        },
+        {
+          src: `/api/library/covers?id=${newTrack?.id}&size=xl`,
+          sizes: '384x384',
+        },
+        {
+          src: `/api/library/covers?id=${newTrack?.id}&size=xl`,
+          sizes: '512x512',
+        },
       ],
     })
   }

@@ -25,7 +25,7 @@ export function AccountButton({ username }: { username: string }) {
   }
 
   const handleSync = async () => {
-      toast.promise(sync(), {
+    toast.promise(sync(), {
       loading: 'Library sync in progress...',
       success: 'Library sync complete. Please refresh the page.',
       error: 'Library sync failed. Please check logs.',

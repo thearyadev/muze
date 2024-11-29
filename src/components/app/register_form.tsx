@@ -32,11 +32,8 @@ export default function RegisterForm() {
   })
 
   async function onSubmit(values: z.infer<typeof formSchema>) {
-    await register(
-      values.username,
-     values.password,
-    )
-    router.push("login")
+    await register(values.username, values.password)
+    router.push('login')
   }
 
   return (
