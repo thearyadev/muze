@@ -12,11 +12,11 @@ import {
 } from "~/server/db/schema";
 import { and, asc, eq, getTableColumns, sql } from "drizzle-orm";
 import { env } from "~/env";
-import fs from "fs";
-import path from "path";
+import fs from "node:fs";
+import path from "node:path";
 import sharp from "sharp";
 import * as mm from "music-metadata";
-import { PostgresJsDatabase } from "drizzle-orm/postgres-js";
+import type { PostgresJsDatabase } from "drizzle-orm/postgres-js";
 
 export const allTracks = protectedAction(
   async (page: number, pageSize: number) => {
