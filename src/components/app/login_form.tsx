@@ -12,7 +12,8 @@ import {
   FormMessage,
 } from '~/components/ui/form'
 import { Input } from '~/components/ui/input'
-import { useRouter } from 'next/navigation'
+import { redirect, useRouter } from 'next/navigation'
+import { authorize, getUsername, isAuthorized } from '~/lib/actions/user'
 
 const formSchema = z.object({
   username: z.string().min(2).max(256),
@@ -30,7 +31,10 @@ export default function LoginForm() {
   })
 
   async function onSubmit(values: z.infer<typeof formSchema>) {
-
+    const auth = await authorize(values.username, values.password)
+    if (auth.status_code === 200) {
+      router.push("/app/home")
+    }
   }
 
   return (

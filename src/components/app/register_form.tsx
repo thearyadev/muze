@@ -14,7 +14,7 @@ import {
 } from '~/components/ui/form'
 import { Input } from '~/components/ui/input'
 import { useRouter } from 'next/navigation'
-import { api } from '~/trpc/react'
+import { register } from '~/lib/actions/user'
 
 const formSchema = z.object({
   username: z.string().min(2).max(256),
@@ -23,7 +23,6 @@ const formSchema = z.object({
 
 export default function RegisterForm() {
   const router = useRouter()
-  const registerMutation = api.user.register.useMutation()
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
     defaultValues: {
@@ -33,16 +32,12 @@ export default function RegisterForm() {
   })
 
   async function onSubmit(values: z.infer<typeof formSchema>) {
-    registerMutation.mutate({
-      username: values.username,
-      password: values.password,
-    })
+    await register(
+      values.username,
+     values.password,
+    )
+    router.push("login")
   }
-  useEffect(() => {
-    if (registerMutation.isSuccess) {
-      router.push('/login')
-    }
-  }, [registerMutation, router])
 
   return (
     <Form {...form}>
