@@ -1,5 +1,5 @@
 import type { APIResponse } from '../types'
-import { cookies } from 'next/headers';
+import { cookies } from 'next/headers'
 import * as jwt from 'jsonwebtoken'
 
 export const key = 'meow'

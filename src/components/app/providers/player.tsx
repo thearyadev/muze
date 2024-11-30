@@ -98,7 +98,8 @@ export default function PlayerContextProvider({
 }: {
   children: React.ReactNode
 }) {
-  const audioRef = useRef<HTMLAudioElement>(null!) // the moment it loads, its not null.
+  // biome-ignore lint/style/noNonNullAssertion : the moment it loads, its not null.
+  const audioRef = useRef<HTMLAudioElement>(null!)
   return (
     <PlayingProvider audioRef={audioRef}>
       <LoopProvider>
