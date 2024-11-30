@@ -10,7 +10,7 @@ const PlayingContext = createContext<{
 const usePlaying = () => useContext(PlayingContext)
 
 const PlayingProvider: React.FC<{
-  audioRef: React.RefObject<HTMLAudioElement>
+  audioRef: React.RefObject<HTMLAudioElement> 
   children: React.ReactNode
 }> = ({ audioRef, children }) => {
   const [playing, setPlaying] = useState(false)

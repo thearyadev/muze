@@ -1,11 +1,11 @@
 import type { APIResponse } from '../types'
-import { cookies } from 'next/headers'
+import { cookies } from 'next/headers';
 import * as jwt from 'jsonwebtoken'
 
 export const key = 'meow'
 
-export function isAuthorized(): APIResponse<string> {
-  const cookiestore = cookies()
+export async function isAuthorized(): Promise<APIResponse<string>> {
+  const cookiestore = await cookies()
   const token = cookiestore.get('auth')
   if (!token?.value) {
     return {
@@ -31,7 +31,7 @@ export const protectedAction = <T, Args extends any[]>(
   fn: (...args: Args) => Promise<APIResponse<T>>,
 ) => {
   return async (...args: Args): Promise<APIResponse<T>> => {
-    const isAuthenticated = isAuthorized()
+    const isAuthenticated = await isAuthorized()
     if (isAuthenticated.status_code !== 200) {
       return {
         status_code: 401,

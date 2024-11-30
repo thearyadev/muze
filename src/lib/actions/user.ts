@@ -13,7 +13,7 @@ import {
 
 export const authorize = openAction(
   async (username: string, password: string) => {
-    const cookiestore = cookies()
+    const cookiestore = await cookies()
     const user = (
       await db.select().from(users).where(eq(users.username, username))
     )[0]
@@ -43,15 +43,15 @@ export const register = openAction(
 )
 
 export const isAuthorized = openAction(async () => {
-  return _isAuthorized()
+  return await _isAuthorized()
 })
 
 export const getUsername = protectedAction(async () => {
-  return _isAuthorized()
+  return await isAuthorized()
 })
 
 export const logout = protectedAction(async () => {
-  const cookiestore = cookies()
+  const cookiestore = await cookies()
   cookiestore.set('auth', '')
   return {
     status_code: 200,

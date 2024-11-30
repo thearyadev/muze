@@ -98,7 +98,7 @@ export default function PlayerContextProvider({
 }: {
   children: React.ReactNode
 }) {
-  const audioRef = useRef<HTMLAudioElement>(null)
+  const audioRef = useRef<HTMLAudioElement>(null!) // the moment it loads, its not null.
   return (
     <PlayingProvider audioRef={audioRef}>
       <LoopProvider>

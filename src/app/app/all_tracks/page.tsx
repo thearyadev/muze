@@ -1,4 +1,3 @@
-import { useSearchParams } from 'next/navigation'
 import PageHeading from '~/components/app/page_heading'
 import { TrackTableScrollPaginated } from '~/components/app/track_table'
 import { allTracks } from '~/lib/actions/library'
@@ -11,7 +10,6 @@ export default async function AllSongsPage() {
     pageSize: 5000,
   }
   const tracks = await allTracks(querySettings.page, querySettings.pageSize)
-  console.log(tracks)
 
   return (
     <>
