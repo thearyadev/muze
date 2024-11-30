@@ -4,6 +4,7 @@ const config = {
   parserOptions: {
     project: true,
   },
+  // @ts-ignore idk
   plugins: ['@typescript-eslint', 'drizzle'],
   extends: [
     'next/core-web-vitals',

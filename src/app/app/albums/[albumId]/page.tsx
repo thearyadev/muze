@@ -1,12 +1,8 @@
-import Image from 'next/image'
-import PageHeading from '~/components/app/page_heading'
-import { TrackTableScroll } from '~/components/app/track_table'
+// import Image from 'next/image'
+// import PageHeading from '~/components/app/page_heading'
+// import { TrackTableScroll } from '~/components/app/track_table'
 
-export default async function Home({
-  params,
-}: {
-  params: { albumId: string }
-}) {
+export default async function Home() {
   // const albumQuery = await api.library.albumDetail(params.albumId)
   // const tracks = albumQuery?.tracks || []
   // return (
