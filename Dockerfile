@@ -9,7 +9,7 @@ WORKDIR /app
 COPY package.json package-lock.json ./
 
 RUN  npm i --legacy-peer-deps
-RUN npm install --save-exact --save-dev @types/react --legacy-peer-deps
+
 
 # Build
 FROM --platform=linux/amd64 node:20.14-alpine AS builder
@@ -25,6 +25,7 @@ COPY . .
 ENV NEXT_TELEMETRY_DISABLED 1
 
 
+RUN npm install --save-exact --save-dev @types/react --legacy-peer-deps
 RUN npm run build
 
 # Runner
