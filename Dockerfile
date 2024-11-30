@@ -8,7 +8,7 @@ WORKDIR /app
 
 COPY package.json package-lock.json ./
 
-RUN  npm i 
+RUN  npm i --legacy-peer-deps
 
 # Build
 FROM --platform=linux/amd64 node:20.14-alpine AS builder
