@@ -464,7 +464,6 @@ export const sync = protectedAction(async () => {
     }
   }
 
-  await new Promise((resolve) => setTimeout(resolve, 900000))
 
   const targetDirectory = env.MUSIC_PATH
   const tracks_fs = await getTracks(targetDirectory)
