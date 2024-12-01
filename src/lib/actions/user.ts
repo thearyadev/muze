@@ -24,7 +24,7 @@ export const authorize = openAction(
       }
     }
     const token = jwt.sign(username, key)
-    cookiestore.set('auth', token)
+    cookiestore.set('auth', token, {secure: true, sameSite: "strict", httpOnly: true})
     return {
       status_code: 200,
       content: token,
