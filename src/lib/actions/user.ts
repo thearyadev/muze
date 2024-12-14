@@ -24,7 +24,12 @@ export const authorize = openAction(
       }
     }
     const token = jwt.sign(username, key)
-    cookiestore.set('auth', token, {secure: process.env.NODE_ENV === 'production', sameSite: "strict", httpOnly: true, maxAge: 60 * 60 * 24 * 365})
+    cookiestore.set('auth', token, {
+      secure: process.env.NODE_ENV === 'production',
+      sameSite: 'strict',
+      httpOnly: true,
+      maxAge: 60 * 60 * 24 * 365,
+    })
     return {
       status_code: 200,
       content: token,
@@ -61,51 +66,65 @@ export const logout = protectedAction(async () => {
 
 export const setCurrentTrack = protectedAction(async (trackId?: string) => {
   // find user
-  const username = (await getUsername()).content ?? ""
+  const username = (await getUsername()).content ?? ''
   const user = await db.select().from(users).where(eq(users.username, username))
   if (!user) {
     return {
       status_code: 401,
-      error: "Unable to find user.",
+      error: 'Unable to find user.',
     }
   }
-  await db.update(users).set({currentTrackId: trackId, currentTrackPosition: 0}).where(eq(users.username, username))
+  await db
+    .update(users)
+    .set({ currentTrackId: trackId, currentTrackPosition: 0 })
+    .where(eq(users.username, username))
 
   return {
     status_code: 200,
     content: undefined,
   }
 })
-export const setCurrentTrackPosition = protectedAction(async (position: number) => {
-  // find user
-  const username = (await getUsername()).content ?? ""
-  const user = await db.select().from(users).where(eq(users.username, username))
-  if (!user[0]) {
+export const setCurrentTrackPosition = protectedAction(
+  async (position: number) => {
+    // find user
+    const username = (await getUsername()).content ?? ''
+    const user = await db
+      .select()
+      .from(users)
+      .where(eq(users.username, username))
+    if (!user[0]) {
+      return {
+        status_code: 401,
+        error: 'Unable to find user.',
+      }
+    }
+    await db
+      .update(users)
+      .set({ currentTrackPosition: Math.floor(position) })
+      .where(eq(users.username, user[0].username))
+
     return {
-      status_code: 401,
-      error: "Unable to find user.",
+      status_code: 200,
+      content: undefined,
     }
-  }
-  await db.update(users).set({currentTrackPosition: Math.floor(position)}).where(eq(users.username, user[0].username))
-
-  return {
-    status_code: 200,
-    content: undefined,
-  }
-})
+  },
+)
 
 export const getCurrentTrack = protectedAction(async () => {
   // find user
-  const username = (await getUsername()).content ?? ""
+  const username = (await getUsername()).content ?? ''
   const user = await db.select().from(users).where(eq(users.username, username))
   if (!user[0]) {
     return {
       status_code: 401,
-      error: "Unable to find user.",
+      error: 'Unable to find user.',
     }
   }
   return {
     status_code: 200,
-    content: {setCurrentTrackId: user[0].currentTrackId, setCurrentTrackPosition: user[0].currentTrackPosition},
+    content: {
+      setCurrentTrackId: user[0].currentTrackId,
+      setCurrentTrackPosition: user[0].currentTrackPosition,
+    },
   }
 })

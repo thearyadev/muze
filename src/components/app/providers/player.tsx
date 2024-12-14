@@ -6,8 +6,7 @@ import { PositionProvider, usePosition } from './position'
 import { TrackProvider, useTrack } from './track'
 import { VolumeProvider, useVolume } from './volume'
 import { QueueProvider, useQueue } from './queue'
-import { getCurrentTrack } from '~/lib/actions/user'
-import { getTrack } from '~/lib/actions/library'
+import type { getTrack } from '~/lib/actions/library'
 
 type TrackQuery = NonNullable<Awaited<ReturnType<typeof getTrack>>['content']>
 
@@ -15,7 +14,7 @@ function ContextRichAudio({
   audioRef,
 }: {
   audioRef: React.RefObject<HTMLAudioElement>
-  }) {
+}) {
   // biome-ignore lint/style/noNonNullAssertion :
   const { setMaxPosition, reactPosition } = usePosition()!
   // biome-ignore lint/style/noNonNullAssertion :
@@ -61,7 +60,10 @@ function ContextRichOverlay() {
     />
   )
 }
-function ContextRichLocalStorageLoader({startingTrack, startingPosition}: {startingTrack: TrackQuery | null, startingPosition: number}) {
+function ContextRichLocalStorageLoader({
+  startingTrack,
+  startingPosition,
+}: { startingTrack: TrackQuery | null; startingPosition: number }) {
   // biome-ignore lint/style/noNonNullAssertion :
   const { changeTrack } = useTrack()!
   // biome-ignore lint/style/noNonNullAssertion :
@@ -95,10 +97,12 @@ function ContextRichLocalStorageLoader({startingTrack, startingPosition}: {start
 export default function PlayerContextProvider({
   children,
   currentTrack,
-  currentTrackPosition
+  currentTrackPosition,
 }: {
-  children: React.ReactNode,
-  currentTrack: NonNullable<Awaited<ReturnType<typeof getTrack>>['content']> | null,
+  children: React.ReactNode
+  currentTrack: NonNullable<
+    Awaited<ReturnType<typeof getTrack>>['content']
+  > | null
   currentTrackPosition: number
 }) {
   // biome-ignore lint/style/noNonNullAssertion : the moment it loads, its not null.
@@ -112,7 +116,10 @@ export default function PlayerContextProvider({
               <QueueProvider>
                 <ContextRichAudio audioRef={audioRef} />
                 <ContextRichOverlay />
-                <ContextRichLocalStorageLoader startingTrack={currentTrack} startingPosition={currentTrackPosition} />
+                <ContextRichLocalStorageLoader
+                  startingTrack={currentTrack}
+                  startingPosition={currentTrackPosition}
+                />
                 {children}
               </QueueProvider>
             </TrackProvider>

@@ -23,7 +23,9 @@ export const users = createTable('user', {
     .$defaultFn(() => crypto.randomUUID()),
   username: varchar('username', { length: 256 }).notNull(),
   password: varchar('password', { length: 256 }).notNull(),
-  currentTrackId: varchar('current_track_id', { length: 256 }).references(() => tracks.id),
+  currentTrackId: varchar('current_track_id', { length: 256 }).references(
+    () => tracks.id,
+  ),
   currentTrackPosition: integer('current_track_position'),
 })
 

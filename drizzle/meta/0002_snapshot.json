@@ -39,12 +39,8 @@
           "name": "muze_album_artist_id_muze_artist_id_fk",
           "tableFrom": "muze_album",
           "tableTo": "muze_artist",
-          "columnsFrom": [
-            "artist_id"
-          ],
-          "columnsTo": [
-            "id"
-          ],
+          "columnsFrom": ["artist_id"],
+          "columnsTo": ["id"],
           "onDelete": "no action",
           "onUpdate": "no action"
         }
@@ -84,12 +80,8 @@
           "name": "muze_artist_track_artist_id_muze_artist_id_fk",
           "tableFrom": "muze_artist_track",
           "tableTo": "muze_artist",
-          "columnsFrom": [
-            "artist_id"
-          ],
-          "columnsTo": [
-            "id"
-          ],
+          "columnsFrom": ["artist_id"],
+          "columnsTo": ["id"],
           "onDelete": "no action",
           "onUpdate": "no action"
         },
@@ -97,12 +89,8 @@
           "name": "muze_artist_track_track_id_muze_track_id_fk",
           "tableFrom": "muze_artist_track",
           "tableTo": "muze_track",
-          "columnsFrom": [
-            "track_id"
-          ],
-          "columnsTo": [
-            "id"
-          ],
+          "columnsFrom": ["track_id"],
+          "columnsTo": ["id"],
           "onDelete": "no action",
           "onUpdate": "no action"
         }
@@ -167,12 +155,8 @@
           "name": "muze_genre_track_track_id_muze_track_id_fk",
           "tableFrom": "muze_genre_track",
           "tableTo": "muze_track",
-          "columnsFrom": [
-            "track_id"
-          ],
-          "columnsTo": [
-            "id"
-          ],
+          "columnsFrom": ["track_id"],
+          "columnsTo": ["id"],
           "onDelete": "no action",
           "onUpdate": "no action"
         },
@@ -180,12 +164,8 @@
           "name": "muze_genre_track_genre_id_muze_genre_id_fk",
           "tableFrom": "muze_genre_track",
           "tableTo": "muze_genre",
-          "columnsFrom": [
-            "genre_id"
-          ],
-          "columnsTo": [
-            "id"
-          ],
+          "columnsFrom": ["genre_id"],
+          "columnsTo": ["id"],
           "onDelete": "no action",
           "onUpdate": "no action"
         }
@@ -193,10 +173,7 @@
       "compositePrimaryKeys": {
         "muze_genre_track_track_id_genre_id_pk": {
           "name": "muze_genre_track_track_id_genre_id_pk",
-          "columns": [
-            "track_id",
-            "genre_id"
-          ]
+          "columns": ["track_id", "genre_id"]
         }
       },
       "uniqueConstraints": {},
@@ -258,12 +235,8 @@
           "name": "muze_playlist_track_playlist_id_muze_playlist_id_fk",
           "tableFrom": "muze_playlist_track",
           "tableTo": "muze_playlist",
-          "columnsFrom": [
-            "playlist_id"
-          ],
-          "columnsTo": [
-            "id"
-          ],
+          "columnsFrom": ["playlist_id"],
+          "columnsTo": ["id"],
           "onDelete": "no action",
           "onUpdate": "no action"
         },
@@ -271,12 +244,8 @@
           "name": "muze_playlist_track_track_id_muze_track_id_fk",
           "tableFrom": "muze_playlist_track",
           "tableTo": "muze_track",
-          "columnsFrom": [
-            "track_id"
-          ],
-          "columnsTo": [
-            "id"
-          ],
+          "columnsFrom": ["track_id"],
+          "columnsTo": ["id"],
           "onDelete": "no action",
           "onUpdate": "no action"
         }
@@ -383,12 +352,8 @@
           "name": "muze_track_album_id_muze_album_id_fk",
           "tableFrom": "muze_track",
           "tableTo": "muze_album",
-          "columnsFrom": [
-            "album_id"
-          ],
-          "columnsTo": [
-            "id"
-          ],
+          "columnsFrom": ["album_id"],
+          "columnsTo": ["id"],
           "onDelete": "no action",
           "onUpdate": "no action"
         }
@@ -434,12 +399,8 @@
           "name": "muze_user_listen_user_id_muze_user_id_fk",
           "tableFrom": "muze_user_listen",
           "tableTo": "muze_user",
-          "columnsFrom": [
-            "user_id"
-          ],
-          "columnsTo": [
-            "id"
-          ],
+          "columnsFrom": ["user_id"],
+          "columnsTo": ["id"],
           "onDelete": "no action",
           "onUpdate": "no action"
         },
@@ -447,12 +408,8 @@
           "name": "muze_user_listen_track_id_muze_track_id_fk",
           "tableFrom": "muze_user_listen",
           "tableTo": "muze_track",
-          "columnsFrom": [
-            "track_id"
-          ],
-          "columnsTo": [
-            "id"
-          ],
+          "columnsFrom": ["track_id"],
+          "columnsTo": ["id"],
           "onDelete": "no action",
           "onUpdate": "no action"
         }
@@ -492,12 +449,8 @@
           "name": "muze_user_playlist_user_id_muze_user_id_fk",
           "tableFrom": "muze_user_playlist",
           "tableTo": "muze_user",
-          "columnsFrom": [
-            "user_id"
-          ],
-          "columnsTo": [
-            "id"
-          ],
+          "columnsFrom": ["user_id"],
+          "columnsTo": ["id"],
           "onDelete": "no action",
           "onUpdate": "no action"
         },
@@ -505,12 +458,8 @@
           "name": "muze_user_playlist_playlist_id_muze_playlist_id_fk",
           "tableFrom": "muze_user_playlist",
           "tableTo": "muze_playlist",
-          "columnsFrom": [
-            "playlist_id"
-          ],
-          "columnsTo": [
-            "id"
-          ],
+          "columnsFrom": ["playlist_id"],
+          "columnsTo": ["id"],
           "onDelete": "no action",
           "onUpdate": "no action"
         }
@@ -562,12 +511,8 @@
           "name": "muze_user_current_track_id_muze_track_id_fk",
           "tableFrom": "muze_user",
           "tableTo": "muze_track",
-          "columnsFrom": [
-            "current_track_id"
-          ],
-          "columnsTo": [
-            "id"
-          ],
+          "columnsFrom": ["current_track_id"],
+          "columnsTo": ["id"],
           "onDelete": "no action",
           "onUpdate": "no action"
         }

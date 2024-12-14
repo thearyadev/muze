@@ -36,13 +36,9 @@
         "muze_album_artist_id_muze_artist_id_fk": {
           "name": "muze_album_artist_id_muze_artist_id_fk",
           "tableFrom": "muze_album",
-          "columnsFrom": [
-            "artist_id"
-          ],
+          "columnsFrom": ["artist_id"],
           "tableTo": "muze_artist",
-          "columnsTo": [
-            "id"
-          ],
+          "columnsTo": ["id"],
           "onUpdate": "no action",
           "onDelete": "no action"
         }
@@ -81,26 +77,18 @@
         "muze_artist_track_artist_id_muze_artist_id_fk": {
           "name": "muze_artist_track_artist_id_muze_artist_id_fk",
           "tableFrom": "muze_artist_track",
-          "columnsFrom": [
-            "artist_id"
-          ],
+          "columnsFrom": ["artist_id"],
           "tableTo": "muze_artist",
-          "columnsTo": [
-            "id"
-          ],
+          "columnsTo": ["id"],
           "onUpdate": "no action",
           "onDelete": "no action"
         },
         "muze_artist_track_track_id_muze_track_id_fk": {
           "name": "muze_artist_track_track_id_muze_track_id_fk",
           "tableFrom": "muze_artist_track",
-          "columnsFrom": [
-            "track_id"
-          ],
+          "columnsFrom": ["track_id"],
           "tableTo": "muze_track",
-          "columnsTo": [
-            "id"
-          ],
+          "columnsTo": ["id"],
           "onUpdate": "no action",
           "onDelete": "no action"
         }
@@ -195,26 +183,18 @@
         "muze_playlist_track_playlist_id_muze_playlist_id_fk": {
           "name": "muze_playlist_track_playlist_id_muze_playlist_id_fk",
           "tableFrom": "muze_playlist_track",
-          "columnsFrom": [
-            "playlist_id"
-          ],
+          "columnsFrom": ["playlist_id"],
           "tableTo": "muze_playlist",
-          "columnsTo": [
-            "id"
-          ],
+          "columnsTo": ["id"],
           "onUpdate": "no action",
           "onDelete": "no action"
         },
         "muze_playlist_track_track_id_muze_track_id_fk": {
           "name": "muze_playlist_track_track_id_muze_track_id_fk",
           "tableFrom": "muze_playlist_track",
-          "columnsFrom": [
-            "track_id"
-          ],
+          "columnsFrom": ["track_id"],
           "tableTo": "muze_track",
-          "columnsTo": [
-            "id"
-          ],
+          "columnsTo": ["id"],
           "onUpdate": "no action",
           "onDelete": "no action"
         }
@@ -320,13 +300,9 @@
         "muze_track_album_id_muze_album_id_fk": {
           "name": "muze_track_album_id_muze_album_id_fk",
           "tableFrom": "muze_track",
-          "columnsFrom": [
-            "album_id"
-          ],
+          "columnsFrom": ["album_id"],
           "tableTo": "muze_album",
-          "columnsTo": [
-            "id"
-          ],
+          "columnsTo": ["id"],
           "onUpdate": "no action",
           "onDelete": "no action"
         }
@@ -371,26 +347,18 @@
         "muze_user_listen_user_id_muze_user_id_fk": {
           "name": "muze_user_listen_user_id_muze_user_id_fk",
           "tableFrom": "muze_user_listen",
-          "columnsFrom": [
-            "user_id"
-          ],
+          "columnsFrom": ["user_id"],
           "tableTo": "muze_user",
-          "columnsTo": [
-            "id"
-          ],
+          "columnsTo": ["id"],
           "onUpdate": "no action",
           "onDelete": "no action"
         },
         "muze_user_listen_track_id_muze_track_id_fk": {
           "name": "muze_user_listen_track_id_muze_track_id_fk",
           "tableFrom": "muze_user_listen",
-          "columnsFrom": [
-            "track_id"
-          ],
+          "columnsFrom": ["track_id"],
           "tableTo": "muze_track",
-          "columnsTo": [
-            "id"
-          ],
+          "columnsTo": ["id"],
           "onUpdate": "no action",
           "onDelete": "no action"
         }
@@ -429,26 +397,18 @@
         "muze_user_playlist_user_id_muze_user_id_fk": {
           "name": "muze_user_playlist_user_id_muze_user_id_fk",
           "tableFrom": "muze_user_playlist",
-          "columnsFrom": [
-            "user_id"
-          ],
+          "columnsFrom": ["user_id"],
           "tableTo": "muze_user",
-          "columnsTo": [
-            "id"
-          ],
+          "columnsTo": ["id"],
           "onUpdate": "no action",
           "onDelete": "no action"
         },
         "muze_user_playlist_playlist_id_muze_playlist_id_fk": {
           "name": "muze_user_playlist_playlist_id_muze_playlist_id_fk",
           "tableFrom": "muze_user_playlist",
-          "columnsFrom": [
-            "playlist_id"
-          ],
+          "columnsFrom": ["playlist_id"],
           "tableTo": "muze_playlist",
-          "columnsTo": [
-            "id"
-          ],
+          "columnsTo": ["id"],
           "onUpdate": "no action",
           "onDelete": "no action"
         }

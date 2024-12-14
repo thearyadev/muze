@@ -16,7 +16,7 @@ const useTrack = () => useContext(TrackContext)
 const TrackProvider: React.FC<{
   audioRef: React.RefObject<HTMLAudioElement>
   children: React.ReactNode
-}> = ({ audioRef, children}) => {
+}> = ({ audioRef, children }) => {
   const [track, setTrack] = useState<TrackQuery | null>(null)
   // biome-ignore lint/style/noNonNullAssertion :
   const position = usePosition()!
@@ -29,7 +29,7 @@ const TrackProvider: React.FC<{
     if (!audioRef.current) return
     audioRef.current.src = newTrack
       ? `/api/library/track_data?id=${newTrack?.id}`
-      : '' 
+      : ''
 
     setCurrentTrack(newTrack?.id)
 
