@@ -1,5 +1,6 @@
 import type React from 'react'
 import { useState, useContext, createContext } from 'react'
+import { setCurrentTrackPosition } from '~/lib/actions/user'
 
 const PositionContext = createContext<{
   position: number[]
@@ -20,14 +21,14 @@ const PositionProvider: React.FC<{
   const reactPosition = () => {
     if (!audioRef.current) return
     setPosition([audioRef.current.currentTime])
-    localStorage.setItem('position', audioRef.current.currentTime.toString())
+    setCurrentTrackPosition(audioRef.current.currentTime)
   }
 
   const changePosition = (newPosition: number[]) => {
     if (!audioRef.current) return
     audioRef.current.currentTime = newPosition[0] || 0
     setPosition(newPosition)
-    localStorage.setItem('position', (newPosition[0] || 0).toString())
+    setCurrentTrackPosition(newPosition[0] || 0)
   }
   return (
     <PositionContext.Provider

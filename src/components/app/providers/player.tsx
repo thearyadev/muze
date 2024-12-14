@@ -6,11 +6,16 @@ import { PositionProvider, usePosition } from './position'
 import { TrackProvider, useTrack } from './track'
 import { VolumeProvider, useVolume } from './volume'
 import { QueueProvider, useQueue } from './queue'
+import { getCurrentTrack } from '~/lib/actions/user'
+import { getTrack } from '~/lib/actions/library'
+
+type TrackQuery = NonNullable<Awaited<ReturnType<typeof getTrack>>['content']>
+
 function ContextRichAudio({
   audioRef,
 }: {
   audioRef: React.RefObject<HTMLAudioElement>
-}) {
+  }) {
   // biome-ignore lint/style/noNonNullAssertion :
   const { setMaxPosition, reactPosition } = usePosition()!
   // biome-ignore lint/style/noNonNullAssertion :
@@ -56,7 +61,7 @@ function ContextRichOverlay() {
     />
   )
 }
-function ContextRichLocalStorageLoader() {
+function ContextRichLocalStorageLoader({startingTrack, startingPosition}: {startingTrack: TrackQuery | null, startingPosition: number}) {
   // biome-ignore lint/style/noNonNullAssertion :
   const { changeTrack } = useTrack()!
   // biome-ignore lint/style/noNonNullAssertion :
@@ -67,27 +72,21 @@ function ContextRichLocalStorageLoader() {
   const { changeLoop } = useLoop()!
   // biome-ignore lint/correctness/useExhaustiveDependencies : causes infinite loop
   useEffect(() => {
-    const track = localStorage.getItem('track')
-      ? JSON.parse(localStorage.getItem('track') as string)
-      : null
-    const position = localStorage.getItem('position')
-      ? Number.parseInt(localStorage.getItem('position') as string)
-      : null
     const volume = localStorage.getItem('volume')
       ? Number.parseInt(localStorage.getItem('volume') as string)
       : null
     const loop = localStorage.getItem('loop')
-    if (track) {
-      changeTrack(track, false)
-    }
-    if (position) {
-      changePosition([position])
-    }
     if (volume) {
       changeVolume(volume)
     }
     if (loop) {
       changeLoop(loop === 'true')
+    }
+    if (startingTrack) {
+      changeTrack(startingTrack, false)
+    }
+    if (startingPosition) {
+      changePosition([startingPosition])
     }
   }, [])
   return null
@@ -95,8 +94,12 @@ function ContextRichLocalStorageLoader() {
 
 export default function PlayerContextProvider({
   children,
+  currentTrack,
+  currentTrackPosition
 }: {
-  children: React.ReactNode
+  children: React.ReactNode,
+  currentTrack: NonNullable<Awaited<ReturnType<typeof getTrack>>['content']> | null,
+  currentTrackPosition: number
 }) {
   // biome-ignore lint/style/noNonNullAssertion : the moment it loads, its not null.
   const audioRef = useRef<HTMLAudioElement>(null!)
@@ -109,7 +112,7 @@ export default function PlayerContextProvider({
               <QueueProvider>
                 <ContextRichAudio audioRef={audioRef} />
                 <ContextRichOverlay />
-                <ContextRichLocalStorageLoader />
+                <ContextRichLocalStorageLoader startingTrack={currentTrack} startingPosition={currentTrackPosition} />
                 {children}
               </QueueProvider>
             </TrackProvider>

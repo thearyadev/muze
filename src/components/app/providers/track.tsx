@@ -2,6 +2,7 @@ import React, { useState, useContext, createContext } from 'react'
 import { usePosition } from './position'
 import { usePlaying } from './playing'
 import type { getTrack } from '~/lib/actions/library'
+import { getCurrentTrack, setCurrentTrack } from '~/lib/actions/user'
 
 type TrackQuery = NonNullable<
   Awaited<ReturnType<typeof getTrack>>['content']
@@ -15,7 +16,7 @@ const useTrack = () => useContext(TrackContext)
 const TrackProvider: React.FC<{
   audioRef: React.RefObject<HTMLAudioElement>
   children: React.ReactNode
-}> = ({ audioRef, children }) => {
+}> = ({ audioRef, children}) => {
   const [track, setTrack] = useState<TrackQuery | null>(null)
   // biome-ignore lint/style/noNonNullAssertion :
   const position = usePosition()!
@@ -28,8 +29,9 @@ const TrackProvider: React.FC<{
     if (!audioRef.current) return
     audioRef.current.src = newTrack
       ? `/api/library/track_data?id=${newTrack?.id}`
-      : ''
-    localStorage.setItem('track', JSON.stringify(newTrack))
+      : '' 
+
+    setCurrentTrack(newTrack?.id)
 
     if (play) {
       setTimeout(() => {
