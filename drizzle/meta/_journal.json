@@ -15,6 +15,13 @@
       "when": 1722815420713,
       "tag": "0001_daffy_sentinel",
       "breakpoints": true
+    },
+    {
+      "idx": 2,
+      "version": "7",
+      "when": 1734192332954,
+      "tag": "0002_daffy_sebastian_shaw",
+      "breakpoints": true
     }
   ]
 }

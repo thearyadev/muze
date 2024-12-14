@@ -1,7 +1,5 @@
 {
-  "id": "6c0ec283-6914-4e20-86f0-f4ace31e4ef5",
-  "prevId": "34831b4f-d31f-4e8d-85bb-9eb05f58dedb",
-  "version": "6",
+  "version": "7",
   "dialect": "postgresql",
   "tables": {
     "public.muze_album": {
@@ -38,15 +36,22 @@
         "muze_album_artist_id_muze_artist_id_fk": {
           "name": "muze_album_artist_id_muze_artist_id_fk",
           "tableFrom": "muze_album",
+          "columnsFrom": [
+            "artist_id"
+          ],
           "tableTo": "muze_artist",
-          "columnsFrom": ["artist_id"],
-          "columnsTo": ["id"],
-          "onDelete": "no action",
-          "onUpdate": "no action"
+          "columnsTo": [
+            "id"
+          ],
+          "onUpdate": "no action",
+          "onDelete": "no action"
         }
       },
       "compositePrimaryKeys": {},
-      "uniqueConstraints": {}
+      "uniqueConstraints": {},
+      "policies": {},
+      "isRLSEnabled": false,
+      "checkConstraints": {}
     },
     "public.muze_artist_track": {
       "name": "muze_artist_track",
@@ -76,24 +81,35 @@
         "muze_artist_track_artist_id_muze_artist_id_fk": {
           "name": "muze_artist_track_artist_id_muze_artist_id_fk",
           "tableFrom": "muze_artist_track",
+          "columnsFrom": [
+            "artist_id"
+          ],
           "tableTo": "muze_artist",
-          "columnsFrom": ["artist_id"],
-          "columnsTo": ["id"],
-          "onDelete": "no action",
-          "onUpdate": "no action"
+          "columnsTo": [
+            "id"
+          ],
+          "onUpdate": "no action",
+          "onDelete": "no action"
         },
         "muze_artist_track_track_id_muze_track_id_fk": {
           "name": "muze_artist_track_track_id_muze_track_id_fk",
           "tableFrom": "muze_artist_track",
+          "columnsFrom": [
+            "track_id"
+          ],
           "tableTo": "muze_track",
-          "columnsFrom": ["track_id"],
-          "columnsTo": ["id"],
-          "onDelete": "no action",
-          "onUpdate": "no action"
+          "columnsTo": [
+            "id"
+          ],
+          "onUpdate": "no action",
+          "onDelete": "no action"
         }
       },
       "compositePrimaryKeys": {},
-      "uniqueConstraints": {}
+      "uniqueConstraints": {},
+      "policies": {},
+      "isRLSEnabled": false,
+      "checkConstraints": {}
     },
     "public.muze_artist": {
       "name": "muze_artist",
@@ -121,7 +137,10 @@
       "indexes": {},
       "foreignKeys": {},
       "compositePrimaryKeys": {},
-      "uniqueConstraints": {}
+      "uniqueConstraints": {},
+      "policies": {},
+      "isRLSEnabled": false,
+      "checkConstraints": {}
     },
     "public.muze_genre_track": {
       "name": "muze_genre_track",
@@ -145,29 +164,43 @@
         "muze_genre_track_track_id_muze_track_id_fk": {
           "name": "muze_genre_track_track_id_muze_track_id_fk",
           "tableFrom": "muze_genre_track",
+          "columnsFrom": [
+            "track_id"
+          ],
           "tableTo": "muze_track",
-          "columnsFrom": ["track_id"],
-          "columnsTo": ["id"],
-          "onDelete": "no action",
-          "onUpdate": "no action"
+          "columnsTo": [
+            "id"
+          ],
+          "onUpdate": "no action",
+          "onDelete": "no action"
         },
         "muze_genre_track_genre_id_muze_genre_id_fk": {
           "name": "muze_genre_track_genre_id_muze_genre_id_fk",
           "tableFrom": "muze_genre_track",
+          "columnsFrom": [
+            "genre_id"
+          ],
           "tableTo": "muze_genre",
-          "columnsFrom": ["genre_id"],
-          "columnsTo": ["id"],
-          "onDelete": "no action",
-          "onUpdate": "no action"
+          "columnsTo": [
+            "id"
+          ],
+          "onUpdate": "no action",
+          "onDelete": "no action"
         }
       },
       "compositePrimaryKeys": {
         "muze_genre_track_track_id_genre_id_pk": {
           "name": "muze_genre_track_track_id_genre_id_pk",
-          "columns": ["track_id", "genre_id"]
+          "columns": [
+            "track_id",
+            "genre_id"
+          ]
         }
       },
-      "uniqueConstraints": {}
+      "uniqueConstraints": {},
+      "policies": {},
+      "isRLSEnabled": false,
+      "checkConstraints": {}
     },
     "public.muze_genre": {
       "name": "muze_genre",
@@ -189,7 +222,10 @@
       "indexes": {},
       "foreignKeys": {},
       "compositePrimaryKeys": {},
-      "uniqueConstraints": {}
+      "uniqueConstraints": {},
+      "policies": {},
+      "isRLSEnabled": false,
+      "checkConstraints": {}
     },
     "public.muze_playlist_track": {
       "name": "muze_playlist_track",
@@ -219,24 +255,35 @@
         "muze_playlist_track_playlist_id_muze_playlist_id_fk": {
           "name": "muze_playlist_track_playlist_id_muze_playlist_id_fk",
           "tableFrom": "muze_playlist_track",
+          "columnsFrom": [
+            "playlist_id"
+          ],
           "tableTo": "muze_playlist",
-          "columnsFrom": ["playlist_id"],
-          "columnsTo": ["id"],
-          "onDelete": "no action",
-          "onUpdate": "no action"
+          "columnsTo": [
+            "id"
+          ],
+          "onUpdate": "no action",
+          "onDelete": "no action"
         },
         "muze_playlist_track_track_id_muze_track_id_fk": {
           "name": "muze_playlist_track_track_id_muze_track_id_fk",
           "tableFrom": "muze_playlist_track",
+          "columnsFrom": [
+            "track_id"
+          ],
           "tableTo": "muze_track",
-          "columnsFrom": ["track_id"],
-          "columnsTo": ["id"],
-          "onDelete": "no action",
-          "onUpdate": "no action"
+          "columnsTo": [
+            "id"
+          ],
+          "onUpdate": "no action",
+          "onDelete": "no action"
         }
       },
       "compositePrimaryKeys": {},
-      "uniqueConstraints": {}
+      "uniqueConstraints": {},
+      "policies": {},
+      "isRLSEnabled": false,
+      "checkConstraints": {}
     },
     "public.muze_playlist": {
       "name": "muze_playlist",
@@ -264,7 +311,10 @@
       "indexes": {},
       "foreignKeys": {},
       "compositePrimaryKeys": {},
-      "uniqueConstraints": {}
+      "uniqueConstraints": {},
+      "policies": {},
+      "isRLSEnabled": false,
+      "checkConstraints": {}
     },
     "public.muze_track": {
       "name": "muze_track",
@@ -330,15 +380,22 @@
         "muze_track_album_id_muze_album_id_fk": {
           "name": "muze_track_album_id_muze_album_id_fk",
           "tableFrom": "muze_track",
+          "columnsFrom": [
+            "album_id"
+          ],
           "tableTo": "muze_album",
-          "columnsFrom": ["album_id"],
-          "columnsTo": ["id"],
-          "onDelete": "no action",
-          "onUpdate": "no action"
+          "columnsTo": [
+            "id"
+          ],
+          "onUpdate": "no action",
+          "onDelete": "no action"
         }
       },
       "compositePrimaryKeys": {},
-      "uniqueConstraints": {}
+      "uniqueConstraints": {},
+      "policies": {},
+      "isRLSEnabled": false,
+      "checkConstraints": {}
     },
     "public.muze_user_listen": {
       "name": "muze_user_listen",
@@ -374,24 +431,35 @@
         "muze_user_listen_user_id_muze_user_id_fk": {
           "name": "muze_user_listen_user_id_muze_user_id_fk",
           "tableFrom": "muze_user_listen",
+          "columnsFrom": [
+            "user_id"
+          ],
           "tableTo": "muze_user",
-          "columnsFrom": ["user_id"],
-          "columnsTo": ["id"],
-          "onDelete": "no action",
-          "onUpdate": "no action"
+          "columnsTo": [
+            "id"
+          ],
+          "onUpdate": "no action",
+          "onDelete": "no action"
         },
         "muze_user_listen_track_id_muze_track_id_fk": {
           "name": "muze_user_listen_track_id_muze_track_id_fk",
           "tableFrom": "muze_user_listen",
+          "columnsFrom": [
+            "track_id"
+          ],
           "tableTo": "muze_track",
-          "columnsFrom": ["track_id"],
-          "columnsTo": ["id"],
-          "onDelete": "no action",
-          "onUpdate": "no action"
+          "columnsTo": [
+            "id"
+          ],
+          "onUpdate": "no action",
+          "onDelete": "no action"
         }
       },
       "compositePrimaryKeys": {},
-      "uniqueConstraints": {}
+      "uniqueConstraints": {},
+      "policies": {},
+      "isRLSEnabled": false,
+      "checkConstraints": {}
     },
     "public.muze_user_playlist": {
       "name": "muze_user_playlist",
@@ -421,24 +489,35 @@
         "muze_user_playlist_user_id_muze_user_id_fk": {
           "name": "muze_user_playlist_user_id_muze_user_id_fk",
           "tableFrom": "muze_user_playlist",
+          "columnsFrom": [
+            "user_id"
+          ],
           "tableTo": "muze_user",
-          "columnsFrom": ["user_id"],
-          "columnsTo": ["id"],
-          "onDelete": "no action",
-          "onUpdate": "no action"
+          "columnsTo": [
+            "id"
+          ],
+          "onUpdate": "no action",
+          "onDelete": "no action"
         },
         "muze_user_playlist_playlist_id_muze_playlist_id_fk": {
           "name": "muze_user_playlist_playlist_id_muze_playlist_id_fk",
           "tableFrom": "muze_user_playlist",
+          "columnsFrom": [
+            "playlist_id"
+          ],
           "tableTo": "muze_playlist",
-          "columnsFrom": ["playlist_id"],
-          "columnsTo": ["id"],
-          "onDelete": "no action",
-          "onUpdate": "no action"
+          "columnsTo": [
+            "id"
+          ],
+          "onUpdate": "no action",
+          "onDelete": "no action"
         }
       },
       "compositePrimaryKeys": {},
-      "uniqueConstraints": {}
+      "uniqueConstraints": {},
+      "policies": {},
+      "isRLSEnabled": false,
+      "checkConstraints": {}
     },
     "public.muze_user": {
       "name": "muze_user",
@@ -466,14 +545,23 @@
       "indexes": {},
       "foreignKeys": {},
       "compositePrimaryKeys": {},
-      "uniqueConstraints": {}
+      "uniqueConstraints": {},
+      "policies": {},
+      "isRLSEnabled": false,
+      "checkConstraints": {}
     }
   },
   "enums": {},
   "schemas": {},
   "_meta": {
-    "columns": {},
     "schemas": {},
-    "tables": {}
-  }
+    "tables": {},
+    "columns": {}
+  },
+  "id": "6c0ec283-6914-4e20-86f0-f4ace31e4ef5",
+  "prevId": "34831b4f-d31f-4e8d-85bb-9eb05f58dedb",
+  "sequences": {},
+  "policies": {},
+  "views": {},
+  "roles": {}
 }
