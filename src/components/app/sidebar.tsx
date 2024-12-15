@@ -14,6 +14,9 @@ import { Button } from '../ui/button'
 import CommandLabel from './command_label'
 import { AccountButton } from './accountButton'
 import { useHotkeys } from '@mantine/hooks'
+import { Input } from '../ui/input'
+import { useEffect, useRef, useState } from 'react'
+import { Jersey_20, Jua } from 'next/font/google'
 
 function SidebarButton({
   href,
@@ -68,6 +71,36 @@ export default function Sidebar({
   className?: string
   username: string
 }) {
+  const searchInputRef = useRef<HTMLInputElement>(null)
+  const router = useRouter()
+  const pathname = usePathname()
+  const lastPage = useRef('')
+  const [searchQuery, setSearchQuery] = useState('')
+  router.prefetch('/app/search')
+
+  useHotkeys([
+    [
+      '/',
+      () => {
+        searchInputRef.current?.focus()
+      },
+    ],
+  ])
+
+  const handleSearchInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const query = e.target.value
+
+    if (lastPage.current === '') {
+      lastPage.current = pathname
+    }
+    setSearchQuery(query)
+    if (query === '') {
+      router.push(lastPage.current)
+    } else {
+      router.push(`/app/search?q=${query}`)
+    }
+  }
+
   return (
     <>
       <div
@@ -75,17 +108,19 @@ export default function Sidebar({
       >
         <div>
           <div className="pb-4">
-            <Button
-              variant="ghost"
-              size="sm"
-              className="flex w-full flex-row justify-between  text-gray-400  hover:text-white"
-              // onMouseDown={() => {
-              //   setOpen(true)
-              // }}
-            >
-              Search...
-              <CommandLabel commandKeyChain="K" />
-            </Button>
+            <Input
+              ref={searchInputRef}
+              placeholder="Search"
+              onChange={handleSearchInputChange}
+              value={searchQuery}
+              onKeyDown={(e) => {
+                if (e.key === 'Escape') {
+                  searchInputRef.current?.blur()
+                  router.push(lastPage.current)
+                  setSearchQuery('')
+                }
+              }}
+            />
           </div>
           <SidebarButton href="/app/home" label="Home" commandKey="1">
             <HomeIcon />

@@ -2,8 +2,6 @@ import PageHeading from '~/components/app/page_heading'
 import { TrackTableScrollPaginated } from '~/components/app/track_table'
 import { allTracks } from '~/lib/actions/library'
 
-export const revalidate = 900
-
 export default async function AllSongsPage() {
   const querySettings = {
     page: 1,

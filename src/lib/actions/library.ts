@@ -10,7 +10,7 @@ import {
   genreTrack,
   tracks,
 } from '~/server/db/schema'
-import { and, asc, eq, getTableColumns, sql } from 'drizzle-orm'
+import { and, asc, eq, getTableColumns, ilike, sql, or } from 'drizzle-orm'
 import { env } from '~/env'
 import fs from 'node:fs'
 import path from 'node:path'
@@ -20,42 +20,56 @@ import type { PostgresJsDatabase } from 'drizzle-orm/postgres-js'
 
 export const allTracks = protectedAction(
   async (page: number, pageSize: number) => {
-    const subquery = db
-      .select({
-        trackId: artistTracks.trackId,
-        artistNames: sql<string>`string_agg(${artists.name}, ';')`.as(
-          'artistNames',
-        ),
-        artistIds: sql<string>`string_agg(cast(${artists.id} AS TEXT), ';')`.as(
-          'artistIds',
-        ),
-      })
-      .from(artistTracks)
-      .innerJoin(artists, eq(artistTracks.artistId, artists.id))
-      .groupBy(artistTracks.trackId)
-      .as('artists')
-
     const query = await db
       .selectDistinct({
         ...getTableColumns(tracks),
         albumName: albums.name,
-        artistNames: subquery.artistNames,
-        artistIds: subquery.artistIds,
+        artistNames: sql<string>`string_agg(${artists.name}, ';')`,
+        artistIds: sql<string>`string_agg(cast(${artists.id} AS TEXT), ';')`,
       })
       .from(tracks)
+      .innerJoin(albums, eq(tracks.albumId, albums.id))
+      .innerJoin(artistTracks, eq(tracks.id, artistTracks.trackId))
+      .innerJoin(artists, eq(artistTracks.artistId, artists.id))
+      .groupBy(tracks.id, albums.name) // Include all non-aggregated columns
       .orderBy(asc(tracks.id))
       .limit(pageSize)
       .offset((page - 1) * pageSize)
-      .innerJoin(albums, eq(tracks.albumId, albums.id))
-      .innerJoin(artistTracks, eq(tracks.id, artistTracks.trackId))
-      .innerJoin(subquery, eq(tracks.id, subquery.trackId))
       .execute()
+
     return {
       status_code: 200,
       content: query,
     }
   },
 )
+
+export const search = protectedAction(async (query: string) => {
+  const searchResult = await db
+    .selectDistinct({
+      ...getTableColumns(tracks),
+      albumName: albums.name,
+      artistNames: sql<string>`string_agg(${artists.name}, ';')`,
+      artistIds: sql<string>`string_agg(cast(${artists.id} AS TEXT), ';')`,
+    })
+    .from(tracks)
+    .innerJoin(albums, eq(tracks.albumId, albums.id))
+    .innerJoin(artistTracks, eq(tracks.id, artistTracks.trackId))
+    .innerJoin(artists, eq(artistTracks.artistId, artists.id))
+    .where(
+      or(
+        ilike(tracks.name, `%${query}%`),
+        ilike(albums.name, `%${query}%`),
+        ilike(artists.name, `%${query}%`),
+      ),
+    )
+    .groupBy(tracks.id, albums.name)
+    .execute()
+  return {
+    status_code: 200,
+    content: searchResult,
+  }
+})
 
 export const getTrack = protectedAction(async (trackId: string) => {
   const trackFound =
