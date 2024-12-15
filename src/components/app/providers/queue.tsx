@@ -32,7 +32,6 @@ const QueueProvider: React.FC<{
 
   const nextTrack = () => {
     if (queue.length === 0) {
-      changeTrack(null, false)
       return
     }
     const nextTrack = queue.shift()
