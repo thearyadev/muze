@@ -21,14 +21,18 @@ const PositionProvider: React.FC<{
   const reactPosition = () => {
     if (!audioRef.current) return
     setPosition([audioRef.current.currentTime])
-    setCurrentTrackPosition(audioRef.current.currentTime)
+    // rate limit polling
+    // this will ensure the position is only updated on the server if one second has passed.
+    if (Math.floor(audioRef.current.currentTime) !== Math.floor(position[0] ?? 0)) {
+      setCurrentTrackPosition(audioRef.current.currentTime)
+    }
   }
 
   const changePosition = (newPosition: number[]) => {
     if (!audioRef.current) return
     audioRef.current.currentTime = newPosition[0] || 0
     setPosition(newPosition)
-    setCurrentTrackPosition(newPosition[0] || 0)
+        setCurrentTrackPosition(newPosition[0] || 0)
   }
   return (
     <PositionContext.Provider
