@@ -93,12 +93,10 @@ export default function Sidebar({
     if (lastPage.current === '') {
       lastPage.current = pathname
     }
-    setSearchQuery(query)
     if (query === '') {
       router.push(lastPage.current)
-    } else {
-      router.push(`/app/search?q=${query}`)
     }
+    setSearchQuery(query)
   }
 
   return (
@@ -118,6 +116,9 @@ export default function Sidebar({
                   searchInputRef.current?.blur()
                   router.push(lastPage.current)
                   setSearchQuery('')
+                }
+                if (e.key === 'Enter') {
+                  router.push(`/app/search?q=${searchQuery}`)
                 }
               }}
             />
