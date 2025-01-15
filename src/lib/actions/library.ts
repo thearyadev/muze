@@ -104,6 +104,34 @@ export const getTrack = protectedAction(async (trackId: string) => {
   }
 })
 
+export const getRandomTrack = protectedAction(async () => {
+  const query = await db
+    .select({
+      ...getTableColumns(tracks),
+      albumName: albums.name,
+      artistNames: sql<string>`string_agg(${artists.name}, ';') AS artistNames`,
+      artistIds: sql<string>`string_agg(cast(${artists.id} AS TEXT), ';')`.as('artistIds'),
+    })
+    .from(tracks)
+    .innerJoin(albums, eq(tracks.albumId, albums.id))
+    .innerJoin(artistTracks, eq(tracks.id, artistTracks.trackId))
+    .innerJoin(artists, eq(artistTracks.artistId, artists.id))
+    .groupBy(tracks.id, albums.name)
+    .orderBy(sql`RANDOM()`)
+    .limit(1)
+    .execute()
+  if (!query.length) {
+    return {
+      status_code: 404,
+      error: 'No tracks found',
+    }
+  }
+  return {
+    status_code: 200,
+    content: query[0],
+  }
+})
+
 export const sync = protectedAction(async () => {
   async function getTracks(dir: string): Promise<string[]> {
     let files: string[] = []
