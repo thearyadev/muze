@@ -19,7 +19,6 @@ const PositionProvider: React.FC<{
   const [position, setPosition] = useState([0])
   const [maxposition, setMaxPosition] = useState(0)
   const reactPosition = () => {
-    console.log('reactPosition')
     if (!audioRef.current) return
     setPosition([audioRef.current.currentTime])
     // rate limit polling

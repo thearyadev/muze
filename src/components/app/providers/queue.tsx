@@ -67,22 +67,19 @@ const QueueProvider: React.FC<{
       return
     } // no need to add this to queue
 
-
-
     // biome-ignore lint/style/noNonNullAssertion : track is probably not null
     setQueuePlayed([...queuePlayed, track!])
     if (queue.length === 0) {
       if (autoplay) {
         // queue is empty, autoplay is on, get a random track from the library
         getRandomTrack().then((res) => {
-          if (res.content != undefined) {
+          if (res.content !== undefined) {
             changeTrack(res.content, true)
           }
         })
       } else {
         setPlayingFalse()
       }
-
     }
     nextTrack()
   }

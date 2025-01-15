@@ -110,7 +110,9 @@ export const getRandomTrack = protectedAction(async () => {
       ...getTableColumns(tracks),
       albumName: albums.name,
       artistNames: sql<string>`string_agg(${artists.name}, ';') AS artistNames`,
-      artistIds: sql<string>`string_agg(cast(${artists.id} AS TEXT), ';')`.as('artistIds'),
+      artistIds: sql<string>`string_agg(cast(${artists.id} AS TEXT), ';')`.as(
+        'artistIds',
+      ),
     })
     .from(tracks)
     .innerJoin(albums, eq(tracks.albumId, albums.id))

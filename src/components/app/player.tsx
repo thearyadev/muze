@@ -59,7 +59,7 @@ export default function Player() {
   // biome-ignore lint/style/noNonNullAssertion :
   const { loop, changeLoop } = useLoop()!
   // biome-ignore lint/style/noNonNullAssertion :
-  const { autoplay, changeAutoplay} = useAutoplay()!
+  const { autoplay, changeAutoplay } = useAutoplay()!
   // biome-ignore lint/style/noNonNullAssertion :
   const { playing, setPlayingTrue, setPlayingFalse } = usePlaying()!
   // biome-ignore lint/style/noNonNullAssertion :
@@ -81,7 +81,7 @@ export default function Player() {
       <PlayerBody>
         <div
           className="flex flex-row items-center"
-        // Track Info
+          // Track Info
         >
           <Image
             alt={track.name || 'Track Cover'}
@@ -108,12 +108,11 @@ export default function Player() {
         </div>
         <div
           className="flex flex-row items-center justify-center space-x-10 align-middle"
-        // controls
+          // controls
         >
-
           <div className="flex flex-row items-center space-x-5 ">
             <AutoplayIcon
-              className={`text-xs text-gray-400 hover:text-orange-400 ${autoplay? 'text-orange-400' : null}`}
+              className={`text-xs text-gray-400 hover:text-orange-400 ${autoplay ? 'text-orange-400' : null}`}
               onMouseDown={() => {
                 autoplay ? changeAutoplay(false) : changeAutoplay(true)
                 loop ? changeLoop(false) : null
@@ -133,7 +132,6 @@ export default function Player() {
             onMouseDown={setPlayingTrue}
           />
           <div className="flex flex-row items-center space-x-5 ">
-
             <StepForwardIcon
               className="text-xl text-white transition duration-100 hover:text-orange-400"
               onMouseDown={nextTrack}
@@ -149,7 +147,7 @@ export default function Player() {
         </div>
         <div
           className="hidden flex-row items-center justify-end space-x-4 sm:flex"
-        // volume
+          // volume
         >
           <SpeakerIcon className="text-white" />
           <VolumeSlider

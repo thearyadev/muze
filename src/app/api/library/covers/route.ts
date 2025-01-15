@@ -33,7 +33,6 @@ export async function GET(request: NextRequest): Promise<NextResponse> {
     path.resolve(env.COVER_ART_PATH),
     `${track_data.mbid}.${size}.jpg`,
   )
-  console.log(coverPath)
 
   if (!existsSync(coverPath)) {
     return new NextResponse('Referenced file does not exist', {
