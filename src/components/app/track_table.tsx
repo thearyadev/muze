@@ -116,7 +116,6 @@ export function TrackTableScrollPaginated(
   // useEffect(() => {
   //   if (data) setTracks((prevTracks) => [...prevTracks, ...data])
   // }, [data])
-  console.log('renduh')
   return (
     <>
       <div className="grid grid-cols-12 grid-rows-1 gap-4 p-3  text-gray-500">

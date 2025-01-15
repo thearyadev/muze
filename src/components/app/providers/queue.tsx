@@ -2,7 +2,8 @@ import React, { useContext, createContext, useEffect } from 'react'
 import { useTrack } from './track'
 import { usePlaying } from './playing'
 import { useLoop } from './loop'
-import type { getTrack } from '~/lib/actions/library'
+import { getRandomTrack, type getTrack } from '~/lib/actions/library'
+import { useAutoplay } from './autoplay'
 
 type TrackQuery = NonNullable<
   NonNullable<Awaited<ReturnType<typeof getTrack>>>['content']
@@ -29,6 +30,8 @@ const QueueProvider: React.FC<{
   const { setPlayingFalse } = usePlaying()!
   // biome-ignore lint/style/noNonNullAssertion :
   const { loop } = useLoop()!
+  // biome-ignore lint/style/noNonNullAssertion :
+  const { autoplay } = useAutoplay()!
 
   const nextTrack = () => {
     if (queue.length === 0) {
@@ -67,7 +70,16 @@ const QueueProvider: React.FC<{
     // biome-ignore lint/style/noNonNullAssertion : track is probably not null
     setQueuePlayed([...queuePlayed, track!])
     if (queue.length === 0) {
-      setPlayingFalse()
+      if (autoplay) {
+        // queue is empty, autoplay is on, get a random track from the library
+        getRandomTrack().then((res) => {
+          if (res.content !== undefined) {
+            changeTrack(res.content, true)
+          }
+        })
+      } else {
+        setPlayingFalse()
+      }
     }
     nextTrack()
   }

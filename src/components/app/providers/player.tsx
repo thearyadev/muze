@@ -7,6 +7,7 @@ import { TrackProvider, useTrack } from './track'
 import { VolumeProvider, useVolume } from './volume'
 import { QueueProvider, useQueue } from './queue'
 import type { getTrack } from '~/lib/actions/library'
+import { AutoplayProvider } from './autoplay'
 
 type TrackQuery = NonNullable<Awaited<ReturnType<typeof getTrack>>['content']>
 
@@ -110,21 +111,23 @@ export default function PlayerContextProvider({
   return (
     <PlayingProvider audioRef={audioRef}>
       <LoopProvider>
-        <VolumeProvider audioRef={audioRef}>
-          <PositionProvider audioRef={audioRef}>
-            <TrackProvider audioRef={audioRef}>
-              <QueueProvider>
-                <ContextRichAudio audioRef={audioRef} />
-                <ContextRichOverlay />
-                <ContextRichLocalStorageLoader
-                  startingTrack={currentTrack}
-                  startingPosition={currentTrackPosition}
-                />
-                {children}
-              </QueueProvider>
-            </TrackProvider>
-          </PositionProvider>
-        </VolumeProvider>
+        <AutoplayProvider>
+          <VolumeProvider audioRef={audioRef}>
+            <PositionProvider audioRef={audioRef}>
+              <TrackProvider audioRef={audioRef}>
+                <QueueProvider>
+                  <ContextRichAudio audioRef={audioRef} />
+                  <ContextRichOverlay />
+                  <ContextRichLocalStorageLoader
+                    startingTrack={currentTrack}
+                    startingPosition={currentTrackPosition}
+                  />
+                  {children}
+                </QueueProvider>
+              </TrackProvider>
+            </PositionProvider>
+          </VolumeProvider>
+        </AutoplayProvider>
       </LoopProvider>
     </PlayingProvider>
   )

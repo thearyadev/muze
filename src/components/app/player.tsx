@@ -12,6 +12,7 @@ import {
   PauseCircleOutlined as PauseIcon,
   StepBackwardFilled as StepBackwardIcon,
   StepForwardFilled as StepForwardIcon,
+  SwapOutlined as AutoplayIcon,
 } from '@ant-design/icons'
 
 import { useTrack } from './providers/track'
@@ -21,6 +22,7 @@ import { usePlaying } from './providers/playing'
 import { usePosition } from './providers/position'
 import { useQueue } from './providers/queue'
 import Image from 'next/image'
+import { useAutoplay } from './providers/autoplay'
 
 function PlayerBody({ children }: { children: React.ReactNode }) {
   return (
@@ -56,6 +58,8 @@ export default function Player() {
   const { volume, changeVolume } = useVolume()!
   // biome-ignore lint/style/noNonNullAssertion :
   const { loop, changeLoop } = useLoop()!
+  // biome-ignore lint/style/noNonNullAssertion :
+  const { autoplay, changeAutoplay } = useAutoplay()!
   // biome-ignore lint/style/noNonNullAssertion :
   const { playing, setPlayingTrue, setPlayingFalse } = usePlaying()!
   // biome-ignore lint/style/noNonNullAssertion :
@@ -106,10 +110,19 @@ export default function Player() {
           className="flex flex-row items-center justify-center space-x-10 align-middle"
           // controls
         >
-          <StepBackwardIcon
-            className="text-xl text-white transition duration-100 hover:text-orange-400"
-            onMouseDown={previousTrack}
-          />
+          <div className="flex flex-row items-center space-x-5 ">
+            <AutoplayIcon
+              className={`text-xs text-gray-400 hover:text-orange-400 ${autoplay ? 'text-orange-400' : null}`}
+              onMouseDown={() => {
+                autoplay ? changeAutoplay(false) : changeAutoplay(true)
+                loop ? changeLoop(false) : null
+              }}
+            />
+            <StepBackwardIcon
+              className="text-xl text-white transition duration-100 hover:text-orange-400"
+              onMouseDown={previousTrack}
+            />
+          </div>
           <PauseIcon
             className={`text-4xl text-white transition duration-100 hover:text-orange-400 ${!playing ? 'hidden' : null}`}
             onMouseDown={setPlayingFalse}
@@ -127,6 +140,7 @@ export default function Player() {
               className={`text-xs text-gray-400 hover:text-orange-400 ${loop ? 'text-orange-400' : null}`}
               onMouseDown={() => {
                 loop ? changeLoop(false) : changeLoop(true)
+                autoplay ? changeAutoplay(false) : null
               }}
             />
           </div>
