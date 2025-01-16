@@ -38,7 +38,7 @@ const QueueProvider: React.FC<{
 
   const nextTrack = () => {
     if (queue.length === 0) {
-      changePosition([maxposition])
+      changePosition([maxposition - 0.1])
       trackComplete()
       return
     }
