@@ -3,6 +3,7 @@ import { usePosition } from './position'
 import { usePlaying } from './playing'
 import type { getTrack } from '~/lib/actions/library'
 import { getCurrentTrack, setCurrentTrack } from '~/lib/actions/user'
+import { MultiRef } from './player'
 
 type TrackQuery = NonNullable<
   Awaited<ReturnType<typeof getTrack>>['content']
@@ -14,9 +15,9 @@ const TrackContext = createContext<{
 const useTrack = () => useContext(TrackContext)
 
 const TrackProvider: React.FC<{
-  audioRef: React.RefObject<HTMLAudioElement>
+  playerRef: MultiRef
   children: React.ReactNode
-}> = ({ audioRef, children }) => {
+}> = ({ playerRef, children }) => {
   const [track, setTrack] = useState<TrackQuery | null>(null)
   // biome-ignore lint/style/noNonNullAssertion :
   const position = usePosition()!
@@ -26,20 +27,22 @@ const TrackProvider: React.FC<{
     setTrack(newTrack)
     playing.setPlayingFalse()
     position.changePosition([0])
-    if (!audioRef.current) return
-    audioRef.current.src = newTrack
-      ? `/api/library/track_data?id=${newTrack?.id}`
-      : ''
+    if (!playerRef.sourceRef.current) return
+    // playerRef.audioRef.current.src = newTrack
+    //   ? `/api/library/track_data?id=${newTrack?.id}`
+    //   : ''
+    playerRef.sourceRef.current.src = `/api/library/track_data?id=${newTrack?.id}`
+    playerRef.audioRef.current.load()
 
     setCurrentTrack(newTrack?.id)
 
     if (play) {
       setTimeout(() => {
-        if (!audioRef.current) return
-        audioRef.current.play().catch(() => {
+        if (!playerRef.audioRef.current) return
+        playerRef.audioRef.current.play().catch(() => {
           return
         })
-        audioRef.current.currentTime = 0
+        playerRef.audioRef.current.currentTime = 0
         playing.setPlayingTrue()
       }, 10)
     }

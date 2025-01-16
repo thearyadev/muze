@@ -12,10 +12,15 @@ import QueueViewer from '../queueviewer'
 
 type TrackQuery = NonNullable<Awaited<ReturnType<typeof getTrack>>['content']>
 
-function ContextRichAudio({
-  audioRef,
-}: {
+export type MultiRef = {
   audioRef: React.RefObject<HTMLAudioElement>
+  sourceRef: React.RefObject<HTMLSourceElement>
+}
+
+function ContextRichAudio({
+  playerRef,
+}: {
+  playerRef: MultiRef
 }) {
   // biome-ignore lint/style/noNonNullAssertion :
   const { setMaxPosition, reactPosition, changePosition } = usePosition()!
@@ -25,24 +30,29 @@ function ContextRichAudio({
     // biome-ignore lint/a11y/useMediaCaption :
     <audio
       id="audo"
-      ref={audioRef}
+      ref={playerRef.audioRef}
       onTimeUpdate={() => {
         reactPosition()
       }}
       onCanPlay={() => {
-        if (!audioRef.current) return
-        setMaxPosition(audioRef.current.duration)
+        if (!playerRef.audioRef.current) return
+        setMaxPosition(playerRef.audioRef.current.duration)
       }}
       onEnded={() => {
         trackComplete()
       }}
-      className="hidden"
-      onError={() => {
-        if (!audioRef.current) return
-        if (audioRef.current.src === '') return
+      // className="hidden"
+      controls
+      onError={(e) => {
+        if (!playerRef.audioRef.current) return
+        if (playerRef.audioRef.current.src === '') return
+      console.log("an error occurred", e)
         // nextTrack()
       }}
-    />
+    >
+      <source id="source" ref={playerRef.sourceRef} type="audio/mpeg" src="/api/library/track_data?id=fe6cee76-1975-4cc3-a4a8-b234625c0e91" />
+    </audio>
+
   )
 }
 
@@ -115,16 +125,19 @@ export default function PlayerContextProvider({
   currentTrackPosition: number
 }) {
   // biome-ignore lint/style/noNonNullAssertion : the moment it loads, its not null.
-  const audioRef = useRef<HTMLAudioElement>(null!)
+  const playerRef  = {
+    audioRef: useRef<HTMLAudioElement>(null!),
+    sourceRef: useRef<HTMLSourceElement>(null!),
+  }
   return (
-    <PlayingProvider audioRef={audioRef}>
+    <PlayingProvider playerRef={playerRef}>
       <LoopProvider>
         <AutoplayProvider>
-          <VolumeProvider audioRef={audioRef}>
-            <PositionProvider audioRef={audioRef}>
-              <TrackProvider audioRef={audioRef}>
+          <VolumeProvider playerRef={playerRef}>
+            <PositionProvider playerRef={playerRef}>
+              <TrackProvider playerRef={playerRef}>
                 <QueueProvider>
-                  <ContextRichAudio audioRef={audioRef} />
+                  <ContextRichAudio playerRef={playerRef} />
                   <ContextRichOverlay />
                   <ContextRichLocalStorageLoader
                     startingTrack={currentTrack}

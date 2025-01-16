@@ -38,7 +38,6 @@ const QueueProvider: React.FC<{
 
   const nextTrack = () => {
     if (queue.length === 0) {
-      console.log('nothing in queue')
       _trackComplete()
       return
     }
@@ -72,24 +71,21 @@ const QueueProvider: React.FC<{
       return
     } // no need to add this to queue
 
-    console.log('track complete, no loop')
 
     if (track !== null) {
       setQueuePlayed([...queuePlayed, track!])
     }
     if (queue.length === 0) {
-      console.log('queue is still empty')
       if (autoplay === true) {
-        console.log('autoplay is on')
         // queue is empty, autoplay is on, get a random track from the library
         getRandomTrack().then((res) => {
           if (res.content !== undefined) {
+            console.log("calling changeTrack")
             changeTrack(res.content, true)
           }
         })
         return
       } else {
-        console.log('autoplay is off')
       }
       setPlayingFalse()
     }

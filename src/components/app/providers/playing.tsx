@@ -1,5 +1,6 @@
 import type React from 'react'
 import { useState, useContext, createContext, useEffect } from 'react'
+import { MultiRef } from './player'
 
 const PlayingContext = createContext<{
   playing: boolean
@@ -10,35 +11,35 @@ const PlayingContext = createContext<{
 const usePlaying = () => useContext(PlayingContext)
 
 const PlayingProvider: React.FC<{
-  audioRef: React.RefObject<HTMLAudioElement>
+  playerRef: MultiRef
   children: React.ReactNode
-}> = ({ audioRef, children }) => {
+}> = ({ playerRef, children }) => {
   const [playing, setPlaying] = useState(false)
   const togglePlayPause = () => {
     setPlaying((prevPlaying) => !prevPlaying)
 
-    if (!audioRef.current) return
-    if (audioRef.current.paused) {
-      audioRef.current.play().catch(() => {
+    if (!playerRef.audioRef.current) return
+    if (playerRef.audioRef.current.paused) {
+      playerRef.audioRef.current.play().catch(() => {
         return
       })
       return
     }
-    audioRef.current.pause()
+    playerRef.audioRef.current.pause()
   }
 
   const setPlayingTrue = () => {
-    if (!audioRef.current) return
+    if (!playerRef.audioRef.current) return
     setPlaying(true)
-    audioRef.current.play().catch(() => {
+    playerRef.audioRef.current.play().catch(() => {
       return
     })
   }
 
   const setPlayingFalse = () => {
-    if (!audioRef.current) return
+    if (!playerRef.audioRef.current) return
     setPlaying(false)
-    audioRef.current.pause()
+    playerRef.audioRef.current.pause()
   }
 
   // biome-ignore lint/correctness/useExhaustiveDependencies : causes infinite loop
