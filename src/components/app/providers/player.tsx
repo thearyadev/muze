@@ -41,12 +41,10 @@ function ContextRichAudio({
       onEnded={() => {
         trackComplete()
       }}
-      // className="hidden"
-      controls
+      className="hidden"
       onError={(e) => {
         if (!playerRef.audioRef.current) return
         if (playerRef.audioRef.current.src === '') return
-      console.log("an error occurred", e)
         // nextTrack()
       }}
     >
