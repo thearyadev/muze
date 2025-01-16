@@ -34,7 +34,7 @@ const QueueProvider: React.FC<{
   // biome-ignore lint/style/noNonNullAssertion :
   const { autoplay } = useAutoplay()!
   // biome-ignore lint/style/noNonNullAssertion :
-  const {changePosition, maxposition} = usePosition()!
+  const { changePosition, maxposition } = usePosition()!
 
   const nextTrack = () => {
     if (queue.length === 0) {
@@ -83,13 +83,10 @@ const QueueProvider: React.FC<{
           }
         })
         return
-      } else {
-        setPlayingFalse()
-        return
       }
-
-    } 
-
+      setPlayingFalse()
+      return
+    }
   }
   // biome-ignore lint/correctness/useExhaustiveDependencies : causes infinite loop
   useEffect(() => {
@@ -107,15 +104,19 @@ const QueueProvider: React.FC<{
 
   return (
     <QueueContext.Provider
-      value={React.useMemo(() => ({
-        queue,
-        queuePlayed,
-        nextTrack,
-        previousTrack,
-        addTrack,
-        trackComplete,
-        addTrackPrevious,
-      }), [queue, queuePlayed])}
+      // biome-ignore lint/correctness/useExhaustiveDependencies : used to optmize re-render
+      value={React.useMemo(
+        () => ({
+          queue,
+          queuePlayed,
+          nextTrack,
+          previousTrack,
+          addTrack,
+          trackComplete,
+          addTrackPrevious,
+        }),
+        [queue, queuePlayed],
+      )}
     >
       {children}
     </QueueContext.Provider>

@@ -90,11 +90,11 @@ export function TrackTableScrollPaginated(
   const heightRef = useRef<number>(0)
   const [tracks, setTracks] = useState<TrackQuery[]>(props.initialTracks)
   const [page, setPage] = useState(props.page + 1)
-  // // biome-ignore lint/style/noNonNullAssertion :
+  // biome-ignore lint/style/noNonNullAssertion :
   const { changeTrack } = useTrack()!
-  // // biome-ignore lint/style/noNonNullAssertion :
+  // biome-ignore lint/style/noNonNullAssertion :
   const { addTrackPrevious } = useQueue()!
-  // // biome-ignore lint/style/noNonNullAssertion :
+  // biome-ignore lint/style/noNonNullAssertion :
   const { track: currentTrack } = useTrack()!
   const handleTrackSwitch = (track: TrackQuery) => {
     if (currentTrack) addTrackPrevious(currentTrack)

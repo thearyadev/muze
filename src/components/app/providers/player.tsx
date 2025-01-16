@@ -17,14 +17,13 @@ function ContextRichAudio({
   audioRef: React.RefObject<HTMLAudioElement>
 }) {
   // biome-ignore lint/style/noNonNullAssertion :
-  const { setMaxPosition, reactPosition,  changePosition } = usePosition()!
+  const { setMaxPosition, reactPosition, changePosition } = usePosition()!
   // biome-ignore lint/style/noNonNullAssertion :
   const { trackComplete } = useQueue()!
-  const {playing} = usePlaying()!
   return (
     // biome-ignore lint/a11y/useMediaCaption :
     <audio
-      id='audo'
+      id="audo"
       ref={audioRef}
       onTimeUpdate={() => {
         reactPosition()

@@ -19,7 +19,6 @@ const PositionProvider: React.FC<{
   const [position, setPosition] = useState([0])
   const [maxposition, setMaxPosition] = useState(0)
   const reactPosition = () => {
-    console.log("reacting position")
     if (!audioRef.current) return
     setPosition([audioRef.current.currentTime])
     // rate limit polling
@@ -41,13 +40,17 @@ const PositionProvider: React.FC<{
   }
   return (
     <PositionContext.Provider
-      value={React.useMemo(() => ({
-        position: position,
-        changePosition: changePosition,
-        maxposition: maxposition,
-        setMaxPosition: setMaxPosition,
-        reactPosition: reactPosition,
-      }), [position, maxposition])}
+      // biome-ignore lint/correctness/useExhaustiveDependencies : used to optmize re-render
+      value={React.useMemo(
+        () => ({
+          position: position,
+          changePosition: changePosition,
+          maxposition: maxposition,
+          setMaxPosition: setMaxPosition,
+          reactPosition: reactPosition,
+        }),
+        [position, maxposition],
+      )}
     >
       {children}
     </PositionContext.Provider>
