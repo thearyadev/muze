@@ -4,6 +4,7 @@ import { usePlaying } from './playing'
 import { useLoop } from './loop'
 import { getRandomTrack, type getTrack } from '~/lib/actions/library'
 import { useAutoplay } from './autoplay'
+import { usePosition } from './position'
 
 type TrackQuery = NonNullable<
   NonNullable<Awaited<ReturnType<typeof getTrack>>>['content']
@@ -32,9 +33,12 @@ const QueueProvider: React.FC<{
   const { loop } = useLoop()!
   // biome-ignore lint/style/noNonNullAssertion :
   const { autoplay } = useAutoplay()!
+  // biome-ignore lint/style/noNonNullAssertion :
+  const {changePosition, maxposition} = usePosition()!
 
   const nextTrack = () => {
     if (queue.length === 0) {
+      trackComplete()
       return
     }
     const nextTrack = queue.shift()
@@ -77,11 +81,15 @@ const QueueProvider: React.FC<{
             changeTrack(res.content, true)
           }
         })
+        return
       } else {
         setPlayingFalse()
+        return
       }
-    }
+
+    } 
     nextTrack()
+
   }
   // biome-ignore lint/correctness/useExhaustiveDependencies : causes infinite loop
   useEffect(() => {
@@ -99,7 +107,7 @@ const QueueProvider: React.FC<{
 
   return (
     <QueueContext.Provider
-      value={{
+      value={React.useMemo(() => ({
         queue,
         queuePlayed,
         nextTrack,
@@ -107,7 +115,7 @@ const QueueProvider: React.FC<{
         addTrack,
         trackComplete,
         addTrackPrevious,
-      }}
+      }), [queue, queuePlayed])}
     >
       {children}
     </QueueContext.Provider>

@@ -1,4 +1,4 @@
-import type React from 'react'
+import React from 'react'
 import { useState, useContext, createContext } from 'react'
 import { setCurrentTrackPosition } from '~/lib/actions/user'
 
@@ -25,12 +25,12 @@ const PositionProvider: React.FC<{
     // this will ensure the position is only updated on the server if one second has passed.
 
     if (audioRef.current.currentTime === undefined) return
-    if (position[0] === undefined) return
-    if (
-      Math.floor(audioRef.current.currentTime) !== Math.floor(position[0] ?? 0)
-    ) {
-      setCurrentTrackPosition(audioRef.current.currentTime)
-    }
+    // if (position[0] === undefined) return
+    // if (
+    //   Math.floor(audioRef.current.currentTime) !== Math.floor(position[0] ?? 0)
+    // ) {
+    //   setCurrentTrackPosition(audioRef.current.currentTime)
+    // }
   }
 
   const changePosition = (newPosition: number[]) => {
@@ -40,13 +40,13 @@ const PositionProvider: React.FC<{
   }
   return (
     <PositionContext.Provider
-      value={{
+      value={React.useMemo(() => ({
         position: position,
         changePosition: changePosition,
         maxposition: maxposition,
         setMaxPosition: setMaxPosition,
         reactPosition: reactPosition,
-      }}
+      }), [position, maxposition])}
     >
       {children}
     </PositionContext.Provider>

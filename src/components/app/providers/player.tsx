@@ -1,7 +1,7 @@
 'use client'
 import { useEffect, useRef } from 'react'
 import { LoopProvider, useLoop } from './loop'
-import { PlayingProvider } from './playing'
+import { PlayingProvider, usePlaying } from './playing'
 import { PositionProvider, usePosition } from './position'
 import { TrackProvider, useTrack } from './track'
 import { VolumeProvider, useVolume } from './volume'
@@ -17,12 +17,14 @@ function ContextRichAudio({
   audioRef: React.RefObject<HTMLAudioElement>
 }) {
   // biome-ignore lint/style/noNonNullAssertion :
-  const { setMaxPosition, reactPosition } = usePosition()!
+  const { setMaxPosition, reactPosition, maxposition, position, changePosition } = usePosition()!
   // biome-ignore lint/style/noNonNullAssertion :
   const { trackComplete, nextTrack } = useQueue()!
+  const {playing} = usePlaying()!
   return (
     // biome-ignore lint/a11y/useMediaCaption :
     <audio
+      id='audo'
       ref={audioRef}
       onTimeUpdate={() => {
         reactPosition()
