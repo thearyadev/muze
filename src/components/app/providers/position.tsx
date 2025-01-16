@@ -1,7 +1,7 @@
 import React from 'react'
 import { useState, useContext, createContext } from 'react'
 import { setCurrentTrackPosition } from '~/lib/actions/user'
-import { MultiRef } from './player'
+import type { MultiRef } from './player'
 
 const PositionContext = createContext<{
   position: number[]
@@ -14,7 +14,7 @@ const PositionContext = createContext<{
 const usePosition = () => useContext(PositionContext)
 
 const PositionProvider: React.FC<{
-  playerRef: MultiRef,
+  playerRef: MultiRef
   children: React.ReactNode
 }> = ({ playerRef, children }) => {
   const [position, setPosition] = useState([0])
@@ -28,7 +28,8 @@ const PositionProvider: React.FC<{
     if (playerRef.audioRef.current.currentTime === undefined) return
     if (position[0] === undefined) return
     if (
-      Math.floor(playerRef.audioRef.current.currentTime) !== Math.floor(position[0] ?? 0)
+      Math.floor(playerRef.audioRef.current.currentTime) !==
+      Math.floor(position[0] ?? 0)
     ) {
       setCurrentTrackPosition(playerRef.audioRef.current.currentTime)
     }

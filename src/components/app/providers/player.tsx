@@ -48,9 +48,13 @@ function ContextRichAudio({
         // nextTrack()
       }}
     >
-      <source id="source" ref={playerRef.sourceRef} type="audio/mpeg" src="/api/library/track_data?id=fe6cee76-1975-4cc3-a4a8-b234625c0e91" />
+      <source
+        id="source"
+        ref={playerRef.sourceRef}
+        type="audio/mpeg"
+        src="/api/library/track_data?id=fe6cee76-1975-4cc3-a4a8-b234625c0e91"
+      />
     </audio>
-
   )
 }
 
@@ -122,9 +126,10 @@ export default function PlayerContextProvider({
   > | null
   currentTrackPosition: number
 }) {
-  // biome-ignore lint/style/noNonNullAssertion : the moment it loads, its not null.
-  const playerRef  = {
+  const playerRef = {
+    // biome-ignore lint/style/noNonNullAssertion : the moment it loads, its not null.
     audioRef: useRef<HTMLAudioElement>(null!),
+    // biome-ignore lint/style/noNonNullAssertion : the moment it loads, its not null.
     sourceRef: useRef<HTMLSourceElement>(null!),
   }
   return (

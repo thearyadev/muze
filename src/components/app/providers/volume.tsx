@@ -1,7 +1,7 @@
 import { MySqlTimeBuilderInitial } from 'drizzle-orm/mysql-core'
 import type React from 'react'
 import { useContext, createContext, useState } from 'react'
-import { MultiRef } from './player'
+import type { MultiRef } from './player'
 
 const VolumeContext = createContext<{
   volume: number
@@ -10,7 +10,7 @@ const VolumeContext = createContext<{
 
 const useVolume = () => useContext(VolumeContext)
 const VolumeProvider: React.FC<{
-  playerRef: MultiRef,
+  playerRef: MultiRef
   children: React.ReactNode
 }> = ({ playerRef, children }) => {
   const [volume, setVolume] = useState(50)

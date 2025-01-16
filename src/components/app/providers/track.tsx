@@ -3,7 +3,7 @@ import { usePosition } from './position'
 import { usePlaying } from './playing'
 import type { getTrack } from '~/lib/actions/library'
 import { getCurrentTrack, setCurrentTrack } from '~/lib/actions/user'
-import { MultiRef } from './player'
+import type { MultiRef } from './player'
 
 type TrackQuery = NonNullable<
   Awaited<ReturnType<typeof getTrack>>['content']

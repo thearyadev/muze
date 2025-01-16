@@ -71,21 +71,19 @@ const QueueProvider: React.FC<{
       return
     } // no need to add this to queue
 
-
     if (track !== null) {
-      setQueuePlayed([...queuePlayed, track!])
+      setQueuePlayed([...queuePlayed, track])
     }
     if (queue.length === 0) {
       if (autoplay === true) {
         // queue is empty, autoplay is on, get a random track from the library
         getRandomTrack().then((res) => {
           if (res.content !== undefined) {
-            console.log("calling changeTrack")
+            console.log('calling changeTrack')
             changeTrack(res.content, true)
           }
         })
         return
-      } else {
       }
       setPlayingFalse()
     }

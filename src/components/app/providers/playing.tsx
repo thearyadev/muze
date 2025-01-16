@@ -1,6 +1,6 @@
 import type React from 'react'
 import { useState, useContext, createContext, useEffect } from 'react'
-import { MultiRef } from './player'
+import type { MultiRef } from './player'
 
 const PlayingContext = createContext<{
   playing: boolean
