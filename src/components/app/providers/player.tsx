@@ -17,9 +17,9 @@ function ContextRichAudio({
   audioRef: React.RefObject<HTMLAudioElement>
 }) {
   // biome-ignore lint/style/noNonNullAssertion :
-  const { setMaxPosition, reactPosition, maxposition, position, changePosition } = usePosition()!
+  const { setMaxPosition, reactPosition,  changePosition } = usePosition()!
   // biome-ignore lint/style/noNonNullAssertion :
-  const { trackComplete, nextTrack } = useQueue()!
+  const { trackComplete } = useQueue()!
   const {playing} = usePlaying()!
   return (
     // biome-ignore lint/a11y/useMediaCaption :
@@ -40,7 +40,7 @@ function ContextRichAudio({
       onError={() => {
         if (!audioRef.current) return
         if (audioRef.current.src === '') return
-        nextTrack()
+        // nextTrack()
       }}
     />
   )

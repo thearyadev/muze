@@ -64,7 +64,6 @@ export default function Player() {
   const { playing, setPlayingTrue, setPlayingFalse } = usePlaying()!
   // biome-ignore lint/style/noNonNullAssertion :
   const { nextTrack, previousTrack } = useQueue()!
-
   if (track === null) {
     return (
       // replace with skeleton

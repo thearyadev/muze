@@ -38,6 +38,7 @@ const QueueProvider: React.FC<{
 
   const nextTrack = () => {
     if (queue.length === 0) {
+      changePosition([maxposition])
       trackComplete()
       return
     }
@@ -88,7 +89,6 @@ const QueueProvider: React.FC<{
       }
 
     } 
-    nextTrack()
 
   }
   // biome-ignore lint/correctness/useExhaustiveDependencies : causes infinite loop
