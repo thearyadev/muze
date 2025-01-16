@@ -38,7 +38,7 @@ const QueueProvider: React.FC<{
 
   const nextTrack = () => {
     if (queue.length === 0) {
-      changePosition([maxposition - 0.1])
+      console.log("nothing in queue")
       trackComplete()
       return
     }
@@ -72,10 +72,15 @@ const QueueProvider: React.FC<{
       return
     } // no need to add this to queue
 
-    // biome-ignore lint/style/noNonNullAssertion : track is probably not null
-    setQueuePlayed([...queuePlayed, track!])
+    console.log("track complete, no loop")
+
+    if (track !== null) {
+      setQueuePlayed([...queuePlayed, track!])
+    }
     if (queue.length === 0) {
-      if (autoplay) {
+      console.log("queue is still empty")
+      if (autoplay === true) {
+        console.log("autoplay is on")
         // queue is empty, autoplay is on, get a random track from the library
         getRandomTrack().then((res) => {
           if (res.content !== undefined) {
@@ -83,9 +88,10 @@ const QueueProvider: React.FC<{
           }
         })
         return
+      } else {
+        console.log("autoplay is off")
       }
       setPlayingFalse()
-      return
     }
   }
   // biome-ignore lint/correctness/useExhaustiveDependencies : causes infinite loop
@@ -115,7 +121,7 @@ const QueueProvider: React.FC<{
           trackComplete,
           addTrackPrevious,
         }),
-        [queue, queuePlayed],
+        [queue, queuePlayed, trackComplete],
       )}
     >
       {children}

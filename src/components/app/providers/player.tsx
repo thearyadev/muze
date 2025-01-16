@@ -7,7 +7,8 @@ import { TrackProvider, useTrack } from './track'
 import { VolumeProvider, useVolume } from './volume'
 import { QueueProvider, useQueue } from './queue'
 import type { getTrack } from '~/lib/actions/library'
-import { AutoplayProvider } from './autoplay'
+import { AutoplayProvider, useAutoplay } from './autoplay'
+import QueueViewer from '../queueviewer'
 
 type TrackQuery = NonNullable<Awaited<ReturnType<typeof getTrack>>['content']>
 
@@ -74,12 +75,18 @@ function ContextRichLocalStorageLoader({
   const { changeVolume } = useVolume()!
   // biome-ignore lint/style/noNonNullAssertion :
   const { changeLoop } = useLoop()!
+  // biome-ignore lint/style/noNonNullAssertion :
+  const { changeAutoplay} = useAutoplay()!
   // biome-ignore lint/correctness/useExhaustiveDependencies : causes infinite loop
   useEffect(() => {
     const volume = localStorage.getItem('volume')
       ? Number.parseInt(localStorage.getItem('volume') as string)
       : null
     const loop = localStorage.getItem('loop')
+    const autoplay = localStorage.getItem('autoplay')
+    if (autoplay) {
+      changeAutoplay(autoplay === 'true')
+    }
     if (volume) {
       changeVolume(volume)
     }
@@ -123,6 +130,7 @@ export default function PlayerContextProvider({
                     startingTrack={currentTrack}
                     startingPosition={currentTrackPosition}
                   />
+
                   {children}
                 </QueueProvider>
               </TrackProvider>

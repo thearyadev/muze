@@ -114,7 +114,7 @@ export default function Player() {
               className={`text-xs text-gray-400 hover:text-orange-400 ${autoplay ? 'text-orange-400' : null}`}
               onMouseDown={() => {
                 autoplay ? changeAutoplay(false) : changeAutoplay(true)
-                loop ? changeLoop(false) : null
+                // loop ? changeLoop(false) : null
               }}
             />
             <StepBackwardIcon
@@ -139,7 +139,7 @@ export default function Player() {
               className={`text-xs text-gray-400 hover:text-orange-400 ${loop ? 'text-orange-400' : null}`}
               onMouseDown={() => {
                 loop ? changeLoop(false) : changeLoop(true)
-                autoplay ? changeAutoplay(false) : null
+                // autoplay ? changeAutoplay(false) : null
               }}
             />
           </div>

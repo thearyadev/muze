@@ -3,6 +3,7 @@ import '~/styles/globals.css'
 import { Inter } from 'next/font/google'
 
 import { Toaster } from 'sonner'
+import QueueViewer from '~/components/app/queueviewer'
 
 const inter = Inter({
   subsets: ['latin'],
