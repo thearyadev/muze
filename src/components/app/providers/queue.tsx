@@ -1,4 +1,4 @@
-import React, { useContext, createContext, useEffect } from 'react'
+import React, { useContext, createContext, useEffect, useCallback } from 'react'
 import { useTrack } from './track'
 import { usePlaying } from './playing'
 import { useLoop } from './loop'
@@ -38,8 +38,8 @@ const QueueProvider: React.FC<{
 
   const nextTrack = () => {
     if (queue.length === 0) {
-      console.log("nothing in queue")
-      trackComplete()
+      console.log('nothing in queue')
+      _trackComplete()
       return
     }
     const nextTrack = queue.shift()
@@ -66,21 +66,21 @@ const QueueProvider: React.FC<{
     setQueuePlayed([...queuePlayed, track])
   }
 
-  const trackComplete = () => {
+  const _trackComplete = () => {
     if (loop && track) {
       changeTrack(track, true)
       return
     } // no need to add this to queue
 
-    console.log("track complete, no loop")
+    console.log('track complete, no loop')
 
     if (track !== null) {
       setQueuePlayed([...queuePlayed, track!])
     }
     if (queue.length === 0) {
-      console.log("queue is still empty")
+      console.log('queue is still empty')
       if (autoplay === true) {
-        console.log("autoplay is on")
+        console.log('autoplay is on')
         // queue is empty, autoplay is on, get a random track from the library
         getRandomTrack().then((res) => {
           if (res.content !== undefined) {
@@ -89,11 +89,15 @@ const QueueProvider: React.FC<{
         })
         return
       } else {
-        console.log("autoplay is off")
+        console.log('autoplay is off')
       }
       setPlayingFalse()
     }
   }
+
+  // biome-ignore lint/correctness/useExhaustiveDependencies : wrong
+  const trackComplete = useCallback(_trackComplete, [autoplay, loop, track])
+
   // biome-ignore lint/correctness/useExhaustiveDependencies : causes infinite loop
   useEffect(() => {
     navigator.mediaSession.setActionHandler('nexttrack', () => {

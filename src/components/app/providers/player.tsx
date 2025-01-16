@@ -76,7 +76,7 @@ function ContextRichLocalStorageLoader({
   // biome-ignore lint/style/noNonNullAssertion :
   const { changeLoop } = useLoop()!
   // biome-ignore lint/style/noNonNullAssertion :
-  const { changeAutoplay} = useAutoplay()!
+  const { changeAutoplay } = useAutoplay()!
   // biome-ignore lint/correctness/useExhaustiveDependencies : causes infinite loop
   useEffect(() => {
     const volume = localStorage.getItem('volume')
