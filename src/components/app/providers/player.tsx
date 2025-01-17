@@ -8,7 +8,6 @@ import { VolumeProvider, useVolume } from './volume'
 import { QueueProvider, useQueue } from './queue'
 import type { getTrack } from '~/lib/actions/library'
 import { AutoplayProvider, useAutoplay } from './autoplay'
-import QueueViewer from '../queueviewer'
 
 type TrackQuery = NonNullable<Awaited<ReturnType<typeof getTrack>>['content']>
 
