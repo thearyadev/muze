@@ -3,7 +3,6 @@ import '~/styles/globals.css'
 import { Inter } from 'next/font/google'
 
 import { Toaster } from 'sonner'
-import QueueViewer from '~/components/app/queueviewer'
 import ScreenSizeIndicator from '~/components/app/ssi'
 
 const inter = Inter({
@@ -25,7 +24,6 @@ export default function RootLayout({
   return (
     <html lang="en" className="dark">
       <body className={`font-sans ${inter.variable}`}>
-        <ScreenSizeIndicator />
         <Toaster richColors className="bg-zinc-900 text-white" />
         {children}
       </body>
