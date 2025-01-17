@@ -10,6 +10,7 @@ import { getCurrentTrack, getUsername } from '~/lib/actions/user'
 import { getTrack } from '~/lib/actions/library'
 import StateViewer from '~/components/app/state_viewer'
 import ScreenSizeIndicator from '~/components/app/ssi'
+import { SidebarProvider } from '~/components/app/providers/sidebar'
 
 type TrackQuery = NonNullable<Awaited<ReturnType<typeof getTrack>>['content']>
 
@@ -38,24 +39,20 @@ export default async function AppLayout({
       currentTrack={currentTrack}
       currentTrackPosition={currentTrackPosition}
     >
-      {process.env.NODE_ENV !== 'production' && <ScreenSizeIndicator />}
-      {process.env.NODE_ENV !== 'production' && <StateViewer />}
+      <SidebarProvider>
+        {process.env.NODE_ENV !== 'production' && <ScreenSizeIndicator />}
+        {process.env.NODE_ENV !== 'production' && <StateViewer />}
 
-      <div className="grid grid-rows-[1fr_auto] h-screen">
-        <div className="grid grid-cols-12 overflow-hidden">
-          <div className="hidden lg:block col-span-3 2xl:col-span-2">
-            <Sidebar username={username || 'error'} />
-          </div>
-
-          <div className="col-span-9 2xl:col-span-10 overflow-hidden">
+        <div className="grid grid-rows-[1fr_auto] h-screen">
+          <div className="overflow-hidden">
             <PageWrapper>{children}</PageWrapper>
           </div>
-        </div>
 
-        <div className="">
-          <Player />
+          <div className="">
+            <Player />
+          </div>
         </div>
-      </div>
+      </SidebarProvider>
     </PlayerContextProvider>
   )
 }

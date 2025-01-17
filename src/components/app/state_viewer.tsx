@@ -8,6 +8,7 @@ import { usePlaying } from './providers/playing'
 import { useTrack } from './providers/track'
 import { usePosition } from './providers/position'
 import { useQueue } from './providers/queue'
+import { useSidebar } from './providers/sidebar'
 
 export default function StateViewer() {
   const [isOpen, setIsOpen] = useState(false)
@@ -28,7 +29,8 @@ export default function StateViewer() {
   const { position, maxposition } = usePosition()!
   // biome-ignore lint/style/noNonNullAssertion : the moment it loads, its not null.
   const { queue, queuePlayed } = useQueue()!
-
+  // biome-ignore lint/style/noNonNullAssertion : the moment it loads, its not null.
+  const { open } = useSidebar()!
   return (
     <>
       <div className="fixed z-[9000] right-1 top-1 transition-all duration-300 ease-in-out">
@@ -56,6 +58,7 @@ export default function StateViewer() {
               <StatusItem label="Autoplay" value={autoplay ? 'On' : 'Off'} />
               <StatusItem label="Loop" value={loop ? 'On' : 'Off'} />
               <StatusItem label="Volume" value={`${volume}%`} />
+              <StatusItem label="Sidebar" value={open ? 'Open' : 'Closed'} />
               <StatusItem
                 label="Playing"
                 value={playing ? 'Playing' : 'Paused'}

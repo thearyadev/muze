@@ -145,6 +145,8 @@ export default function Sidebar({
           <SidebarButton href="/app/genres" label="Genres" commandKey="6">
             <TableIcon />
           </SidebarButton>
+
+          <AccountButton username={username} />
         </div>
         <AccountButton username={username} />
       </div>
