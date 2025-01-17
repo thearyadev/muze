@@ -85,7 +85,8 @@ export default function StateViewer() {
             <div className="space-y-2 max-h-32 overflow-y-auto">
               {queue.map((track, index) => (
                 <div
-                  key={track.id}
+                  // biome-ignore lint/suspicious/noArrayIndexKey : idc
+                  key={index}
                   className="text-white text-sm bg-zinc-700 p-2 rounded"
                 >
                   {index + 1}. {track.name}
@@ -101,7 +102,8 @@ export default function StateViewer() {
             <div className="space-y-2 max-h-32 overflow-y-auto">
               {queuePlayed.map((track, index) => (
                 <div
-                  key={track.id}
+                  // biome-ignore lint/suspicious/noArrayIndexKey : idc
+                  key={index}
                   className="text-white text-sm bg-zinc-700 p-2 rounded"
                 >
                   {index + 1}. {track.name}
