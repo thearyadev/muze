@@ -36,18 +36,24 @@ export default async function AppLayout({
       currentTrack={currentTrack}
       currentTrackPosition={currentTrackPosition}
     >
-      <div className="flex">
-        <div className="hidden flex-none sm:block">
-          <Sidebar username={username || 'error'} />
+      <div className="grid grid-rows-[1fr_auto] h-screen">
+        <div className="grid grid-cols-12 overflow-hidden">
+          <div className="hidden lg:block col-span-3 2xl:col-span-2">
+            <Sidebar username={username || 'error'} />
+          </div>
+
+          <div className="col-span-9 2xl:col-span-10 overflow-hidden">
+            <PageWrapper>{children}</PageWrapper>
+          </div>
         </div>
 
-        <div className="grow">
-          <PageWrapper>{children}</PageWrapper>
+        <div className="">
+          <Player />
         </div>
       </div>
-      <div className="fixed bottom-0">
-        <Player />
-      </div>
+
+
     </PlayerContextProvider>
   )
 }
+

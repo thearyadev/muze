@@ -8,7 +8,7 @@ export default function PageWrapper({
 }) {
   return (
     <>
-      <div className="h-screen w-full pb-20 text-white">{children}</div>
+      <div className="h-screen w-full text-white">{children}</div>
     </>
   )
 }
