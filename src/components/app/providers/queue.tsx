@@ -92,7 +92,7 @@ const QueueProvider: React.FC<{
   // biome-ignore lint/correctness/useExhaustiveDependencies : wrong
   const trackComplete = useCallback(_trackComplete, [autoplay, loop, track])
 
-  // biome-ignore lint/correctness/useExhaustiveDependencies : causes infinite loop
+  // biome-ignore lint/correctness/useExhaustiveDependencies : i disagree
   useEffect(() => {
     navigator.mediaSession.setActionHandler('nexttrack', () => {
       nextTrack()
@@ -104,7 +104,8 @@ const QueueProvider: React.FC<{
       navigator.mediaSession.setActionHandler('nexttrack', null)
       navigator.mediaSession.setActionHandler('previoustrack', null)
     }
-  }, [])
+
+  }, [trackComplete])
 
   return (
     <QueueContext.Provider
