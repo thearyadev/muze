@@ -28,7 +28,7 @@ export default function PageWrapper({
         <Sidebar username="error" />
       </div>
       <div
-        className={`${open ? 'col-span-12' : 'col-span-8 lg:col-span-9 xl:col-span-10'} overflow-x-hidden`}
+        className={`${open ? 'col-span-12' : 'col-span-8 lg:col-span-9 xl:col-span-10'} overflow-y-hidden`}
       >
         <div className="h-screen w-full text-white">{children}</div>
       </div>

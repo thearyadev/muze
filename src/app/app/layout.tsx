@@ -43,12 +43,12 @@ export default async function AppLayout({
         {process.env.NODE_ENV !== 'production' && <ScreenSizeIndicator />}
         {process.env.NODE_ENV !== 'production' && <StateViewer />}
 
-        <div className="grid grid-rows-[1fr_auto] h-screen">
+        <div className=" h-screen">
           <div className="overflow-hidden">
             <PageWrapper>{children}</PageWrapper>
           </div>
 
-          <div className="">
+          <div className="absolute bottom-0 left-0">
             <Player />
           </div>
         </div>
