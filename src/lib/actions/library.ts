@@ -9,6 +9,8 @@ import {
   genres,
   genreTrack,
   tracks,
+  userListens,
+  users,
 } from '~/server/db/schema'
 import { and, asc, eq, getTableColumns, ilike, sql, or } from 'drizzle-orm'
 import { env } from '~/env'
@@ -17,13 +19,27 @@ import path from 'node:path'
 import sharp from 'sharp'
 import * as mm from 'music-metadata'
 import type { PostgresJsDatabase } from 'drizzle-orm/postgres-js'
+import { getUsername } from './user'
 
 export const allTracks = protectedAction(
   async (page: number, pageSize: number) => {
+    const username = await getUsername()
+    const [user] = await db
+      .select()
+      .from(users)
+      .where(eq(users.username, username.content ?? ''))
+    if (!user) {
+      return {
+        status_code: 401,
+        error: 'Unable to find user.',
+      }
+    }
+
     const query = await db
       .selectDistinct({
         ...getTableColumns(tracks),
         albumName: albums.name,
+        listens: userListens.listens,
         artistNames: sql<string>`string_agg(${artists.name}, ';')`,
         artistIds: sql<string>`string_agg(cast(${artists.id} AS TEXT), ';')`,
       })
@@ -31,7 +47,14 @@ export const allTracks = protectedAction(
       .innerJoin(albums, eq(tracks.albumId, albums.id))
       .innerJoin(artistTracks, eq(tracks.id, artistTracks.trackId))
       .innerJoin(artists, eq(artistTracks.artistId, artists.id))
-      .groupBy(tracks.id, albums.name) // Include all non-aggregated columns
+      .leftJoin(
+        userListens,
+        and(
+          eq(userListens.userId, user.id),
+          eq(userListens.trackId, tracks.id),
+        ),
+      ) // include tracks with no listens. will be null
+      .groupBy(tracks.id, albums.name, userListens.listens) // Include all non-aggregated columns
       .orderBy(asc(tracks.id))
       .limit(pageSize)
       .offset((page - 1) * pageSize)
@@ -45,17 +68,33 @@ export const allTracks = protectedAction(
 )
 
 export const search = protectedAction(async (query: string) => {
+  const username = await getUsername()
+  const [user] = await db
+    .select()
+    .from(users)
+    .where(eq(users.username, username.content ?? ''))
+  if (!user) {
+    return {
+      status_code: 401,
+      error: 'Unable to find user.',
+    }
+  }
   const searchResult = await db
     .selectDistinct({
       ...getTableColumns(tracks),
       albumName: albums.name,
       artistNames: sql<string>`string_agg(${artists.name}, ';')`,
+      listens: userListens.listens,
       artistIds: sql<string>`string_agg(cast(${artists.id} AS TEXT), ';')`,
     })
     .from(tracks)
     .innerJoin(albums, eq(tracks.albumId, albums.id))
     .innerJoin(artistTracks, eq(tracks.id, artistTracks.trackId))
     .innerJoin(artists, eq(artistTracks.artistId, artists.id))
+    .leftJoin(
+      userListens,
+      and(eq(userListens.userId, user.id), eq(userListens.trackId, tracks.id)),
+    ) // include tracks with no listens. will be null
     .where(
       or(
         ilike(tracks.name, `%${query}%`),
@@ -63,7 +102,7 @@ export const search = protectedAction(async (query: string) => {
         ilike(artists.name, `%${query}%`),
       ),
     )
-    .groupBy(tracks.id, albums.name)
+    .groupBy(tracks.id, albums.name, userListens.listens)
     .execute()
   return {
     status_code: 200,
@@ -72,12 +111,24 @@ export const search = protectedAction(async (query: string) => {
 })
 
 export const getTrack = protectedAction(async (trackId: string) => {
+  const username = await getUsername()
+  const [user] = await db
+    .select()
+    .from(users)
+    .where(eq(users.username, username.content ?? ''))
+  if (!user) {
+    return {
+      status_code: 401,
+      error: 'Unable to find user.',
+    }
+  }
   const trackFound =
     (
       await db
         .select({
           ...getTableColumns(tracks),
           albumName: albums.name,
+          listens: userListens.listens,
           artistNames: sql<string>`string_agg(${artists.name}, ';') AS artistNames`,
           artistIds:
             sql<string>`string_agg(cast(${artists.id} AS TEXT), ';')`.as(
@@ -89,7 +140,14 @@ export const getTrack = protectedAction(async (trackId: string) => {
         .innerJoin(albums, eq(tracks.albumId, albums.id))
         .innerJoin(artistTracks, eq(artistTracks.trackId, tracks.id))
         .innerJoin(artists, eq(artists.id, artistTracks.artistId))
-        .groupBy(tracks.id, albums.name)
+        .leftJoin(
+          userListens,
+          and(
+            eq(userListens.userId, user.id),
+            eq(userListens.trackId, tracks.id),
+          ),
+        ) // include tracks with no listens. will be null
+        .groupBy(tracks.id, albums.name, userListens.listens)
         .execute()
     )[0] || null
   if (!trackFound) {
@@ -105,11 +163,23 @@ export const getTrack = protectedAction(async (trackId: string) => {
 })
 
 export const getRandomTrack = protectedAction(async () => {
+  const username = await getUsername()
+  const [user] = await db
+    .select()
+    .from(users)
+    .where(eq(users.username, username.content ?? ''))
+  if (!user) {
+    return {
+      status_code: 401,
+      error: 'Unable to find user.',
+    }
+  }
   const query = await db
     .select({
       ...getTableColumns(tracks),
       albumName: albums.name,
       artistNames: sql<string>`string_agg(${artists.name}, ';') AS artistNames`,
+      listens: userListens.listens,
       artistIds: sql<string>`string_agg(cast(${artists.id} AS TEXT), ';')`.as(
         'artistIds',
       ),
@@ -118,7 +188,11 @@ export const getRandomTrack = protectedAction(async () => {
     .innerJoin(albums, eq(tracks.albumId, albums.id))
     .innerJoin(artistTracks, eq(tracks.id, artistTracks.trackId))
     .innerJoin(artists, eq(artistTracks.artistId, artists.id))
-    .groupBy(tracks.id, albums.name)
+    .leftJoin(
+      userListens,
+      and(eq(userListens.userId, user.id), eq(userListens.trackId, tracks.id)),
+    ) // include tracks with no listens. will be null
+    .groupBy(tracks.id, albums.name, userListens.listens)
     .orderBy(sql`RANDOM()`)
     .limit(1)
     .execute()

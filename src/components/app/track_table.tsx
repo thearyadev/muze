@@ -74,6 +74,9 @@ function TrackCell({
       <div className="col-span-2 content-center text-xs text-gray-500">
         {secondsToTimeString(track?.duration || 0)}
       </div>
+      <div className="col-span-1 content-center text-xs text-gray-500">
+        {track?.listens ?? 0}
+      </div>
     </div>
   )
 }
@@ -118,6 +121,7 @@ export function TrackTableScrollPaginated(
         <div className="col-span-6 text-xs">TRACK</div>
         <div className="col-span-3 text-xs">ALBUM</div>
         <div className="col-span-2 text-xs">TIME</div>
+        <div className="col-span-1 text-xs">LISTENS</div>
       </div>
       <Separator />
       <ScrollArea
@@ -164,6 +168,7 @@ export function TrackTableScroll(props: TrackTableScroll) {
         <div className="col-span-6 text-xs">TRACK</div>
         <div className="col-span-3 text-xs">ALBUM</div>
         <div className="col-span-2 text-xs">TIME</div>
+        <div className="col-span-1 text-xs">LISTENS</div>
       </div>
       <Separator />
       <ScrollArea className="h-full w-full rounded-md">

@@ -148,7 +148,7 @@ export const logTrackListen = protectedAction(async (trackId: string) => {
 
   if (lastListen) {
     const diff = new Date().getTime() - lastListen.dt.getTime()
-    if (diff > 30000) {
+    if (diff < 30000) {
       return {
         status_code: 400,
         error: 'Cooldown period not met.',
@@ -163,14 +163,12 @@ export const logTrackListen = protectedAction(async (trackId: string) => {
       and(eq(userListens.userId, user[0].id), eq(userListens.trackId, trackId)),
     )
   if (!trackUserListen) {
-    await db
-      .insert(userListens)
-      .values({
-        userId: user[0].id,
-        trackId: trackId,
-        listens: 1,
-        lastListen: new Date(),
-      })
+    await db.insert(userListens).values({
+      userId: user[0].id,
+      trackId: trackId,
+      listens: 1,
+      lastListen: new Date(),
+    })
   } else {
     await db
       .update(userListens)
