@@ -6,7 +6,9 @@ await import('./src/env.js')
 
 /** @type {import("next").NextConfig} */
 const config = {
-  experimental: {},
+  experimental: {
+    reactCompiler: true,
+  },
   eslint: {
     ignoreDuringBuilds: true,
   },
