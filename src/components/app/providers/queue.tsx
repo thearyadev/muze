@@ -86,6 +86,11 @@ const QueueProvider: React.FC<{
         return
       }
       setPlayingFalse()
+    } else {
+      const nextTrack = queue.shift()
+      if (nextTrack) {
+        changeTrack(nextTrack, true)
+      }
     }
   }
 
