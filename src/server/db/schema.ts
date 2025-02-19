@@ -6,6 +6,7 @@ import {
   primaryKey,
   pgTableCreator,
   varchar,
+  timestamp,
 } from 'drizzle-orm/pg-core'
 
 /**
@@ -133,6 +134,7 @@ export const userListens = createTable('user_listen', {
     .references(() => tracks.id)
     .notNull(),
   listens: integer('listens').notNull(),
+  lastListen: timestamp().defaultNow().notNull(),
 })
 
 export const userPlaylists = createTable('user_playlist', {

@@ -5,6 +5,7 @@ import { useLoop } from './loop'
 import { getRandomTrack, type getTrack } from '~/lib/actions/library'
 import { useAutoplay } from './autoplay'
 import { usePosition } from './position'
+import { logTrackListen } from '~/lib/actions/user'
 
 type TrackQuery = NonNullable<
   NonNullable<Awaited<ReturnType<typeof getTrack>>>['content']
@@ -37,6 +38,9 @@ const QueueProvider: React.FC<{
   const { changePosition, maxposition } = usePosition()!
 
   const nextTrack = () => {
+    if (track) {
+      logTrackListen(track.id)
+    }
     if (queue.length === 0) {
       _trackComplete()
       return
@@ -66,6 +70,10 @@ const QueueProvider: React.FC<{
   }
 
   const _trackComplete = () => {
+    // is called when natural track completion
+    if (track) {
+      logTrackListen(track.id)
+    }
     if (loop && track) {
       changeTrack(track, true)
       return
@@ -109,7 +117,6 @@ const QueueProvider: React.FC<{
       navigator.mediaSession.setActionHandler('nexttrack', null)
       navigator.mediaSession.setActionHandler('previoustrack', null)
     }
-
   }, [trackComplete])
 
   return (

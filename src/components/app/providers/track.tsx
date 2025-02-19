@@ -2,7 +2,11 @@ import React, { useState, useContext, createContext } from 'react'
 import { usePosition } from './position'
 import { usePlaying } from './playing'
 import type { getTrack } from '~/lib/actions/library'
-import { getCurrentTrack, setCurrentTrack } from '~/lib/actions/user'
+import {
+  getCurrentTrack,
+  logTrackListen,
+  setCurrentTrack,
+} from '~/lib/actions/user'
 import type { MultiRef } from './player'
 
 type TrackQuery = NonNullable<

@@ -1,0 +1,1 @@
+ALTER TABLE "muze_user_listen" ADD COLUMN "lastListen" timestamp DEFAULT now() NOT NULL;
