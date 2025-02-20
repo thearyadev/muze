@@ -37,7 +37,7 @@ const TrackSlider = React.forwardRef<
     )}
     {...props}
   >
-    <SliderPrimitive.Track className="relative h-0.5 w-full grow overflow-hidden rounded-full dark:bg-zinc-50/20">
+    <SliderPrimitive.Track className="relative h-0.5 cursor-pointer w-full grow overflow-hidden rounded-full dark:bg-zinc-50/20">
       <SliderPrimitive.Range className="absolute h-full dark:bg-orange-400" />
     </SliderPrimitive.Track>
     <SliderPrimitive.Thumb className="hidden h-2 w-2 rounded-full border border-zinc-200 border-zinc-900/50 bg-white shadow transition-colors focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-zinc-950 disabled:pointer-events-none disabled:opacity-50 dark:border-zinc-50/50 dark:border-zinc-800 dark:bg-zinc-950 dark:focus-visible:ring-zinc-300" />
