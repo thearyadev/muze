@@ -2,7 +2,7 @@
 import type React from 'react'
 import Sidebar from './sidebar'
 import { useSidebar } from './providers/sidebar'
-import { useEffect } from 'react'
+import { Suspense, useEffect } from 'react'
 export default function PageWrapper({
   children,
 }: {
