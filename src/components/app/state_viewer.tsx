@@ -20,7 +20,7 @@ export default function StateViewer() {
   // biome-ignore lint/style/noNonNullAssertion : the moment it loads, its not null.
   const { loop } = useLoop()!
   // biome-ignore lint/style/noNonNullAssertion : the moment it loads, its not null.
-  const { volume } = useVolume()!
+  const { volume, muted } = useVolume()!
   // biome-ignore lint/style/noNonNullAssertion : the moment it loads, its not null.
   const { playing } = usePlaying()!
   // biome-ignore lint/style/noNonNullAssertion : the moment it loads, its not null.
@@ -63,6 +63,8 @@ export default function StateViewer() {
                 label="Playing"
                 value={playing ? 'Playing' : 'Paused'}
               />
+
+              <StatusItem label="Muted" value={muted ? 'True' : 'False'} />
             </div>
           </div>
 

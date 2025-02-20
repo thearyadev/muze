@@ -5,7 +5,11 @@ import Link from 'next/link'
 
 import { VolumeSlider, TrackSlider } from '../ui/slider'
 
-import { LoopIcon, SpeakerLoudIcon as SpeakerIcon } from '@radix-ui/react-icons'
+import {
+  LoopIcon,
+  SpeakerLoudIcon as SpeakerIconOn,
+  SpeakerOffIcon as SpeakerIconOff,
+} from '@radix-ui/react-icons'
 
 import {
   PlayCircleOutlined as PlayIcon,
@@ -55,7 +59,7 @@ export default function Player() {
   // biome-ignore lint/style/noNonNullAssertion :
   const { track } = useTrack()!
   // biome-ignore lint/style/noNonNullAssertion :
-  const { volume, changeVolume } = useVolume()!
+  const { volume, changeVolume, toggleMute, muted } = useVolume()!
   // biome-ignore lint/style/noNonNullAssertion :
   const { loop, changeLoop } = useLoop()!
   // biome-ignore lint/style/noNonNullAssertion :
@@ -148,12 +152,24 @@ export default function Player() {
           className="hidden flex-row items-center justify-end space-x-4 sm:flex"
           // volume
         >
-          <SpeakerIcon className="text-white" />
+          <SpeakerIconOn
+            className={!muted ? 'text-white' : 'hidden'}
+            onClick={() => {
+              toggleMute()
+            }}
+          />
+          <SpeakerIconOff
+            className={muted ? 'text-white' : 'hidden'}
+            onClick={() => {
+              toggleMute()
+            }}
+          />
           <VolumeSlider
             defaultValue={[volume]}
-            value={[volume]}
+            value={[muted ? 0 : volume]}
             max={100}
             step={1}
+            disabled={muted}
             className="w-[30%]"
             onValueChange={(v) => changeVolume(v[0] || 0)}
           />
