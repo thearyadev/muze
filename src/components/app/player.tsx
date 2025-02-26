@@ -61,6 +61,8 @@ export default function Player() {
   // biome-ignore lint/style/noNonNullAssertion :
   const { volume, changeVolume, toggleMute, muted } = useVolume()!
   // biome-ignore lint/style/noNonNullAssertion :
+  const { queue } = useQueue()!
+  // biome-ignore lint/style/noNonNullAssertion :
   const { loop, changeLoop } = useLoop()!
   // biome-ignore lint/style/noNonNullAssertion :
   const { autoplay, changeAutoplay } = useAutoplay()!
@@ -137,7 +139,12 @@ export default function Player() {
           <div className="flex flex-row items-center space-x-5 ">
             <StepForwardIcon
               className="text-xl text-white transition duration-100 hover:text-orange-400"
-              onMouseDown={nextTrack}
+              onMouseDown={() => {
+                if (queue.length === 0 && autoplay === false){
+                  changeAutoplay(true)
+                }
+                nextTrack()
+              }}
             />
             <LoopIcon
               className={`text-xs text-gray-400 hover:text-orange-400 ${loop ? 'text-orange-400' : null}`}
