@@ -13,6 +13,7 @@ export default function Queue() {
         tracks={queue}
         pageSize={50}
         page={1}
+        toolbar={false}
       />
     </>
   )
