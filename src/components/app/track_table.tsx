@@ -18,6 +18,7 @@ type TrackTableProps = {
   tracks?: TrackQuery[];
   pageSize: number;
   page: number;
+  toolbar: boolean;
   dataCallback?: (
     page: number,
     pageSize: number,
@@ -103,6 +104,8 @@ export function TrackTable(
   const { addTrackPrevious } = useQueue()!;
   // biome-ignore lint/style/noNonNullAssertion :
   const { track: currentTrack } = useTrack()!;
+  // biome-ignore lint/style/noNonNullAssertion :
+  const { replaceQueue } = useQueue()!;
   const handleTrackSwitch = (track: TrackQuery) => {
     if (currentTrack) addTrackPrevious(currentTrack);
     changeTrack(track, true);
@@ -113,7 +116,7 @@ export function TrackTable(
     if (percentageScrolled <= 200 && heightRef.current < maxPosition) {
       setPage((prevPage) => prevPage + 1);
       heightRef.current = maxPosition;
-      props.dataCallback!(page, props.pageSize).then((tracks) => {
+      props.dataCallback?.(page, props.pageSize).then((tracks) => {
         setTracks((prevTracks) => [...prevTracks, ...tracks || []]);
       });
     }
@@ -121,6 +124,19 @@ export function TrackTable(
 
   return (
     <>
+      {props.toolbar &&
+        (
+          <div className="text-gray-500 py-1 w-full text-center">
+            <div
+              className="text-xs hover:text-orange-400 cursor-pointer"
+              onClick={() => {
+                replaceQueue(props.tracks || [])
+              }}
+            >
+              Add To Queue
+            </div>
+          </div>
+        )}
       <div className="grid grid-cols-12 grid-rows-1 gap-4 p-3  text-gray-500">
         <div className="col-span-6 text-xs">TRACK</div>
         <div className="col-span-3 text-xs">ALBUM</div>
