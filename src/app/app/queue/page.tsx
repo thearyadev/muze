@@ -1,7 +1,7 @@
 'use client'
 import PageHeading from '~/components/app/page_heading'
 import { useQueue } from '~/components/app/providers/queue'
-import { TrackTableScroll } from '~/components/app/track_table'
+import { TrackTable } from '~/components/app/track_table'
 
 export default function Queue() {
   // biome-ignore lint/style/noNonNullAssertion :
@@ -9,7 +9,11 @@ export default function Queue() {
   return (
     <>
       <PageHeading>Queue</PageHeading>
-      <TrackTableScroll tracks={queue} />
+      <TrackTable 
+        tracks={queue}
+        pageSize={50}
+        page={1}
+      />
     </>
   )
 }
