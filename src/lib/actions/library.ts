@@ -20,6 +20,50 @@ import sharp from 'sharp'
 import * as mm from 'music-metadata'
 import type { PostgresJsDatabase } from 'drizzle-orm/postgres-js'
 import { getUsername } from './user'
+export const getAlbumTracks = protectedAction(
+  async (albumId: string) => {
+    const username = await getUsername()
+    const [user] = await db
+      .select()
+      .from(users)
+      .where(eq(users.username, username.content ?? ''))
+    if (!user) {
+      return {
+        status_code: 401,
+        error: 'Unable to find user.',
+      }
+    }
+
+    const query = await db
+      .selectDistinct({
+        ...getTableColumns(tracks),
+        albumName: albums.name,
+        listens: userListens.listens,
+        artistNames: sql<string>`string_agg(${artists.name}, ';')`,
+        artistIds: sql<string>`string_agg(cast(${artists.id} AS TEXT), ';')`,
+      })
+      .from(tracks)
+      .innerJoin(albums, eq(tracks.albumId, albums.id))
+      .innerJoin(artistTracks, eq(tracks.id, artistTracks.trackId))
+      .innerJoin(artists, eq(artistTracks.artistId, artists.id))
+      .leftJoin(
+        userListens,
+        and(
+          eq(userListens.userId, user.id),
+          eq(userListens.trackId, tracks.id),
+        ),
+      ) // include tracks with no listens. will be null
+      .groupBy(tracks.id, albums.name, userListens.listens) // Include all non-aggregated columns
+      .orderBy(asc(tracks.trackNumber))
+      .where(eq(albums.id, albumId))
+      .execute()
+
+    return {
+      status_code: 200,
+      content: query,
+    }
+  },
+)
 
 export const allTracks = protectedAction(
   async (page: number, pageSize: number) => {
@@ -159,6 +203,41 @@ export const getTrack = protectedAction(async (trackId: string) => {
   return {
     status_code: 200,
     content: trackFound,
+  }
+})
+
+
+export const getAlbum = protectedAction(async (albumId: string) => {
+  const username = await getUsername()
+  const [user] = await db
+    .select()
+    .from(users)
+    .where(eq(users.username, username.content ?? ''))
+  if (!user) {
+    return {
+      status_code: 401,
+      error: 'Unable to find user.',
+    }
+  }
+  const albumFound =
+    (
+      await db
+        .select({
+          ...getTableColumns(albums),
+        })
+        .from(albums)
+        .where(eq(albums.id, albumId))
+        .execute()
+    )[0] || null
+  if (!albumFound) {
+    return {
+      status_code: 404,
+      error: 'Album not found',
+    }
+  }
+  return {
+    status_code: 200,
+    content: albumFound,
   }
 })
 
