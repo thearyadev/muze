@@ -70,7 +70,8 @@ const QueueProvider: React.FC<{
   }
 
   const replaceQueue = (tracks: TrackQuery[]) => {
-    setQueue(tracks)
+    changeTrack(tracks[0] ?? null, true)
+    setQueue(tracks.slice(1, tracks.length))
     setQueuePlayed([])
   }
 
