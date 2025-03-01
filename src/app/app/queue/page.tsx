@@ -9,12 +9,7 @@ export default function Queue() {
   return (
     <>
       <PageHeading>Queue</PageHeading>
-      <TrackTable 
-        tracks={queue}
-        pageSize={50}
-        page={1}
-        toolbar={false}
-      />
+      <TrackTable tracks={queue} pageSize={50} page={1} toolbar={false} />
     </>
   )
 }

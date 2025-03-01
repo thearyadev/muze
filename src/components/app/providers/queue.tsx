@@ -17,7 +17,7 @@ const QueueContext = createContext<{
   previousTrack: () => void
   addTrack: (track: TrackQuery) => void
   trackComplete: () => void
-  addTrackPrevious: (track: TrackQuery) => void, 
+  addTrackPrevious: (track: TrackQuery) => void
   replaceQueue: (tracks: TrackQuery[]) => void
 } | null>(null)
 
@@ -74,8 +74,6 @@ const QueueProvider: React.FC<{
     setQueue(tracks.slice(1, tracks.length))
     setQueuePlayed([])
   }
-
-
 
   const _trackComplete = () => {
     // is called when natural track completion
@@ -139,7 +137,7 @@ const QueueProvider: React.FC<{
           addTrack,
           trackComplete,
           addTrackPrevious,
-          replaceQueue
+          replaceQueue,
         }),
         [queue, queuePlayed, trackComplete],
       )}

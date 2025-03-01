@@ -1,8 +1,8 @@
-import Image from "next/image";
-import { notFound, redirect } from "next/navigation";
-import PageHeading from "~/components/app/page_heading";
-import { TrackTable } from "~/components/app/track_table";
-import { getAlbum, getAlbumTracks } from "~/lib/actions/library";
+import Image from 'next/image'
+import { notFound, redirect } from 'next/navigation'
+import PageHeading from '~/components/app/page_heading'
+import { TrackTable } from '~/components/app/track_table'
+import { getAlbum, getAlbumTracks } from '~/lib/actions/library'
 
 // export default async function AblumPage() {
 //   return (
@@ -25,10 +25,10 @@ import { getAlbum, getAlbumTracks } from "~/lib/actions/library";
 //   )
 // }
 //
-export default async function AlbumPage({params}: {params: Promise<{albumId: string}>}) {
-  const album = await getAlbum(
-    (await params).albumId
-  )
+export default async function AlbumPage({
+  params,
+}: { params: Promise<{ albumId: string }> }) {
+  const album = await getAlbum((await params).albumId)
   if (!album.content) {
     return notFound()
   }
@@ -43,11 +43,9 @@ export default async function AlbumPage({params}: {params: Promise<{albumId: str
   return (
     <>
       <PageHeading>
-        <div className="flex flex-row items-center">
-          {album.content.name}
-        </div>
+        <div className="flex flex-row items-center">{album.content.name}</div>
       </PageHeading>
-      <TrackTable tracks={tracks.content} pageSize={50} page={1} toolbar/>
+      <TrackTable tracks={tracks.content} pageSize={50} page={1} toolbar />
     </>
   )
 }

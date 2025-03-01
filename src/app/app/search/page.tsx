@@ -22,7 +22,7 @@ export default function Search() {
   return (
     <>
       <PageHeading>Search</PageHeading>
-      <TrackTable tracks={tracks} pageSize={50} page={1} toolbar/>
+      <TrackTable tracks={tracks} pageSize={50} page={1} toolbar />
     </>
   )
 }

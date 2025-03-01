@@ -140,7 +140,7 @@ export default function Player() {
             <StepForwardIcon
               className="text-xl text-white transition duration-100 hover:text-orange-400"
               onMouseDown={() => {
-                if (queue.length === 0 && autoplay === false){
+                if (queue.length === 0 && autoplay === false) {
                   changeAutoplay(true)
                 }
                 nextTrack()

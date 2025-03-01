@@ -22,16 +22,16 @@ async function AllSongsPageContent() {
   }
   const tracks = await allTracks(querySettings.page, querySettings.pageSize)
   const dataCallback = async (page: number, pageSize: number) => {
-    "use server"
+    'use server'
     return allTracks(page, pageSize).then((res) => res.content)
   }
-  return <TrackTable
-    initialTracks={tracks.content || []}
-    page={querySettings.page}
-    pageSize={querySettings.pageSize}
-    dataCallback={dataCallback}
-    toolbar={false}
-  />
-
-
+  return (
+    <TrackTable
+      initialTracks={tracks.content || []}
+      page={querySettings.page}
+      pageSize={querySettings.pageSize}
+      dataCallback={dataCallback}
+      toolbar={false}
+    />
+  )
 }
