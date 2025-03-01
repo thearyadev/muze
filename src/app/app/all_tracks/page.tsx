@@ -30,6 +30,7 @@ async function AllSongsPageContent() {
     page={querySettings.page}
     pageSize={querySettings.pageSize}
     dataCallback={dataCallback}
+    toolbar={false}
   />
 
 
