@@ -148,7 +148,6 @@ export default function Sidebar({
 
           <AccountButton username={username} />
         </div>
-        <AccountButton username={username} />
       </div>
     </>
   )

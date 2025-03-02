@@ -45,7 +45,7 @@ export default async function AppLayout({
 
         <div className=" h-screen">
           <div className="overflow-hidden">
-            <PageWrapper>{children}</PageWrapper>
+            <PageWrapper username={username ?? 'Error'}>{children}</PageWrapper>
           </div>
 
           <div className="absolute bottom-0 left-0">
