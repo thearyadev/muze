@@ -19,6 +19,7 @@ const QueueContext = createContext<{
   trackComplete: () => void
   addTrackPrevious: (track: TrackQuery) => void
   replaceQueue: (tracks: TrackQuery[]) => void
+  addQueueMany: (tracks: TrackQuery[]) => void
 } | null>(null)
 
 const useQueue = () => useContext(QueueContext)
@@ -73,6 +74,10 @@ const QueueProvider: React.FC<{
     changeTrack(tracks[0] ?? null, true)
     setQueue(tracks.slice(1, tracks.length))
     setQueuePlayed([])
+  }
+
+  const addQueueMany = (tracks: TrackQuery[]) => {
+    setQueue([...queue, ...tracks])
   }
 
   const _trackComplete = () => {
@@ -138,6 +143,7 @@ const QueueProvider: React.FC<{
           trackComplete,
           addTrackPrevious,
           replaceQueue,
+          addQueueMany,
         }),
         [queue, queuePlayed, trackComplete],
       )}

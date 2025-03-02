@@ -103,7 +103,7 @@ export function TrackTable(props: TrackTableProps) {
   // biome-ignore lint/style/noNonNullAssertion :
   const { track: currentTrack } = useTrack()!
   // biome-ignore lint/style/noNonNullAssertion :
-  const { replaceQueue } = useQueue()!
+  const { replaceQueue, addQueueMany } = useQueue()!
   const handleTrackSwitch = (track: TrackQuery) => {
     if (currentTrack) addTrackPrevious(currentTrack)
     changeTrack(track, true)
@@ -123,15 +123,25 @@ export function TrackTable(props: TrackTableProps) {
   return (
     <>
       {props.toolbar && (
-        <div className="text-gray-500 py-1 w-full text-center">
+        <div className="text-gray-500 py-1 w-full text-center grid grid-cols-2">
           {/* biome-ignore lint/a11y/useKeyWithClickEvents : not planned */}
           <div
-            className="text-xs hover:text-orange-400 cursor-pointer"
+            className="text-xs hover:text-orange-400 cursor-pointer col-span-1"
             onClick={() => {
               replaceQueue(props.tracks || [])
             }}
           >
-            Add To Queue
+            Clear Queue and Play
+          </div>
+
+          {/* biome-ignore lint/a11y/useKeyWithClickEvents : not planned */}
+          <div
+            className="text-xs hover:text-orange-400 cursor-pointer col-span-1"
+            onClick={() => {
+              addQueueMany(props.tracks || [])
+            }}
+          >
+            Add to Queue
           </div>
         </div>
       )}
