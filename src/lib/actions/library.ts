@@ -328,6 +328,7 @@ export const sync = protectedAction(async () => {
 
   type Metadata = {
     MB_ALBUM_ID?: string
+    MB_RELEASE_GROUP_ID?: string
     MB_TRACK_ID?: string
     MB_RELEASE_ID?: string
     MB_ARTIST_ID?: string[]
@@ -422,6 +423,14 @@ export const sync = protectedAction(async () => {
     const trackExisting = track_data.find(() => true)
     if (trackExisting) {
       // track exists in db
+
+      try {
+        fs.accessSync(path, fs.constants.F_OK)
+      } catch {
+        console.log('Track file is missing. Removing from db')
+        await db.delete(tracks).where(eq(tracks.id, trackExisting.id)).execute()
+      }
+
       await db
         .update(tracks)
         .set({
@@ -467,14 +476,14 @@ export const sync = protectedAction(async () => {
   ): Promise<string | null> {
     if (
       metadata.ALBUM_NAME === undefined ||
-      metadata.MB_ALBUM_ID === undefined
+      metadata.MB_RELEASE_GROUP_ID === undefined
     ) {
       return null
     }
 
     if (
       metadata.ALBUM_NAME !== undefined &&
-      metadata.MB_ALBUM_ID === undefined
+      metadata.MB_RELEASE_GROUP_ID === undefined
     ) {
       // no mbid, but album name exists. match by name
       const albums_found = await db
@@ -493,7 +502,7 @@ export const sync = protectedAction(async () => {
       const albumRecord = await db // look for it in the database
         .select()
         .from(albums)
-        .where(eq(albums.mbid, metadata.MB_ALBUM_ID))
+        .where(eq(albums.mbid, metadata.MB_RELEASE_GROUP_ID))
         .execute()
       const albumExistingMbid = albumRecord.find(() => true)
       if (albumExistingMbid) {
@@ -507,7 +516,7 @@ export const sync = protectedAction(async () => {
       .values({
         name: metadata.ALBUM_NAME,
         artistId: albumArtistId,
-        mbid: metadata.MB_ALBUM_ID,
+        mbid: metadata.MB_RELEASE_GROUP_ID,
       })
       .returning({ newRecordId: albums.id })
       .execute()
@@ -631,6 +640,7 @@ export const sync = protectedAction(async () => {
     }
     return {
       MB_ALBUM_ID: metadata.common.musicbrainz_albumid,
+      MB_RELEASE_GROUP_ID: metadata.common.musicbrainz_releasegroupid,
       MB_TRACK_ID: metadata.common.musicbrainz_trackid,
       MB_RELEASE_ID: metadata.common.musicbrainz_releasegroupid,
       MB_ARTIST_ID: metadata.common.musicbrainz_artistid,
