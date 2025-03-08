@@ -43,6 +43,13 @@
       "when": 1741454333903,
       "tag": "0005_quiet_jamie_braddock",
       "breakpoints": true
+    },
+    {
+      "idx": 6,
+      "version": "7",
+      "when": 1741454859747,
+      "tag": "0006_heavy_felicia_hardy",
+      "breakpoints": true
     }
   ]
 }

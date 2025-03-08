@@ -62,17 +62,26 @@ export const tracks = createTable(
   ],
 )
 
-export const albums = createTable('album', {
-  id: varchar('id', { length: 256 })
-    .notNull()
-    .primaryKey()
-    .$defaultFn(() => crypto.randomUUID()),
-  name: varchar('name', { length: 256 }).notNull(),
-  artistId: varchar('artist_id', { length: 256 })
-    .references(() => artists.id)
-    .notNull(),
-  mbid: varchar('mbid', { length: 256 }).notNull(),
-})
+export const albums = createTable(
+  'album',
+  {
+    id: varchar('id', { length: 256 })
+      .notNull()
+      .primaryKey()
+      .$defaultFn(() => crypto.randomUUID()),
+    name: varchar('name', { length: 256 }).notNull(),
+    artistId: varchar('artist_id', { length: 256 })
+      .references(() => artists.id)
+      .notNull(),
+    mbid: varchar('mbid', { length: 256 }).notNull(),
+  },
+  (table) => [
+    index('album_name_search_index').using(
+      'gin',
+      sql`${table.name} gin_trgm_ops`,
+    ),
+  ],
+)
 
 export const genres = createTable('genre', {
   id: varchar('id', { length: 256 })
@@ -96,14 +105,23 @@ export const genreTrack = createTable(
   },
 )
 
-export const artists = createTable('artist', {
-  id: varchar('id', { length: 256 })
-    .notNull()
-    .primaryKey()
-    .$defaultFn(() => crypto.randomUUID()),
-  name: varchar('name', { length: 256 }).notNull(),
-  mbid: varchar('mbid', { length: 256 }).notNull(),
-})
+export const artists = createTable(
+  'artist',
+  {
+    id: varchar('id', { length: 256 })
+      .notNull()
+      .primaryKey()
+      .$defaultFn(() => crypto.randomUUID()),
+    name: varchar('name', { length: 256 }).notNull(),
+    mbid: varchar('mbid', { length: 256 }).notNull(),
+  },
+  (table) => [
+    index('artist_name_search_index').using(
+      'gin',
+      sql`${table.name} gin_trgm_ops`,
+    ),
+  ],
+)
 
 export const artistTracks = createTable('artist_track', {
   id: varchar('id', { length: 256 })

@@ -119,8 +119,6 @@ export const search = protectedAction(async (query: string) => {
     }
   }
 
-  const formattedQuery = `%${query.replace(/ /g, '%')}%`
-
   const searchResult = await db
     .selectDistinct({
       ...getTableColumns(tracks),
@@ -139,7 +137,11 @@ export const search = protectedAction(async (query: string) => {
     ) // include tracks with no listens. will be null
 
     .where(
-      sql`${tracks.name} % ${query} OR similarity(${tracks.name}, ${query}) > 0.3`,
+      or(
+        sql`${tracks.name} % ${query} OR similarity(${tracks.name}, ${query}) > 0.3`,
+        sql`${artists.name} % ${query} OR similarity(${artists.name}, ${query}) > 0.3`,
+        sql`${albums.name} % ${query} OR similarity(${albums.name}, ${query}) > 0.3`,
+      ),
     )
     .groupBy(tracks.id, albums.name, userListens.listens)
     .execute()

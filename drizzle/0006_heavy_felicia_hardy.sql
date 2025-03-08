@@ -1,0 +1,2 @@
+CREATE INDEX IF NOT EXISTS "album_name_search_index" ON "muze_album" USING gin ("name" gin_trgm_ops);--> statement-breakpoint
+CREATE INDEX IF NOT EXISTS "artist_name_search_index" ON "muze_artist" USING gin ("name" gin_trgm_ops);
