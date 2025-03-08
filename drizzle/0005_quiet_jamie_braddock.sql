@@ -1,0 +1,1 @@
+CREATE INDEX IF NOT EXISTS "name_search_index" ON "muze_track" USING gin ("name" gin_trgm_ops);

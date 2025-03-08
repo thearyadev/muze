@@ -118,6 +118,9 @@ export const search = protectedAction(async (query: string) => {
       error: 'Unable to find user.',
     }
   }
+
+  const formattedQuery = `%${query.replace(/ /g, '%')}%`
+
   const searchResult = await db
     .selectDistinct({
       ...getTableColumns(tracks),
@@ -134,12 +137,9 @@ export const search = protectedAction(async (query: string) => {
       userListens,
       and(eq(userListens.userId, user.id), eq(userListens.trackId, tracks.id)),
     ) // include tracks with no listens. will be null
+
     .where(
-      or(
-        ilike(tracks.name, `%${query}%`),
-        ilike(albums.name, `%${query}%`),
-        ilike(artists.name, `%${query}%`),
-      ),
+      sql`${tracks.name} % ${query} OR similarity(${tracks.name}, ${query}) > 0.3`,
     )
     .groupBy(tracks.id, albums.name, userListens.listens)
     .execute()

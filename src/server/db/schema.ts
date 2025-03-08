@@ -1,12 +1,14 @@
 // Example model schema from the Drizzle docs
 // https://orm.drizzle.team/docs/sql-schema-declaration
 
+import { sql } from 'drizzle-orm'
 import {
   integer,
   primaryKey,
   pgTableCreator,
   varchar,
   timestamp,
+  index,
 } from 'drizzle-orm/pg-core'
 
 /**
@@ -39,20 +41,26 @@ export const playlists = createTable('playlist', {
   userId: integer('user_id').notNull(),
 })
 
-export const tracks = createTable('track', {
-  id: varchar('id', { length: 256 })
-    .notNull()
-    .primaryKey()
-    .$defaultFn(() => crypto.randomUUID()),
-  name: varchar('name', { length: 256 }),
-  albumId: varchar('album_id', { length: 256 }).references(() => albums.id),
-  duration: integer('duration'),
-  trackNumber: integer('track_number'),
-  discNumber: integer('disc_number'),
-  year: integer('year'),
-  path: varchar('path').notNull(),
-  mbid: varchar('mbid', { length: 256 }).notNull(),
-})
+export const tracks = createTable(
+  'track',
+  {
+    id: varchar('id', { length: 256 })
+      .notNull()
+      .primaryKey()
+      .$defaultFn(() => crypto.randomUUID()),
+    name: varchar('name', { length: 256 }),
+    albumId: varchar('album_id', { length: 256 }).references(() => albums.id),
+    duration: integer('duration'),
+    trackNumber: integer('track_number'),
+    discNumber: integer('disc_number'),
+    year: integer('year'),
+    path: varchar('path').notNull(),
+    mbid: varchar('mbid', { length: 256 }).notNull(),
+  },
+  (table) => [
+    index('name_search_index').using('gin', sql`${table.name} gin_trgm_ops`),
+  ],
+)
 
 export const albums = createTable('album', {
   id: varchar('id', { length: 256 })
