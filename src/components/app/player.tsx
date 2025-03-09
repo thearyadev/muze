@@ -90,11 +90,13 @@ export default function Player() {
         >
           <Image
             alt={track.name || 'Track Cover'}
-            src={`/api/library/covers?id=${track.id}&size=md`}
+            src={`/api/library/covers?id=${track.id}&size=xl`}
             className="h-16 w-16 rounded-md"
             loading="eager"
             width={40}
             height={40}
+            placeholder="blur"
+            blurDataURL="data:image/png;base64,/9j/4AAQSkZJRgABAQAAAQABAAD/2wBDAAMCAgICAgMCAgIDAwMDBAYEBAQEBAgGBgUGCQgKCgkICQkKDA8MCgsOCwkJDRENDg8QEBEQCgwSExIQEw8QEBD/wAALCABkAGQBAREA/8QAFQABAQAAAAAAAAAAAAAAAAAAAAj/xAAUEAEAAAAAAAAAAAAAAAAAAAAA/9oACAEBAAA/AIkAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAf/9k="
           />
 
           <div className="hidden pl-3 sm:block">

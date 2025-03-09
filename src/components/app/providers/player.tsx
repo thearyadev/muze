@@ -8,6 +8,7 @@ import { VolumeProvider, useVolume } from './volume'
 import { QueueProvider, useQueue } from './queue'
 import type { getTrack } from '~/lib/actions/library'
 import { AutoplayProvider, useAutoplay } from './autoplay'
+import Image from 'next/image'
 
 type TrackQuery = NonNullable<Awaited<ReturnType<typeof getTrack>>['content']>
 
@@ -68,10 +69,23 @@ function ContextRichOverlay() {
   return (
     <div
       className="z-10000 pointer-events-none fixed left-0 top-0 h-full w-full overflow-hidden bg-cover bg-center bg-no-repeat opacity-10 blur-xl"
-      style={{
-        backgroundImage: `url('/api/library/covers/?id=${track.id}&size=xl')`,
-      }}
-    />
+      style={
+        {
+          // backgroundImage: `url('/api/library/covers/?id=${track.id}&size=xl')`,
+        }
+      }
+    >
+      <Image
+        alt={track.name || 'Track Cover'}
+        src={`/api/library/covers?id=${track.id}&size=xl`}
+        className="h-full w-full"
+        loading="eager"
+        width={500}
+        height={500}
+        placeholder="blur"
+        blurDataURL="data:image/png;base64,/9j/4AAQSkZJRgABAQAAAQABAAD/2wBDAAMCAgICAgMCAgIDAwMDBAYEBAQEBAgGBgUGCQgKCgkICQkKDA8MCgsOCwkJDRENDg8QEBEQCgwSExIQEw8QEBD/wAALCABkAGQBAREA/8QAFQABAQAAAAAAAAAAAAAAAAAAAAj/xAAUEAEAAAAAAAAAAAAAAAAAAAAA/9oACAEBAAA/AIkAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAf/9k="
+      />
+    </div>
   )
 }
 function ContextRichLocalStorageLoader({
