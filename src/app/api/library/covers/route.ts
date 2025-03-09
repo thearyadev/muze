@@ -24,6 +24,7 @@ export async function GET(request: NextRequest): Promise<NextResponse> {
   const { content: track_data } = await getTrack(trackId)
 
   if (!track_data) {
+    console.log("the fuck")
     return new NextResponse('Not Found', {
       status: 404,
     })
@@ -42,7 +43,7 @@ export async function GET(request: NextRequest): Promise<NextResponse> {
   const headers: Record<string, string> = {}
 
   const contentType =
-    mime.getType(track_data.path) || 'application/octet-stream'
+    mime.getType(coverPath) || 'application/octet-stream'
   headers['Content-Type'] = contentType
 
   const stream = createReadStream(coverPath)
