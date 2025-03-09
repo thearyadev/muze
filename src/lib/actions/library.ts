@@ -425,14 +425,6 @@ export const sync = protectedAction(async () => {
     const trackExisting = track_data.find(() => true)
     if (trackExisting) {
       // track exists in db
-
-      try {
-        fs.accessSync(path, fs.constants.F_OK)
-      } catch {
-        console.log('Track file is missing. Removing from db')
-        await db.delete(tracks).where(eq(tracks.id, trackExisting.id)).execute()
-      }
-
       await db
         .update(tracks)
         .set({
@@ -667,6 +659,19 @@ export const sync = protectedAction(async () => {
     }
   }
 
+  async function pruneMissingTracks(
+    db: PostgresJsDatabase<typeof import('~/server/db/schema')>,
+  ) {
+    const tracks_queried = await db
+      .select({ id: tracks.id, path: tracks.path })
+      .from(tracks)
+      .execute()
+    const tracks_missing = tracks_queried.filter((t) => !fs.existsSync(t.path))
+    for (const track of tracks_missing) {
+      await db.delete(tracks).where(eq(tracks.id, track.id)).execute()
+    }
+  }
+
   const targetDirectory = env.MUSIC_PATH
   const tracks_fs = await getTracks(targetDirectory)
   for (const track_i of tracks_fs) {
@@ -688,6 +693,7 @@ export const sync = protectedAction(async () => {
       console.error(e)
     }
   }
+  await pruneMissingTracks(db)
   return {
     status_code: 200,
   }

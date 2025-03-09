@@ -50,6 +50,13 @@
       "when": 1741454859747,
       "tag": "0006_heavy_felicia_hardy",
       "breakpoints": true
+    },
+    {
+      "idx": 7,
+      "version": "7",
+      "when": 1741527493280,
+      "tag": "0007_amazing_black_queen",
+      "breakpoints": true
     }
   ]
 }

@@ -28,6 +28,7 @@ export const users = createTable('user', {
   password: varchar('password', { length: 256 }).notNull(),
   currentTrackId: varchar('current_track_id', { length: 256 }).references(
     () => tracks.id,
+    { onDelete: 'set null', onUpdate: 'cascade' },
   ),
   currentTrackPosition: integer('current_track_position'),
 })
@@ -95,7 +96,10 @@ export const genreTrack = createTable(
   'genre_track',
   {
     // TODO: convert the fks to a joined pk to avoid duplicates
-    trackId: varchar('track_id', { length: 256 }).references(() => tracks.id),
+    trackId: varchar('track_id', { length: 256 }).references(() => tracks.id, {
+      onDelete: 'cascade',
+      onUpdate: 'cascade',
+    }),
     genreId: varchar('genre_id', { length: 265 }).references(() => genres.id),
   },
   (table) => {
@@ -132,7 +136,7 @@ export const artistTracks = createTable('artist_track', {
     .references(() => artists.id)
     .notNull(),
   trackId: varchar('track_id', { length: 256 })
-    .references(() => tracks.id)
+    .references(() => tracks.id, { onDelete: 'cascade', onUpdate: 'cascade' })
     .notNull(),
 })
 
@@ -145,7 +149,7 @@ export const playlistTracks = createTable('playlist_track', {
     .references(() => playlists.id)
     .notNull(),
   trackId: varchar('track_id', { length: 256 })
-    .references(() => tracks.id)
+    .references(() => tracks.id, { onDelete: 'cascade', onUpdate: 'cascade' })
     .notNull(),
 })
 export const userListens = createTable('user_listen', {
@@ -157,7 +161,7 @@ export const userListens = createTable('user_listen', {
     .references(() => users.id)
     .notNull(),
   trackId: varchar('track_id', { length: 256 })
-    .references(() => tracks.id)
+    .references(() => tracks.id, { onDelete: 'cascade', onUpdate: 'cascade' })
     .notNull(),
   listens: integer('listens').notNull(),
   lastListen: timestamp().defaultNow().notNull(),
