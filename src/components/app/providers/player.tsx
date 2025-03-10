@@ -78,10 +78,9 @@ function ContextRichOverlay() {
       <Image
         alt={track.name || 'Track Cover'}
         src={`/api/library/covers?id=${track.id}&size=xl`}
-        className="h-full w-full"
+        className="h-full w-full object-cover"
         loading="eager"
-        width={500}
-        height={281}
+        fill
         placeholder="blur"
         blurDataURL="data:image/png;base64,/9j/4AAQSkZJRgABAQAAAQABAAD/2wBDAAMCAgICAgMCAgIDAwMDBAYEBAQEBAgGBgUGCQgKCgkICQkKDA8MCgsOCwkJDRENDg8QEBEQCgwSExIQEw8QEBD/wAALCABkAGQBAREA/8QAFQABAQAAAAAAAAAAAAAAAAAAAAj/xAAUEAEAAAAAAAAAAAAAAAAAAAAA/9oACAEBAAA/AIkAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAf/9k="
       />
