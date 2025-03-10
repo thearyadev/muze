@@ -35,9 +35,10 @@ function TrackCell({
   index: number
 }) {
   return (
+    // biome-ignore lint/a11y/useKeyWithClickEvents : not planned
     <div
       className="grid grid-cols-12 grid-rows-1 gap-4 p-3 hover:bg-zinc-700 "
-      onMouseDown={() => clickFn(track)}
+      onClick={() => clickFn(track)}
     >
       <div className="col-span-6 flex flex-row space-x-3 text-sm">
         <div>

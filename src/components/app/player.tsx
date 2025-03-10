@@ -120,28 +120,28 @@ export default function Player() {
           <div className="flex flex-row items-center space-x-5 ">
             <AutoplayIcon
               className={`text-xs text-gray-400 hover:text-orange-400 ${autoplay ? 'text-orange-400' : null}`}
-              onMouseDown={() => {
+              onClick={() => {
                 autoplay ? changeAutoplay(false) : changeAutoplay(true)
                 // loop ? changeLoop(false) : null
               }}
             />
             <StepBackwardIcon
               className="text-xl text-white transition duration-100 hover:text-orange-400"
-              onMouseDown={previousTrack}
+              onClick={previousTrack}
             />
           </div>
           <PauseIcon
             className={`text-4xl text-white transition duration-100 hover:text-orange-400 ${!playing ? 'hidden' : null}`}
-            onMouseDown={setPlayingFalse}
+            onClick={setPlayingFalse}
           />
           <PlayIcon
             className={`text-4xl text-white transition duration-100 hover:text-orange-400 ${!playing ? null : 'hidden'}`}
-            onMouseDown={setPlayingTrue}
+            onClick={setPlayingTrue}
           />
           <div className="flex flex-row items-center space-x-5 ">
             <StepForwardIcon
               className="text-xl text-white transition duration-100 hover:text-orange-400"
-              onMouseDown={() => {
+              onClick={() => {
                 if (queue.length === 0 && autoplay === false) {
                   changeAutoplay(true)
                 }
@@ -150,7 +150,7 @@ export default function Player() {
             />
             <LoopIcon
               className={`text-xs text-gray-400 hover:text-orange-400 ${loop ? 'text-orange-400' : null}`}
-              onMouseDown={() => {
+              onClick={() => {
                 loop ? changeLoop(false) : changeLoop(true)
                 // autoplay ? changeAutoplay(false) : null
               }}
