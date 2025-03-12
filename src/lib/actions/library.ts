@@ -138,9 +138,9 @@ export const search = protectedAction(async (query: string) => {
 
     .where(
       or(
-        sql`${tracks.name} % ${query} OR similarity(${tracks.name}, ${query}) > 0.3`,
-        sql`${artists.name} % ${query} OR similarity(${artists.name}, ${query}) > 0.3`,
-        sql`${albums.name} % ${query} OR similarity(${albums.name}, ${query}) > 0.3`,
+        sql`${tracks.name} % ${query} OR word_similarity(${tracks.name}, ${query}) > 0.3`,
+        sql`${artists.name} % ${query} OR word_similarity(${artists.name}, ${query}) > 0.3`,
+        sql`${albums.name} % ${query} OR word_similarity(${albums.name}, ${query}) > 0.3`,
       ),
     )
     .groupBy(tracks.id, albums.name, userListens.listens)
