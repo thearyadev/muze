@@ -9,7 +9,8 @@
     "db:studio": "drizzle-kit studio",
     "dev": "next dev",
     "lint": "next lint",
-    "start": "next start"
+    "start": "next start",
+    "pre": "biome format --write && biome lint"
   },
   "dependencies": {
     "@ant-design/icons": "^5.5.2",

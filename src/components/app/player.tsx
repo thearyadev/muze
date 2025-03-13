@@ -121,7 +121,7 @@ export default function Player() {
             <AutoplayIcon
               className={`text-xs text-gray-400 hover:text-orange-400 ${autoplay ? 'text-orange-400' : null}`}
               onClick={() => {
-                autoplay ? changeAutoplay(false) : changeAutoplay(true)
+                changeAutoplay(!autoplay)
                 // loop ? changeLoop(false) : null
               }}
             />
@@ -151,8 +151,7 @@ export default function Player() {
             <LoopIcon
               className={`text-xs text-gray-400 hover:text-orange-400 ${loop ? 'text-orange-400' : null}`}
               onClick={() => {
-                loop ? changeLoop(false) : changeLoop(true)
-                // autoplay ? changeAutoplay(false) : null
+                changeLoop(!loop)
               }}
             />
           </div>
