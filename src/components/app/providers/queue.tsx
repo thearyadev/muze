@@ -13,10 +13,10 @@ type TrackQuery = NonNullable<
 const QueueContext = createContext<{
   queue: TrackQuery[]
   queuePlayed: TrackQuery[]
-  nextTrack: () => void
+  nextTrack: (skipLoop?: boolean) => void
   previousTrack: () => void
   addTrack: (track: TrackQuery) => void
-  trackComplete: () => void
+  trackComplete: (skipLoop?: boolean) => void
   addTrackPrevious: (track: TrackQuery) => void
   replaceQueue: (tracks: TrackQuery[]) => void
   addQueueMany: (tracks: TrackQuery[]) => void
@@ -39,12 +39,12 @@ const QueueProvider: React.FC<{
   // biome-ignore lint/style/noNonNullAssertion :
   const { changePosition, maxposition } = usePosition()!
 
-  const nextTrack = () => {
+  const nextTrack = (skipLoop?: boolean) => {
     if (track) {
       logTrackListen(track.id)
     }
     if (queue.length === 0) {
-      _trackComplete()
+      _trackComplete(skipLoop)
       return
     }
     const nextTrack = queue.shift()
@@ -80,14 +80,16 @@ const QueueProvider: React.FC<{
     setQueue([...queue, ...tracks])
   }
 
-  const _trackComplete = () => {
+  const _trackComplete = (skipLoop?: boolean) => {
     // is called when natural track completion
     if (track) {
       logTrackListen(track.id)
     }
     if (loop && track) {
-      changeTrack(track, true)
-      return
+      if (skipLoop === false) {
+        changeTrack(track, true)
+        return
+      }
     } // no need to add this to queue
 
     if (track !== null) {

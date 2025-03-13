@@ -145,7 +145,7 @@ export default function Player() {
                 if (queue.length === 0 && autoplay === false) {
                   changeAutoplay(true)
                 }
-                nextTrack()
+                nextTrack(true)
               }}
             />
             <LoopIcon
