@@ -104,7 +104,7 @@ export default function Player() {
             {track.artistIds.split(';').map((artistId, index) => (
               <Link
                 key={artistId}
-                href={`/artist/${artistId}`}
+                href={`/app/artists/${artistId}`}
                 className="text-xs text-gray-500 transition-all fade-in-100 fade-out-100 hover:text-orange-400 "
               >
                 {track.artistNames.split(';')[index]}
