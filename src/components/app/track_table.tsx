@@ -71,6 +71,7 @@ function TrackCell({
         <Link
           href={`/app/albums/${track?.albumId}`}
           className="text-xs text-gray-500 transition-all fade-in-100 fade-out-100 hover:text-orange-400"
+          onClick={(e) => e.stopPropagation()}
         >
           {track?.albumName}
         </Link>
