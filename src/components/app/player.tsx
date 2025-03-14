@@ -115,7 +115,7 @@ export default function Player() {
         </div>
         <div
           className="flex flex-row items-center justify-center space-x-10 align-middle"
-          // controls
+          // controls.
         >
           <div className="flex flex-row items-center space-x-5 ">
             <AutoplayIcon
