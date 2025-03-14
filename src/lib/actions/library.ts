@@ -237,6 +237,75 @@ export const getAlbum = protectedAction(async (albumId: string) => {
   }
 })
 
+export const getArtist = protectedAction(async (artistId: string) => {
+  const username = await getUsername()
+  const [user] = await db
+    .select()
+    .from(users)
+    .where(eq(users.username, username.content ?? ''))
+  if (!user) {
+    return {
+      status_code: 401,
+      error: 'Unable to find user.',
+    }
+  }
+  const artistFound =
+    (
+      await db.select().from(artists).where(eq(artists.id, artistId)).execute()
+    )[0] || null
+  if (!artistFound) {
+    return {
+      status_code: 404,
+      error: 'Artist not found',
+    }
+  }
+  return {
+    status_code: 200,
+    content: artistFound,
+  }
+})
+
+export const getArtistTracks = protectedAction(async (artistId: string) => {
+  const username = await getUsername()
+  const [user] = await db
+    .select()
+    .from(users)
+    .where(eq(users.username, username.content ?? ''))
+  if (!user) {
+    return {
+      status_code: 401,
+      error: 'Unable to find user.',
+    }
+  }
+
+  const query = await db
+    .selectDistinct({
+      ...getTableColumns(tracks),
+      albumName: albums.name,
+      listens: userListens.listens,
+      artistNames: sql<string>`string_agg(${artists.name}, ';') AS artistNames`,
+      artistIds: sql<string>`string_agg(cast(${artists.id} AS TEXT), ';')`.as(
+        'artistIds',
+      ),
+    })
+    .from(tracks)
+    .innerJoin(albums, eq(tracks.albumId, albums.id))
+    .innerJoin(artistTracks, eq(tracks.id, artistTracks.trackId))
+    .innerJoin(artists, eq(artistTracks.artistId, artists.id))
+    .leftJoin(
+      userListens,
+      and(eq(userListens.userId, user.id), eq(userListens.trackId, tracks.id)),
+    ) // include tracks with no listens. will be null
+    .where(eq(artists.id, artistId))
+    .groupBy(tracks.id, albums.name, userListens.listens)
+    .execute()
+
+  return {
+    status_code: 200,
+    content: query,
+  }
+})
+
 export const getRandomTrack = protectedAction(async () => {
   const username = await getUsername()
   const [user] = await db

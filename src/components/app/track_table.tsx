@@ -57,8 +57,9 @@ function TrackCell({
             {track?.artistIds.split(';').map((artistId, index) => (
               <Link
                 key={artistId}
-                href={`/artist/${artistId}`}
+                href={`/app/artists/${artistId}`}
                 className="text-xs text-gray-500 transition-all fade-in-100 fade-out-100 hover:text-orange-400 "
+                onClick={(e) => e.stopPropagation()}
               >
                 {track?.artistNames.split(';')[index]}
                 {index < track?.artistIds.split(';').length - 1 ? ', ' : ''}
