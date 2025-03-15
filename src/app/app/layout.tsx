@@ -43,12 +43,12 @@ export default async function AppLayout({
         {process.env.NODE_ENV !== 'production' && <ScreenSizeIndicator />}
         {process.env.NODE_ENV !== 'production' && <StateViewer />}
 
-        <div className=" h-screen">
-          <div className="overflow-hidden">
+        <div className="h-screen flex flex-col">
+          <div className="overflow-hidden flex-1 ">
             <PageWrapper username={username ?? 'Error'}>{children}</PageWrapper>
           </div>
 
-          <div className="absolute bottom-0 left-0">
+          <div className="flex-shrink-0">
             <Player />
           </div>
         </div>

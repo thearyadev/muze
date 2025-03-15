@@ -100,10 +100,8 @@ export default function Sidebar({
   }
 
   return (
-    <>
-      <div
-        className={`flex h-full flex-col justify-between bg-zinc-800 p-5 ${className}`}
-      >
+    <div className={`flex flex-col h-full bg-zinc-800 ${className} p-5`}>
+      <div className="flex flex-col flex-1">
         <div>
           <div className="pb-4">
             <Input
@@ -145,29 +143,11 @@ export default function Sidebar({
           <SidebarButton href="/app/genres" label="Genres" commandKey="6">
             <TableIcon />
           </SidebarButton>
-
+        </div>
+        <div className="mt-auto flex-shrink-0">
           <AccountButton username={username} />
         </div>
       </div>
-    </>
+    </div>
   )
 }
-// <div className="flex flex-row justify-between text-xs text-gray-500">
-
-//           <div>
-//             queue
-//             {queue.queue.map((track) => (
-//               <div className="text-xs text-gray-500">
-//                 {track.name}
-//               </div>
-//             ))}
-//           </div>
-//          <div>
-//             queue played
-//             {queue.queuePlayed.map((track) => (
-//               <div className="text-xs text-gray-500">
-//                 {track.name}
-//               </div>
-//             ))}
-//           </div>
-//         </div>

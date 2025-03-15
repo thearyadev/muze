@@ -24,16 +24,17 @@ export default function PageWrapper({
     }
   }, [setOpen])
   return (
-    <div className="grid grid-cols-12 overflow-hidden">
+    <div className="grid grid-cols-12 h-full">
       <div
         className={open ? 'hidden' : 'col-span-4 lg:col-span-3 xl:col-span-2'}
       >
         <Sidebar username={username} />
       </div>
       <div
-        className={`${open ? 'col-span-12' : 'col-span-8 lg:col-span-9 xl:col-span-10'} overflow-y-hidden`}
+        className={`${open ? 'col-span-12' : 'col-span-8 lg:col-span-9 xl:col-span-10'} overflow-y-hidden
+`}
       >
-        <div className="h-screen w-full text-white">{children}</div>
+        <div className="h-full w-full text-white">{children}</div>
       </div>
     </div>
   )

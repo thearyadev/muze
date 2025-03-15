@@ -124,7 +124,7 @@ export function TrackTable(props: TrackTableProps) {
   }
 
   return (
-    <>
+    <div className="h-full">
       {props.toolbar && (
         <div className="text-gray-500 py-1 w-full text-center grid grid-cols-2">
           {/* biome-ignore lint/a11y/useKeyWithClickEvents : not planned */}
@@ -186,8 +186,9 @@ export function TrackTable(props: TrackTableProps) {
             />
           )
         })}
-        <div className="pb-52" />
+
+        <div className="pb-48" />
       </ScrollArea>
-    </>
+    </div>
   )
 }
