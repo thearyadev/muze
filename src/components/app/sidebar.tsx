@@ -146,8 +146,7 @@ export default function Sidebar({
             <TableIcon />
           </SidebarButton>
         </div>
-        <div className="mt-auto flex-shrink-0">
-        </div>
+        <div className="mt-auto flex-shrink-0" />
       </div>
     </div>
   )
