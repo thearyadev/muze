@@ -9,10 +9,6 @@ export const env = createEnv({
       .default('development'),
     MUSIC_PATH: z.string().default('/music'),
     COVER_ART_PATH: z.string().default('/covers'),
-    NEXTAUTH_SECRET:
-      process.env.NODE_ENV === 'production'
-        ? z.string()
-        : z.string().optional(),
   },
 
   client: {
@@ -23,7 +19,6 @@ export const env = createEnv({
     NODE_ENV: process.env.NODE_ENV,
     MUSIC_PATH: process.env.MUSIC_PATH,
     COVER_ART_PATH: process.env.COVER_ART_PATH,
-    NEXTAUTH_SECRET: process.env.NEXTAUTH_SECRET,
   },
   skipValidation: !!process.env.SKIP_ENV_VALIDATION,
   emptyStringAsUndefined: true,
