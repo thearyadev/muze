@@ -31,7 +31,9 @@ function SidebarButton({
 }) {
   const pathname = usePathname()
   const router = useRouter()
-  router.prefetch(href)
+  try {
+    router.prefetch(href)
+  } catch {}
   useHotkeys(
     [
       [

@@ -8,7 +8,7 @@ WORKDIR /app
 
 COPY package.json package-lock.json ./
 
-RUN  npm i --legacy-peer-deps
+RUN  npm i
 # Build
 FROM --platform=linux/amd64 node:20.14-alpine AS builder
 ENV DATABASE_URL "postgres://root:root@localhos2:5432/muze"
@@ -23,7 +23,7 @@ COPY . .
 ENV NEXT_TELEMETRY_DISABLED 1
 
 
-RUN npm run build --legacy-peer-deps
+RUN npm run build 
 
 # Runner
 
