@@ -147,7 +147,6 @@ export default function Sidebar({
           </SidebarButton>
         </div>
         <div className="mt-auto flex-shrink-0">
-          <AccountButton username={username} />
         </div>
       </div>
     </div>
