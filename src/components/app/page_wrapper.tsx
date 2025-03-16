@@ -93,7 +93,7 @@ export function PageWrapper({ children }: { children: React.ReactNode }) {
           </div>
         </SidebarBody>
       </Sidebar>
-      <div className="w-full">{children}</div>
+      <div className="w-full h-full">{children}</div>
     </div>
   )
 }
