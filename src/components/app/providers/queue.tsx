@@ -86,7 +86,7 @@ const QueueProvider: React.FC<{
       logTrackListen(track.id)
     }
     if (loop && track) {
-      if (skipLoop === false) {
+      if (skipLoop === false || skipLoop === undefined) {
         changeTrack(track, true)
         return
       }
