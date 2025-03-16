@@ -1,7 +1,7 @@
 'use client'
 import { Separator } from '../ui/separator'
 import { PanelLeft } from 'lucide-react'
-import { useSidebar } from './providers/sidebar'
+import { useSidebar } from '~/components/ui/sidebar'
 
 export default function PageHeading({
   children,

@@ -1,41 +1,126 @@
 'use client'
-import type React from 'react'
-import Sidebar from './sidebar'
-import { useSidebar } from './providers/sidebar'
-import { Suspense, useEffect } from 'react'
-import { getUsername } from '~/lib/actions/user'
-export default function PageWrapper({
-  username,
-  children,
-}: {
-  username: string
-  children: React.ReactNode
-}) {
-  // biome-ignore lint/style/noNonNullAssertion : the moment it loads, its not null.
-  const { open, setOpen } = useSidebar()!
-  useEffect(() => {
-    const handleResize = () => {
-      setOpen(window.innerWidth <= 768)
-    }
-    window.addEventListener('resize', handleResize)
-    // Cleanup
-    return () => {
-      window.removeEventListener('resize', handleResize)
-    }
-  }, [setOpen])
+import { useState } from 'react'
+import { Sidebar, SidebarBody, SidebarLink } from '../ui/sidebar'
+import {
+  IconArrowLeft,
+  IconBrandTabler,
+  IconSettings,
+  IconUserBolt,
+  IconLogout,
+  IconHome,
+  IconDisc,
+  IconAlbum,
+  IconSortAscendingShapes,
+  IconUsers,
+} from '@tabler/icons-react'
+import Link from 'next/link'
+import { motion } from 'motion/react'
+import { useSidebar } from '~/components/ui/sidebar'
+import Image from 'next/image'
+import { cn } from '~/lib/utils'
+import { AccountButton } from './accountButton'
+import { logout } from '~/lib/actions/user'
+import { toast } from 'sonner'
+import { useRouter } from 'next/navigation'
+
+export function PageWrapper({ children }: { children: React.ReactNode }) {
+  const router = useRouter()
+  const links = [
+    {
+      label: 'Home',
+      href: '/app/home',
+      icon: (
+        <IconHome className="text-neutral-700 dark:text-neutral-200 h-5 w-5 shrink-0" />
+      ),
+    },
+    {
+      label: 'Queue',
+      href: '/app/queue',
+      icon: (
+        <IconSortAscendingShapes className="text-neutral-700 dark:text-neutral-200 h-5 w-5 shrink-0" />
+      ),
+    },
+    {
+      label: 'All Tracks',
+      href: '/app/all_tracks',
+      icon: (
+        <IconDisc className="text-neutral-700 dark:text-neutral-200 h-5 w-5 shrink-0" />
+      ),
+    },
+    {
+      label: 'Albums',
+      href: '/app/albums',
+      icon: (
+        <IconAlbum className="text-neutral-700 dark:text-neutral-200 h-5 w-5 shrink-0" />
+      ),
+    },
+    {
+      label: 'Artists',
+      href: '/app/artists',
+      icon: (
+        <IconUsers className="text-neutral-700 dark:text-neutral-200 h-5 w-5 shrink-0" />
+      ),
+    },
+  ]
+  const { open, setOpen } = useSidebar()
   return (
-    <div className="grid grid-cols-12 h-full">
-      <div
-        className={open ? 'hidden' : 'col-span-4 lg:col-span-3 xl:col-span-2'}
-      >
-        <Sidebar username={username} />
-      </div>
-      <div
-        className={`${open ? 'col-span-12' : 'col-span-8 lg:col-span-9 xl:col-span-10'} overflow-y-hidden
-`}
-      >
-        <div className="h-full w-full text-white">{children}</div>
-      </div>
+    <div
+      className={cn(
+        'rounded-md flex flex-col md:flex-row bg-gray-100 dark:bg-neutral-800 w-full flex-1  mx-auto dark:border-neutral-700 overflow-hidden',
+        'h-full',
+      )}
+    >
+      <Sidebar open={open} setOpen={setOpen} animate={true}>
+        <SidebarBody className="justify-between gap-10">
+          <div className="flex flex-col flex-1 overflow-y-auto overflow-x-hidden">
+            <Logo />
+            <div className="mt-8 flex flex-col gap-2">
+              {links.map((link) => (
+                <SidebarLink key={link.label} link={link} />
+              ))}
+            </div>
+          </div>
+          <div>
+            <IconLogout
+              className="text-neutral-700 dark:text-neutral-200 h-5 w-5 shrink-0"
+              onClick={() => {
+                logout().then(() => {
+                  toast.success('Logged out')
+                  router.push('/login')
+                })
+              }}
+            />
+          </div>
+        </SidebarBody>
+      </Sidebar>
+      <div className="w-full">{children}</div>
     </div>
+  )
+}
+export const Logo = () => {
+  return (
+    <Link
+      href="#"
+      className="font-normal flex space-x-2 items-center text-sm text-black py-1 relative z-20"
+    >
+      <div className="h-5 w-6 bg-black dark:bg-white rounded-br-lg rounded-tr-sm rounded-tl-lg rounded-bl-sm shrink-0" />
+      <motion.span
+        initial={{ opacity: 0 }}
+        animate={{ opacity: 1 }}
+        className="font-medium text-black dark:text-white whitespace-pre"
+      >
+        muze
+      </motion.span>
+    </Link>
+  )
+}
+export const LogoIcon = () => {
+  return (
+    <Link
+      href="#"
+      className="font-normal flex space-x-2 items-center text-sm text-black py-1 relative z-20"
+    >
+      <div className="h-5 w-6 bg-black dark:bg-white rounded-br-lg rounded-tr-sm rounded-tl-lg rounded-bl-sm shrink-0" />
+    </Link>
   )
 }

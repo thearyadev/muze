@@ -15,7 +15,8 @@ import { toast } from 'sonner'
 import { logout } from '~/lib/actions/user'
 import { useRouter } from 'next/navigation'
 import { sync } from '~/lib/actions/library'
-export function AccountButton({ username }: { username: string }) {
+import { IconUser } from '@tabler/icons-react'
+export function AccountButton() {
   const router = useRouter()
   const handleSignout = () => {
     logout().then(() => {
@@ -42,7 +43,9 @@ export function AccountButton({ username }: { username: string }) {
   return (
     <DropdownMenu>
       <DropdownMenuTrigger asChild>
-        <Button className="w-full border-0">{username}</Button>
+        <div className="w-full items-center flex justify-center group hover:bg-white rounded-md py-1 transition-opacity ease-in-out duration-300">
+          <IconUser className="group-hover:text-orange-400" />
+        </div>
       </DropdownMenuTrigger>
       <DropdownMenuContent className="" side="top">
         <DropdownMenuGroup>

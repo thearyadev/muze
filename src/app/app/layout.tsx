@@ -5,12 +5,12 @@ import Sidebar from '~/components/app/sidebar'
 import PlayerContextProvider from '~/components/app/providers/player'
 
 import { redirect } from 'next/navigation'
-import PageWrapper from '~/components/app/page_wrapper'
+import { PageWrapper } from '~/components/app/page_wrapper'
 import { getCurrentTrack, getUsername } from '~/lib/actions/user'
 import { getTrack } from '~/lib/actions/library'
 import StateViewer from '~/components/app/state_viewer'
 import ScreenSizeIndicator from '~/components/app/ssi'
-import { SidebarProvider } from '~/components/app/providers/sidebar'
+import { SidebarProvider } from '~/components/ui/sidebar'
 
 type TrackQuery = NonNullable<Awaited<ReturnType<typeof getTrack>>['content']>
 
@@ -45,7 +45,7 @@ export default async function AppLayout({
 
         <div className="h-screen flex flex-col">
           <div className="overflow-hidden flex-1 ">
-            <PageWrapper username={username ?? 'Error'}>{children}</PageWrapper>
+            <PageWrapper>{children}</PageWrapper>
           </div>
 
           <div className="flex-shrink-0">

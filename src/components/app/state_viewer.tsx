@@ -8,7 +8,7 @@ import { usePlaying } from './providers/playing'
 import { useTrack } from './providers/track'
 import { usePosition } from './providers/position'
 import { useQueue } from './providers/queue'
-import { useSidebar } from './providers/sidebar'
+import { useSidebar } from '~/components/ui/sidebar'
 
 export default function StateViewer() {
   const [isOpen, setIsOpen] = useState(false)
