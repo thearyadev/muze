@@ -57,6 +57,13 @@
       "when": 1741527493280,
       "tag": "0007_amazing_black_queen",
       "breakpoints": true
+    },
+    {
+      "idx": 8,
+      "version": "7",
+      "when": 1742221113513,
+      "tag": "0008_warm_eddie_brock",
+      "breakpoints": true
     }
   ]
 }

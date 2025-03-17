@@ -1,16 +1,16 @@
 import '~/styles/globals.css'
 
 import Player from '~/components/app/player'
-import Sidebar from '~/components/app/sidebar'
 import PlayerContextProvider from '~/components/app/providers/player'
 
 import { redirect } from 'next/navigation'
 import { PageWrapper } from '~/components/app/page_wrapper'
-import { getCurrentTrack, getUsername } from '~/lib/actions/user'
+import { getUsername } from '~/lib/actions/user'
 import { getTrack } from '~/lib/actions/library'
 import StateViewer from '~/components/app/state_viewer'
 import ScreenSizeIndicator from '~/components/app/ssi'
 import { SidebarProvider } from '~/components/ui/sidebar'
+import { getCurrentTrack } from '~/lib/actions/user'
 
 type TrackQuery = NonNullable<Awaited<ReturnType<typeof getTrack>>['content']>
 
@@ -19,7 +19,12 @@ export default async function AppLayout({
 }: {
   children: React.ReactNode
 }) {
-  const { content: username } = await getUsername()
+  const { status_code } = await getUsername()
+
+  if (status_code !== 200) {
+    redirect('/login')
+  }
+
   const { content: currentTrackInfo } = await getCurrentTrack()
   let currentTrack: TrackQuery | null = null
   let currentTrackPosition = 0
@@ -33,7 +38,6 @@ export default async function AppLayout({
     currentTrack = track ?? null
     currentTrackPosition = currentTrackInfo.setCurrentTrackPosition ?? 0
   }
-
   return (
     <PlayerContextProvider
       currentTrack={currentTrack}

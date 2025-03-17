@@ -12,7 +12,6 @@ import {
 import { usePathname, useRouter } from 'next/navigation'
 import { Button } from '../ui/button'
 import CommandLabel from './command_label'
-import { AccountButton } from './accountButton'
 import { useHotkeys } from '@mantine/hooks'
 import { Input } from '../ui/input'
 import { useEffect, useRef, useState } from 'react'

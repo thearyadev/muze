@@ -21,6 +21,7 @@ async function AllSongsPageContent() {
     pageSize: 40,
   }
   const tracks = await allTracks(querySettings.page, querySettings.pageSize)
+  console.log(tracks)
   const dataCallback = async (page: number, pageSize: number) => {
     'use server'
     return allTracks(page, pageSize).then((res) => res.content)

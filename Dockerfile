@@ -20,6 +20,7 @@ RUN --mount=type=cache,id=pnpm,target=/pnpm/store pnpm install --frozen-lockfile
 ENV DATABASE_URL="postgres://root:root@localhos2:5432/muze"
 ENV MUSIC_PATH="/app/music"
 ENV COVER_ART_PATH="/app/covers"
+ENV APP_URL="http://localhost:3000"
 
 RUN pnpm run build
 
@@ -29,6 +30,7 @@ FROM base
 ENV DATABASE_URL="postgres://root:root@localhos2:5432/muze"
 ENV MUSIC_PATH="/app/music"
 ENV COVER_ART_PATH="/app/covers"
+ENV APP_URL="http://localhost:3000"
 COPY --from=prod-deps /app/node_modules /app/node_modules
 COPY --from=build /app/.next /app/.next
 EXPOSE 3000

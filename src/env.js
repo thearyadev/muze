@@ -9,6 +9,7 @@ export const env = createEnv({
       .default('development'),
     MUSIC_PATH: z.string().default('/music'),
     COVER_ART_PATH: z.string().default('/covers'),
+    APP_URL: z.string().default('http://localhost:3000'),
   },
 
   client: {
@@ -19,6 +20,7 @@ export const env = createEnv({
     NODE_ENV: process.env.NODE_ENV,
     MUSIC_PATH: process.env.MUSIC_PATH,
     COVER_ART_PATH: process.env.COVER_ART_PATH,
+    APP_URL: process.env.APP_URL,
   },
   skipValidation: !!process.env.SKIP_ENV_VALIDATION,
   emptyStringAsUndefined: true,

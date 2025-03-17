@@ -19,3 +19,5 @@ services:
       - POSTGRES_PASSWORD=password
       - POSTGRES_USER=muze
       - POSTGRES_DB=muze # or make the database
+      - BETTER_AUTH_SECRET=uuskRu4cOaX5TYCf2geyhV9ytmLiQcL9 # change this to something random
+      - APP_URL=http://localhost:3000 # change this to your client app url

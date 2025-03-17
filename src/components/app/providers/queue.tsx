@@ -83,7 +83,7 @@ const QueueProvider: React.FC<{
   const _trackComplete = (skipLoop?: boolean) => {
     // is called when natural track completion
     if (track) {
-      logTrackListen(track.id)
+      // logTrackListen(track.id)
     }
     if (loop && track) {
       if (skipLoop === false || skipLoop === undefined) {

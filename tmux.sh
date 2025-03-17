@@ -21,7 +21,7 @@ else
 	docker kill muze-db 2>/dev/null
 	docker rm muze-db 2>/dev/null
 	tmux send-keys -t $SESSION_NAME:2.2 "./start_database.sh" Enter
-	tmux send-keys -t $SESSION_NAME:2.1 "npm run dev --legacy-peer-deps" Enter
+	tmux send-keys -t $SESSION_NAME:2.1 "pnpm dev" Enter
 
 
 	tmux new-window -t $SESSION_NAME:3 -n "Manifests"

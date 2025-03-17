@@ -10,7 +10,7 @@ import {
   genreTrack,
   tracks,
   userListens,
-  users,
+  users_data,
 } from '~/server/db/schema'
 import { and, asc, eq, getTableColumns, ilike, sql, or } from 'drizzle-orm'
 import { env } from '~/env'
@@ -24,8 +24,8 @@ export const getAlbumTracks = protectedAction(async (albumId: string) => {
   const username = await getUsername()
   const [user] = await db
     .select()
-    .from(users)
-    .where(eq(users.username, username.content ?? ''))
+    .from(users_data)
+    .where(eq(users_data.username, username.content ?? ''))
   if (!user) {
     return {
       status_code: 401,
@@ -65,14 +65,15 @@ export const allTracks = protectedAction(
     const username = await getUsername()
     const [user] = await db
       .select()
-      .from(users)
-      .where(eq(users.username, username.content ?? ''))
+      .from(users_data)
+      .where(eq(users_data.username, username.content ?? ''))
     if (!user) {
       return {
         status_code: 401,
         error: 'Unable to find user.',
       }
     }
+    console.log(user)
 
     const query = await db
       .selectDistinct({
@@ -110,8 +111,8 @@ export const search = protectedAction(async (query: string) => {
   const username = await getUsername()
   const [user] = await db
     .select()
-    .from(users)
-    .where(eq(users.username, username.content ?? ''))
+    .from(users_data)
+    .where(eq(users_data.username, username.content ?? ''))
   if (!user) {
     return {
       status_code: 401,
@@ -155,8 +156,8 @@ export const getTrack = protectedAction(async (trackId: string) => {
   const username = await getUsername()
   const [user] = await db
     .select()
-    .from(users)
-    .where(eq(users.username, username.content ?? ''))
+    .from(users_data)
+    .where(eq(users_data.username, username.content ?? ''))
   if (!user) {
     return {
       status_code: 401,
@@ -207,8 +208,8 @@ export const getAlbum = protectedAction(async (albumId: string) => {
   const username = await getUsername()
   const [user] = await db
     .select()
-    .from(users)
-    .where(eq(users.username, username.content ?? ''))
+    .from(users_data)
+    .where(eq(users_data.username, username.content ?? ''))
   if (!user) {
     return {
       status_code: 401,
@@ -241,8 +242,8 @@ export const getArtist = protectedAction(async (artistId: string) => {
   const username = await getUsername()
   const [user] = await db
     .select()
-    .from(users)
-    .where(eq(users.username, username.content ?? ''))
+    .from(users_data)
+    .where(eq(users_data.username, username.content ?? ''))
   if (!user) {
     return {
       status_code: 401,
@@ -269,8 +270,8 @@ export const getArtistTracks = protectedAction(async (artistId: string) => {
   const username = await getUsername()
   const [user] = await db
     .select()
-    .from(users)
-    .where(eq(users.username, username.content ?? ''))
+    .from(users_data)
+    .where(eq(users_data.username, username.content ?? ''))
   if (!user) {
     return {
       status_code: 401,
@@ -310,8 +311,8 @@ export const getRandomTrack = protectedAction(async () => {
   const username = await getUsername()
   const [user] = await db
     .select()
-    .from(users)
-    .where(eq(users.username, username.content ?? ''))
+    .from(users_data)
+    .where(eq(users_data.username, username.content ?? ''))
   if (!user) {
     return {
       status_code: 401,

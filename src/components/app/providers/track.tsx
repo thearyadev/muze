@@ -3,8 +3,8 @@ import { usePosition } from './position'
 import { usePlaying } from './playing'
 import type { getTrack } from '~/lib/actions/library'
 import {
-  getCurrentTrack,
-  logTrackListen,
+  // getCurrentTrack,
+  // logTrackListen,
   setCurrentTrack,
 } from '~/lib/actions/user'
 import type { MultiRef } from './player'

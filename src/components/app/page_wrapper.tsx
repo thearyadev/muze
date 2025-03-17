@@ -1,11 +1,6 @@
 'use client'
-import { useState } from 'react'
 import { Sidebar, SidebarBody, SidebarLink } from '../ui/sidebar'
 import {
-  IconArrowLeft,
-  IconBrandTabler,
-  IconSettings,
-  IconUserBolt,
   IconLogout,
   IconHome,
   IconDisc,
@@ -16,15 +11,15 @@ import {
 import Link from 'next/link'
 import { motion } from 'motion/react'
 import { useSidebar } from '~/components/ui/sidebar'
-import Image from 'next/image'
 import { cn } from '~/lib/utils'
-import { AccountButton } from './accountButton'
-import { logout } from '~/lib/actions/user'
 import { toast } from 'sonner'
 import { useRouter } from 'next/navigation'
+import { authClient } from '~/lib/auth-client'
+import { sync } from '~/lib/actions/library'
 
 export function PageWrapper({ children }: { children: React.ReactNode }) {
   const router = useRouter()
+
   const links = [
     {
       label: 'Home',
@@ -82,11 +77,15 @@ export function PageWrapper({ children }: { children: React.ReactNode }) {
           </div>
           <div>
             <IconLogout
-              className="text-neutral-700 dark:text-neutral-200 h-5 w-5 shrink-0"
+              className="text-neutral-700 dark:text-neutral-200 h-5 w-5 shrink-0 pb-10"
               onClick={() => {
-                logout().then(() => {
-                  toast.success('Logged out')
-                  router.push('/login')
+                authClient.signOut({
+                  fetchOptions: {
+                    onSuccess: () => {
+                      toast.success('Logged out')
+                      router.push('/login')
+                    },
+                  },
                 })
               }}
             />

@@ -1,29 +1,24 @@
 import type { APIResponse } from '../types'
-import { cookies } from 'next/headers'
+import { cookies, headers } from 'next/headers'
 import * as jwt from 'jsonwebtoken'
-
+import { auth } from '~/lib/auth'
 export const key = 'meow'
 
 export async function isAuthorized(): Promise<APIResponse<string>> {
-  const cookiestore = await cookies()
-  const token = cookiestore.get('auth')
-  if (!token?.value) {
+  const session = await auth.api.getSession({
+    headers: await headers(),
+  })
+
+  if (session === null) {
     return {
       status_code: 401,
       error: 'Unauthorized',
     }
   }
-  try {
-    const jwt_data = jwt.verify(token.value, key)
-    return {
-      status_code: 200,
-      content: jwt_data.toString(),
-    }
-  } catch {
-    return {
-      status_code: 401,
-      error: 'Unauthorized',
-    }
+
+  return {
+    status_code: 200,
+    content: session.user.name,
   }
 }
 // biome-ignore lint/suspicious/noExplicitAny : dont care

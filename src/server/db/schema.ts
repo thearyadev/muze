@@ -9,6 +9,8 @@ import {
   varchar,
   timestamp,
   index,
+  text,
+  boolean,
 } from 'drizzle-orm/pg-core'
 
 /**
@@ -19,13 +21,12 @@ import {
  */
 export const createTable = pgTableCreator((name) => `muze_${name}`)
 
-export const users = createTable('user', {
+export const users_data = createTable('user_data', {
   id: varchar('id', { length: 256 })
     .notNull()
     .primaryKey()
     .$defaultFn(() => crypto.randomUUID()),
   username: varchar('username', { length: 256 }).notNull(),
-  password: varchar('password', { length: 256 }).notNull(),
   currentTrackId: varchar('current_track_id', { length: 256 }).references(
     () => tracks.id,
     { onDelete: 'set null', onUpdate: 'cascade' },
@@ -158,7 +159,7 @@ export const userListens = createTable('user_listen', {
     .primaryKey()
     .$defaultFn(() => crypto.randomUUID()),
   userId: varchar('user_id', { length: 256 })
-    .references(() => users.id)
+    .references(() => users_data.id)
     .notNull(),
   trackId: varchar('track_id', { length: 256 })
     .references(() => tracks.id, { onDelete: 'cascade', onUpdate: 'cascade' })
@@ -173,9 +174,59 @@ export const userPlaylists = createTable('user_playlist', {
     .primaryKey()
     .$defaultFn(() => crypto.randomUUID()),
   userId: varchar('user_id', { length: 256 })
-    .references(() => users.id)
+    .references(() => users_data.id)
     .notNull(),
   playlistId: varchar('playlist_id', { length: 256 })
     .references(() => playlists.id)
     .notNull(),
+})
+
+export const user = createTable('user', {
+  id: text('id').primaryKey(),
+  name: text('name').notNull(),
+  email: text('email').notNull().unique(),
+  emailVerified: boolean('email_verified').notNull(),
+  image: text('image'),
+  createdAt: timestamp('created_at').notNull(),
+  updatedAt: timestamp('updated_at').notNull(),
+})
+
+export const session = createTable('session', {
+  id: text('id').primaryKey(),
+  expiresAt: timestamp('expires_at').notNull(),
+  token: text('token').notNull().unique(),
+  createdAt: timestamp('created_at').notNull(),
+  updatedAt: timestamp('updated_at').notNull(),
+  ipAddress: text('ip_address'),
+  userAgent: text('user_agent'),
+  userId: text('user_id')
+    .notNull()
+    .references(() => user.id, { onDelete: 'cascade' }),
+})
+
+export const account = createTable('account', {
+  id: text('id').primaryKey(),
+  accountId: text('account_id').notNull(),
+  providerId: text('provider_id').notNull(),
+  userId: text('user_id')
+    .notNull()
+    .references(() => user.id, { onDelete: 'cascade' }),
+  accessToken: text('access_token'),
+  refreshToken: text('refresh_token'),
+  idToken: text('id_token'),
+  accessTokenExpiresAt: timestamp('access_token_expires_at'),
+  refreshTokenExpiresAt: timestamp('refresh_token_expires_at'),
+  scope: text('scope'),
+  password: text('password'),
+  createdAt: timestamp('created_at').notNull(),
+  updatedAt: timestamp('updated_at').notNull(),
+})
+
+export const verification = createTable('verification', {
+  id: text('id').primaryKey(),
+  identifier: text('identifier').notNull(),
+  value: text('value').notNull(),
+  expiresAt: timestamp('expires_at').notNull(),
+  createdAt: timestamp('created_at'),
+  updatedAt: timestamp('updated_at'),
 })

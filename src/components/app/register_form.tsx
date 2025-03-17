@@ -14,7 +14,8 @@ import {
 } from '~/components/ui/form'
 import { Input } from '~/components/ui/input'
 import { useRouter } from 'next/navigation'
-import { register } from '~/lib/actions/user'
+import { createUserData } from '~/lib/actions/user'
+import { authClient } from '~/lib/auth-client'
 
 const formSchema = z.object({
   username: z.string().min(2).max(256),
@@ -32,8 +33,18 @@ export default function RegisterForm() {
   })
 
   async function onSubmit(values: z.infer<typeof formSchema>) {
-    await register(values.username, values.password)
-    router.push('login')
+    await authClient.signUp.email({
+      email: values.username,
+      password: values.password,
+      name: values.username,
+      fetchOptions: {
+        onSuccess: () => {
+          createUserData().then(() => {
+            router.push('/app/home')
+          })
+        },
+      },
+    })
   }
 
   return (
