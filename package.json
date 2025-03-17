@@ -10,7 +10,8 @@
     "dev": "next dev --turbo",
     "lint": "next lint",
     "start": "next start",
-    "pre": "biome format --write && biome lint"
+    "pre": "biome format --write && biome lint",
+    "preinstall": "npx only-allow pnpm"
   },
   "dependencies": {
     "@ant-design/icons": "^5.6.1",
@@ -93,7 +94,6 @@
   "ct3aMetadata": {
     "initVersion": "7.30.2"
   },
-  "packageManager": "npm@10.9.1",
   "release": {
     "branches": [
       "main"
@@ -102,5 +102,14 @@
   "overrides": {
     "@types/react": "19.0.10",
     "@types/react-dom": "19.0.4"
+  },
+  "pnpm": {
+    "onlyBuiltDependencies": [
+      "@biomejs/biome",
+      "better-sqlite3",
+      "esbuild",
+      "iconv",
+      "sharp"
+    ]
   }
 }
