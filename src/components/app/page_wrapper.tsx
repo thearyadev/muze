@@ -76,13 +76,22 @@ export function PageWrapper({ children }: { children: React.ReactNode }) {
             </div>
           </div>
           <div>
+            <button
+              type="button"
+              onClick={() => {
+                console.log('syncing')
+                sync()
+              }}
+            >
+              sync
+            </button>
             <IconLogout
-              className="text-neutral-700 dark:text-neutral-200 h-5 w-5 shrink-0 pb-10"
+              className="text-neutral-700 dark:text-neutral-200 h-5 w-5 shrink-0"
               onClick={() => {
                 authClient.signOut({
                   fetchOptions: {
                     onSuccess: () => {
-                      toast.success('Logged out')
+                      toast.success('Logged out AND SYNCING')
                       router.push('/login')
                     },
                   },
