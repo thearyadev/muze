@@ -19,6 +19,7 @@ import { authClient } from '~/lib/auth-client'
 import { useRouter } from 'next/navigation'
 import { toast } from 'sonner'
 import { cn } from '~/lib/utils'
+import { createUserData } from '~/lib/actions/user'
 const formSchema = z.object({
   username: z.string().min(2).max(256),
   password: z.string().min(2).max(256),
@@ -46,7 +47,9 @@ export default function LoginPage() {
         name: values.username,
         fetchOptions: {
           onSuccess: () => {
-            router.push('/app/home')
+            createUserData().then(() => {
+              router.push('/app/home')
+            })
           },
           onError: (context) => {
             setIsLoading(false)

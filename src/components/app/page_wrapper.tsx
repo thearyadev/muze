@@ -7,6 +7,7 @@ import {
   IconAlbum,
   IconSortAscendingShapes,
   IconUsers,
+  IconRefreshAlert,
 } from '@tabler/icons-react'
 import Link from 'next/link'
 import { motion } from 'motion/react'
@@ -76,28 +77,37 @@ export function PageWrapper({ children }: { children: React.ReactNode }) {
             </div>
           </div>
           <div>
-            <button
-              type="button"
-              onClick={() => {
-                console.log('syncing')
-                sync()
-              }}
-            >
-              sync
-            </button>
-            <IconLogout
-              className="text-neutral-700 dark:text-neutral-200 h-5 w-5 shrink-0"
-              onClick={() => {
-                authClient.signOut({
-                  fetchOptions: {
-                    onSuccess: () => {
-                      toast.success('Logged out AND SYNCING')
-                      router.push('/login')
+            <div className="grid grid-rows-2 gap-2">
+              <IconRefreshAlert
+                className="text-neutral-700 dark:text-neutral-200 h-5 w-5 shrink-0"
+                onClick={() => {
+                  toast.promise(
+                    sync().then(() => {
+                      window.location.reload()
+                    }),
+                    {
+                      loading: 'Syncing...',
+                      success: 'Synced!',
+                      error: 'Sync failed!',
                     },
-                  },
-                })
-              }}
-            />
+                  )
+                }}
+              />
+
+              <IconLogout
+                className="text-neutral-700 dark:text-neutral-200 h-5 w-5 shrink-0"
+                onClick={() => {
+                  authClient.signOut({
+                    fetchOptions: {
+                      onSuccess: () => {
+                        toast.success('Logged out')
+                        router.push('/login')
+                      },
+                    },
+                  })
+                }}
+              />
+            </div>
           </div>
         </SidebarBody>
       </Sidebar>
