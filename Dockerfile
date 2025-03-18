@@ -1,4 +1,6 @@
 FROM node:20-alpine AS base
+
+
 ENV PNPM_HOME="/pnpm"
 ENV PATH="$PNPM_HOME:$PATH"
 RUN corepack enable
@@ -25,6 +27,9 @@ ENV APP_URL="http://localhost:3000"
 RUN pnpm run build
 
 FROM base
+
+ARG TAG
+ENV TAG=${TAG}
 
 
 ENV DATABASE_URL="postgres://root:root@localhos2:5432/muze"

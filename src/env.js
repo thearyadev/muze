@@ -10,6 +10,7 @@ export const env = createEnv({
     MUSIC_PATH: z.string().default('/music'),
     COVER_ART_PATH: z.string().default('/covers'),
     APP_URL: z.string().default('http://localhost:3000'),
+    TAG: z.string().default('dev'),
   },
 
   client: {
@@ -21,6 +22,7 @@ export const env = createEnv({
     MUSIC_PATH: process.env.MUSIC_PATH,
     COVER_ART_PATH: process.env.COVER_ART_PATH,
     APP_URL: process.env.APP_URL,
+    TAG: process.env.TAG,
   },
   skipValidation: !!process.env.SKIP_ENV_VALIDATION,
   emptyStringAsUndefined: true,
