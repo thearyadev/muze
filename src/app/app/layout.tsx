@@ -20,6 +20,7 @@ export default async function AppLayout({
   children: React.ReactNode
 }) {
   const { status_code } = await getUsername()
+  console.log(status_code)
 
   if (status_code !== 200) {
     redirect('/login')

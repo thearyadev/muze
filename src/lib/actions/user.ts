@@ -7,6 +7,7 @@ import {
 } from './helper'
 import { userListens, users_data } from '~/server/db/schema'
 import { eq, sql, and } from 'drizzle-orm'
+import type { User } from '~/lib/actions/helper'
 
 export const isAuthorized = openAction(async () => {
   return await _isAuthorized()
@@ -16,66 +17,31 @@ export const getUsername = protectedAction(async () => {
   return await isAuthorized()
 })
 
-export const createUserData = protectedAction(async () => {
-  const { content: username } = await getUsername()
-  if (username === undefined) {
+export const createUserData = openAction(async () => {
+  const username = await isAuthorized()
+  if (username.content === undefined) {
     return {
       status_code: 401,
       error: 'Unauthorized',
     }
   }
   await db.insert(users_data).values({
-    username: username,
+    username: username.content,
     currentTrackId: null,
     currentTrackPosition: 0,
   })
-  return {
-    status_code: 200,
-  }
-})
-
-export const setCurrentTrack = protectedAction(async (trackId?: string) => {
-  // find user
-  const username = (await getUsername()).content ?? ''
-  const user = await db
-    .select()
-    .from(users_data)
-    .where(eq(users_data.username, username))
-  if (!user) {
-    return {
-      status_code: 401,
-      error: 'Unable to find user.',
-    }
-  }
-  await db
-    .update(users_data)
-    .set({ currentTrackId: trackId, currentTrackPosition: 0 })
-    .where(eq(users_data.username, username))
-
   return {
     status_code: 200,
     content: undefined,
   }
 })
 
-export const setCurrentTrackPosition = protectedAction(
-  async (position: number) => {
-    // find user
-    const username = (await getUsername()).content ?? ''
-    const user = await db
-      .select()
-      .from(users_data)
-      .where(eq(users_data.username, username))
-    if (!user[0]) {
-      return {
-        status_code: 401,
-        error: 'Unable to find user.',
-      }
-    }
+export const setCurrentTrack = protectedAction(
+  async (user: User, trackId?: string) => {
     await db
       .update(users_data)
-      .set({ currentTrackPosition: Math.floor(position) })
-      .where(eq(users_data.username, user[0].username))
+      .set({ currentTrackId: trackId, currentTrackPosition: 0 })
+      .where(eq(users_data.username, user.username))
 
     return {
       status_code: 200,
@@ -84,84 +50,75 @@ export const setCurrentTrackPosition = protectedAction(
   },
 )
 
-export const getCurrentTrack = protectedAction(async () => {
-  // find user
-  const username = (await getUsername()).content ?? ''
-  const user = await db
-    .select()
-    .from(users_data)
-    .where(eq(users_data.username, username))
-  if (!user[0]) {
+export const setCurrentTrackPosition = protectedAction(
+  async (user: User, position: number) => {
+    await db
+      .update(users_data)
+      .set({ currentTrackPosition: Math.floor(position) })
+      .where(eq(users_data.username, user.username))
     return {
-      status_code: 401,
-      error: 'Unable to find user.',
+      status_code: 200,
+      content: undefined,
     }
-  }
+  },
+)
+
+export const getCurrentTrack = protectedAction(async (user: User) => {
   return {
     status_code: 200,
     content: {
-      setCurrentTrackId: user[0].currentTrackId,
-      setCurrentTrackPosition: user[0].currentTrackPosition,
+      setCurrentTrackId: user.currentTrackId,
+      setCurrentTrackPosition: user.currentTrackPosition,
     },
   }
 })
 
-export const logTrackListen = protectedAction(async (trackId: string) => {
-  const username = (await getUsername()).content ?? ''
-  const user = await db
-    .select()
-    .from(users_data)
-    .where(eq(users_data.username, username))
-  if (!user[0]) {
-    return {
-      status_code: 401,
-      error: 'Unable to find user.',
-    }
-  }
+export const logTrackListen = protectedAction(
+  async (user: User, trackId: string) => {
+    const [lastListen] = await db
+      .select({ dt: userListens.lastListen })
+      .from(userListens)
+      .where(eq(userListens.userId, user.id))
+      .orderBy(sql`${userListens.lastListen} desc`)
+      .limit(1)
 
-  const [lastListen] = await db
-    .select({ dt: userListens.lastListen })
-    .from(userListens)
-    .where(eq(userListens.userId, user[0].id))
-    .orderBy(sql`${userListens.lastListen} desc`)
-    .limit(1)
-
-  if (lastListen) {
-    const diff = new Date().getTime() - lastListen.dt.getTime()
-    if (diff < 30000) {
-      return {
-        status_code: 400,
-        error: 'Cooldown period not met.',
+    if (lastListen) {
+      const diff = new Date().getTime() - lastListen.dt.getTime()
+      if (diff < 30000) {
+        return {
+          status_code: 400,
+          error: 'Cooldown period not met.',
+        }
       }
     }
-  }
 
-  const [trackUserListen] = await db
-    .select()
-    .from(userListens)
-    .where(
-      and(eq(userListens.userId, user[0].id), eq(userListens.trackId, trackId)),
-    )
-  if (!trackUserListen) {
-    await db.insert(userListens).values({
-      userId: user[0].id,
-      trackId: trackId,
-      listens: 1,
-      lastListen: new Date(),
-    })
-  } else {
-    await db
-      .update(userListens)
-      .set({ lastListen: sql`NOW()`, listens: trackUserListen.listens + 1 })
+    const [trackUserListen] = await db
+      .select()
+      .from(userListens)
       .where(
-        and(
-          eq(userListens.userId, user[0].id),
-          eq(userListens.trackId, trackId),
-        ),
+        and(eq(userListens.userId, user.id), eq(userListens.trackId, trackId)),
       )
-  }
+    if (!trackUserListen) {
+      await db.insert(userListens).values({
+        userId: user.id,
+        trackId: trackId,
+        listens: 1,
+        lastListen: new Date(),
+      })
+    } else {
+      await db
+        .update(userListens)
+        .set({ lastListen: sql`NOW()`, listens: trackUserListen.listens + 1 })
+        .where(
+          and(
+            eq(userListens.userId, user.id),
+            eq(userListens.trackId, trackId),
+          ),
+        )
+    }
 
-  return {
-    status_code: 200,
-  }
-})
+    return {
+      status_code: 200,
+    }
+  },
+)

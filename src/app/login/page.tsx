@@ -46,10 +46,9 @@ export default function LoginPage() {
         password: values.password,
         name: values.username,
         fetchOptions: {
-          onSuccess: () => {
-            createUserData().then(() => {
-              router.push('/app/home')
-            })
+          onSuccess: async () => {
+            await createUserData()
+            router.push('/app/home')
           },
           onError: (context) => {
             setIsLoading(false)
@@ -58,6 +57,7 @@ export default function LoginPage() {
           },
         },
       })
+      return
     }
     await authClient.signIn.email({
       email: values.username,
