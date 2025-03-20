@@ -676,7 +676,6 @@ export const sync = protectedAction(async () => {
       await upsert_artist_track_relation(db, artist_ids, track_id)
       await create_cover_files(metadata)
     } catch (e) {
-      console.log('Failed to process track', track_i)
       console.error(e)
     }
   }

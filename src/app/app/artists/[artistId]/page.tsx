@@ -1,5 +1,4 @@
-
-import { notFound, } from 'next/navigation'
+import { notFound } from 'next/navigation'
 import PageHeading from '~/components/app/page_heading'
 import { TrackTable } from '~/components/app/track_table'
 import { getArtist, getArtistTracks } from '~/lib/actions/library'
@@ -14,11 +13,9 @@ export default async function ArtistPage({
 
   const tracks = await getArtistTracks(artist.content.id)
   if (!tracks.content) {
-    console.log('no content')
     return notFound()
   }
   if (!tracks.content.length) {
-    console.log('no tracks')
     return notFound()
   }
   return (

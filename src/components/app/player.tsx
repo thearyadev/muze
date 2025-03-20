@@ -3,7 +3,7 @@
 import type React from 'react'
 import Link from 'next/link'
 
-import { VolumeSlider, } from '../ui/slider'
+import { VolumeSlider } from '../ui/slider'
 
 import {
   SpeakerLoudIcon as SpeakerIconOn,

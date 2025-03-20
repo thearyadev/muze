@@ -100,7 +100,6 @@ const QueueProvider: React.FC<{
         // queue is empty, autoplay is on, get a random track from the library
         getRandomTrack().then((res) => {
           if (res.content !== undefined) {
-            console.log('calling changeTrack')
             changeTrack(res.content, true)
           }
         })

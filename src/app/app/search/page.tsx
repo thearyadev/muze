@@ -1,5 +1,5 @@
 'use client'
-import { useDebouncedCallback, } from '@mantine/hooks'
+import { useDebouncedCallback } from '@mantine/hooks'
 import { useState } from 'react'
 import PageHeading from '~/components/app/page_heading'
 import { TrackTable } from '~/components/app/track_table'
