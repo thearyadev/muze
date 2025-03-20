@@ -8,9 +8,9 @@
     "db:push": "drizzle-kit push",
     "db:studio": "drizzle-kit studio",
     "dev": "next dev --turbo",
-    "lint": "next lint",
+    "lint": "tsc --noEmit",
     "start": "next start",
-    "pre": "biome format --write && biome lint",
+    "pre": "biome format --write && tsc --noEmit && biome lint",
     "preinstall": "npx only-allow pnpm"
   },
   "dependencies": {
