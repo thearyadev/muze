@@ -6,18 +6,20 @@ import Link from 'next/link'
 import { VolumeSlider, TrackSlider } from '../ui/slider'
 
 import {
-  LoopIcon,
   SpeakerLoudIcon as SpeakerIconOn,
   SpeakerOffIcon as SpeakerIconOff,
 } from '@radix-ui/react-icons'
 
+import {} from '@ant-design/icons'
+
 import {
-  PlayCircleOutlined as PlayIcon,
-  PauseCircleOutlined as PauseIcon,
-  StepBackwardFilled as StepBackwardIcon,
-  StepForwardFilled as StepForwardIcon,
-  SwapOutlined as AutoplayIcon,
-} from '@ant-design/icons'
+  IconPlayerPlay as PlayIcon,
+  IconPlayerSkipForward as StepForwardIcon,
+  IconPlayerSkipBack as StepBackwardIcon,
+  IconArrowsShuffle as AutoplayIcon,
+  IconRepeat as LoopIcon,
+  IconPlayerPause as PauseIcon,
+} from '@tabler/icons-react'
 
 import { useTrack } from './providers/track'
 import { useVolume } from './providers/volume'
@@ -35,26 +37,37 @@ function PlayerBody({ children }: { children: React.ReactNode }) {
     </div>
   )
 }
+import { motion } from 'motion/react'
 
-function TrackSliderPosition() {
+function TrackPositionSlider() {
   // biome-ignore lint/style/noNonNullAssertion :
   const { position, changePosition, maxposition } = usePosition()!
+  const currentPercentage = ((position[0] as number) / maxposition) * 100
+
   return (
-    <TrackSlider
-      defaultValue={position}
-      max={maxposition}
-      value={position}
-      step={0.1}
-      onValueChange={(value) => {
-        changePosition(value)
-        // if (!audioRef.current) return;
-        // audioRef.current.currentTime = value[0] as number;
+    <div
+      className="relative cursor-pointer min-h-3 -mb-3"
+      onClick={(e) => {
+        const clickX = e.clientX
+        const divWidth = (e.target as HTMLDivElement).offsetWidth
+        const percentage = clickX / divWidth
+        const newPosition = percentage * maxposition
+        changePosition([newPosition])
       }}
-      className="w-screen transition duration-75"
-    />
+    >
+      <div className="bg-gray-500 min-h-0.5 absolute top-0 left-0 w-full" />
+      <motion.div
+        className="bg-orange-400 min-h-0.5 absolute top-0 left-0 pointer-events-none"
+        animate={{ width: `${currentPercentage}%` }}
+        transition={{
+          type: 'tween',
+          ease: 'linear',
+          duration: 0.18,
+        }}
+      />
+    </div>
   )
 }
-
 export default function Player() {
   // biome-ignore lint/style/noNonNullAssertion :
   const { track } = useTrack()!
@@ -82,7 +95,7 @@ export default function Player() {
   return (
     <div className="select-none">
       <div className="w-screen" />
-      <TrackSliderPosition />
+      <TrackPositionSlider />
       <PlayerBody>
         <div
           className="flex flex-row items-center"
@@ -114,32 +127,44 @@ export default function Player() {
           </div>
         </div>
         <div
-          className="flex flex-row items-center justify-center space-x-10 align-middle"
+          className="flex flex-row items-center justify-center  space-x-3 md:space-x-10 align-middle"
           // controls.
         >
           <div className="flex flex-row items-center space-x-5 ">
-            <AutoplayIcon
-              className={`text-xs text-gray-400 hover:text-orange-400 ${autoplay ? 'text-orange-400' : null}`}
+            <div
+              className="px-4 py-2 group"
               onClick={() => {
                 changeAutoplay(!autoplay)
-                // loop ? changeLoop(false) : null
               }}
-            />
+            >
+              <AutoplayIcon
+                size={15}
+                className={`text-xs text-gray-400 group-hover:text-orange-400 ${autoplay ? 'text-orange-400' : null}`}
+              />
+            </div>
             <StepBackwardIcon
+              size={20}
               className="text-xl text-white transition duration-100 hover:text-orange-400"
               onClick={previousTrack}
             />
           </div>
-          <PauseIcon
-            className={`text-4xl text-white transition duration-100 hover:text-orange-400 ${!playing ? 'hidden' : null}`}
-            onClick={setPlayingFalse}
-          />
-          <PlayIcon
-            className={`text-4xl text-white transition duration-100 hover:text-orange-400 ${!playing ? null : 'hidden'}`}
-            onClick={setPlayingTrue}
-          />
+          <div>
+            {playing ? (
+              <PauseIcon
+                className="text-4xl text-white transition duration-100 hover:text-orange-400"
+                onClick={setPlayingFalse}
+              />
+            ) : (
+              <PlayIcon
+                className="text-4xl text-white transition duration-100 hover:text-orange-400"
+                onClick={setPlayingTrue}
+              />
+            )}
+          </div>
+
           <div className="flex flex-row items-center space-x-5 ">
             <StepForwardIcon
+              size={20}
               className="text-xl text-white transition duration-100 hover:text-orange-400"
               onClick={() => {
                 if (queue.length === 0 && autoplay === false) {
@@ -148,12 +173,17 @@ export default function Player() {
                 nextTrack(true)
               }}
             />
-            <LoopIcon
-              className={`text-xs text-gray-400 hover:text-orange-400 ${loop ? 'text-orange-400' : null}`}
+            <div
+              className="px-4 py-2 group"
               onClick={() => {
                 changeLoop(!loop)
               }}
-            />
+            >
+              <LoopIcon
+                size={15}
+                className={`text-xs text-gray-400 group-hover:text-orange-400 ${loop ? 'text-orange-400' : null}`}
+              />
+            </div>
           </div>
         </div>
         <div

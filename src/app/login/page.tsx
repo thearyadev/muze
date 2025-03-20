@@ -135,7 +135,6 @@ export default function LoginPage() {
           </form>
         </Form>
 
-        {/* biome-ignore lint/a11y/useKeyWithClickEvents: */}
         <p
           className="hover:underline text-xs text-gray-500 text-center cursor-pointer"
           onClick={() => setRegister(!register)}
