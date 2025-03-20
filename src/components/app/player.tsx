@@ -83,15 +83,6 @@ export default function Player() {
   const { playing, setPlayingTrue, setPlayingFalse } = usePlaying()!
   // biome-ignore lint/style/noNonNullAssertion :
   const { nextTrack, previousTrack } = useQueue()!
-  if (track === null) {
-    return (
-      // replace with skeleton
-      <div className="select-none">
-        <PlayerBody>{null}</PlayerBody>
-      </div>
-    )
-  }
-
   return (
     <div className="select-none">
       <div className="w-screen" />
@@ -101,30 +92,33 @@ export default function Player() {
           className="flex flex-row items-center"
           // Track Info
         >
-          <Image
-            alt={track.name || 'Track Cover'}
-            src={`/api/library/covers?id=${track.id}&size=xl`}
-            className="h-16 w-16 rounded-md"
-            loading="eager"
-            width={40}
-            height={40}
-            placeholder="blur"
-            blurDataURL="data:image/png;base64,/9j/4AAQSkZJRgABAQAAAQABAAD/2wBDAAMCAgICAgMCAgIDAwMDBAYEBAQEBAgGBgUGCQgKCgkICQkKDA8MCgsOCwkJDRENDg8QEBEQCgwSExIQEw8QEBD/wAALCABkAGQBAREA/8QAFQABAQAAAAAAAAAAAAAAAAAAAAj/xAAUEAEAAAAAAAAAAAAAAAAAAAAA/9oACAEBAAA/AIkAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAf/9k="
-          />
-
-          <div className="hidden pl-3 sm:block">
-            <p className="text-sm leading-tight text-white">{track.name}</p>
-            {track.artistIds.split(';').map((artistId, index) => (
-              <Link
-                key={artistId}
-                href={`/app/artists/${artistId}`}
-                className="text-xs text-gray-500 transition-all fade-in-100 fade-out-100 hover:text-orange-400 "
-              >
-                {track.artistNames.split(';')[index]}
-                {index < track.artistIds.split(';').length - 1 ? ', ' : ''}
-              </Link>
-            ))}
-          </div>
+          {track !== null ? (
+            <>
+              <Image
+                alt={track.name || 'Track Cover'}
+                src={`/api/library/covers?id=${track.id}&size=xl`}
+                className="h-16 w-16 rounded-md"
+                loading="eager"
+                width={40}
+                height={40}
+                placeholder="blur"
+                blurDataURL="data:image/png;base64,/9j/4AAQSkZJRgABAQAAAQABAAD/2wBDAAMCAgICAgMCAgIDAwMDBAYEBAQEBAgGBgUGCQgKCgkICQkKDA8MCgsOCwkJDRENDg8QEBEQCgwSExIQEw8QEBD/wAALCABkAGQBAREA/8QAFQABAQAAAAAAAAAAAAAAAAAAAAj/xAAUEAEAAAAAAAAAAAAAAAAAAAAA/9oACAEBAAA/AIkAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAf/9k="
+              />
+              <div className="hidden pl-3 sm:block">
+                <p className="text-sm leading-tight text-white">{track.name}</p>
+                {track.artistIds.split(';').map((artistId, index) => (
+                  <Link
+                    key={artistId}
+                    href={`/app/artists/${artistId}`}
+                    className="text-xs text-gray-500 transition-all fade-in-100 fade-out-100 hover:text-orange-400 "
+                  >
+                    {track.artistNames.split(';')[index]}
+                    {index < track.artistIds.split(';').length - 1 ? ', ' : ''}
+                  </Link>
+                ))}
+              </div>
+            </>
+          ) : null}
         </div>
         <div
           className="flex flex-row items-center justify-center  space-x-3 md:space-x-10 align-middle"
