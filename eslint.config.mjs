@@ -18,6 +18,7 @@ const compat = new FlatCompat({
 export default defineConfig([
   {
     extends: compat.extends(
+      'plugin:@next/next/recommended',
       'plugin:@typescript-eslint/recommended-type-checked',
       'plugin:@typescript-eslint/stylistic-type-checked',
     ),
