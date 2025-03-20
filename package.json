@@ -74,6 +74,8 @@
   },
   "devDependencies": {
     "@biomejs/biome": "1.9.4",
+    "@eslint/eslintrc": "^3.3.0",
+    "@eslint/js": "^9.22.0",
     "@types/better-sqlite3": "^7.6.12",
     "@types/eslint": "^9.6.1",
     "@types/node": "^22.10.1",
@@ -82,7 +84,7 @@
     "@typescript-eslint/eslint-plugin": "^8.16.0",
     "@typescript-eslint/parser": "^8.16.0",
     "drizzle-kit": "^0.30.5",
-    "eslint": "^9.16.0",
+    "eslint": "^9.22.0",
     "eslint-config-next": "15.2.2",
     "eslint-plugin-drizzle": "^0.2.3",
     "postcss": "^8.4.49",
