@@ -10,12 +10,9 @@ import {
   TableIcon,
 } from '@radix-ui/react-icons'
 import { usePathname, useRouter } from 'next/navigation'
-import { Button } from '../ui/button'
-import CommandLabel from './command_label'
 import { useHotkeys } from '@mantine/hooks'
 import { Input } from '../ui/input'
-import { useEffect, useRef, useState } from 'react'
-import { Jersey_20, Jua } from 'next/font/google'
+import { useRef, useState } from 'react'
 
 function SidebarButton({
   href,

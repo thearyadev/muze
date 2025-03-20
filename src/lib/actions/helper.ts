@@ -1,6 +1,5 @@
 import type { APIResponse } from '../types'
-import { cookies, headers } from 'next/headers'
-import * as jwt from 'jsonwebtoken'
+import { headers } from 'next/headers'
 import { auth } from '~/lib/auth'
 import { db } from '~/server/db'
 import { users_data } from '~/server/db/schema'

@@ -10,16 +10,14 @@ import {
   genreTrack,
   tracks,
   userListens,
-  users_data,
 } from '~/server/db/schema'
-import { and, asc, eq, getTableColumns, ilike, sql, or } from 'drizzle-orm'
+import { and, asc, eq, getTableColumns, sql, or } from 'drizzle-orm'
 import { env } from '~/env'
 import fs from 'node:fs'
 import path from 'node:path'
 import sharp from 'sharp'
 import * as mm from 'music-metadata'
 import type { PostgresJsDatabase } from 'drizzle-orm/postgres-js'
-import { getUsername } from './user'
 import type { User } from '~/lib/actions/helper'
 
 export const getAlbumTracks = protectedAction(

@@ -1,7 +1,6 @@
 'use client'
 
 import { Input } from '~/components/ui/input'
-import { Label } from '~/components/ui/label'
 import React from 'react'
 import { Button } from '~/components/ui/button'
 import {
@@ -18,7 +17,6 @@ import { zodResolver } from '@hookform/resolvers/zod'
 import { authClient } from '~/lib/auth-client'
 import { useRouter } from 'next/navigation'
 import { toast } from 'sonner'
-import { cn } from '~/lib/utils'
 import { createUserData } from '~/lib/actions/user'
 const formSchema = z.object({
   username: z.string().min(2).max(256),

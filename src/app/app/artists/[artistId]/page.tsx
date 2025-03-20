@@ -1,5 +1,5 @@
-import Image from 'next/image'
-import { notFound, redirect } from 'next/navigation'
+
+import { notFound, } from 'next/navigation'
 import PageHeading from '~/components/app/page_heading'
 import { TrackTable } from '~/components/app/track_table'
 import { getArtist, getArtistTracks } from '~/lib/actions/library'

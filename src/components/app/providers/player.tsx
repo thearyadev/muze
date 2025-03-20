@@ -1,7 +1,7 @@
 'use client'
 import { useEffect, useRef } from 'react'
 import { LoopProvider, useLoop } from './loop'
-import { PlayingProvider, usePlaying } from './playing'
+import { PlayingProvider, } from './playing'
 import { PositionProvider, usePosition } from './position'
 import { TrackProvider, useTrack } from './track'
 import { VolumeProvider, useVolume } from './volume'

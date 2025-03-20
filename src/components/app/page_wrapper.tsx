@@ -18,7 +18,6 @@ import { useRouter } from 'next/navigation'
 import { authClient } from '~/lib/auth-client'
 import { sync } from '~/lib/actions/library'
 import { useHotkeys } from '@mantine/hooks'
-import { n } from 'node_modules/better-auth/dist/shared/better-auth.6BOIvSei'
 import { env } from '~/env'
 
 export function PageWrapper({ children }: { children: React.ReactNode }) {

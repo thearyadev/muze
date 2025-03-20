@@ -3,7 +3,6 @@ import '~/styles/globals.css'
 import { Inter } from 'next/font/google'
 
 import { Toaster } from 'sonner'
-import ScreenSizeIndicator from '~/components/app/ssi'
 
 const inter = Inter({
   subsets: ['latin'],
