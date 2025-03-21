@@ -10,7 +10,7 @@ import {
   IconRefreshAlert,
 } from '@tabler/icons-react'
 import Link from 'next/link'
-import { AnimatePresence, motion } from 'motion/react'
+import { motion } from 'motion/react'
 import { useSidebar } from '~/components/ui/sidebar'
 import { cn } from '~/lib/utils'
 import { toast } from 'sonner'
@@ -19,11 +19,9 @@ import { authClient } from '~/lib/auth-client'
 import { sync } from '~/lib/actions/library'
 import { useHotkeys } from '@mantine/hooks'
 import { env } from '~/env'
-import { usePathname } from 'next/navigation'
 
 export function PageWrapper({ children }: { children: React.ReactNode }) {
   const router = useRouter()
-  const pathname = usePathname()
 
   useHotkeys([
     [
@@ -124,21 +122,7 @@ export function PageWrapper({ children }: { children: React.ReactNode }) {
           </div>
         </SidebarBody>
       </Sidebar>
-      <AnimatePresence mode="wait" initial={true}>
-        <motion.div
-          className="w-full h-full"
-          initial={{ opacity: 0 }}
-          animate={{ opacity: 1 }}
-          transition={{
-            type: 'tween',
-            duration: 0.3,
-            bounce: 0,
-          }}
-          key={pathname}
-        >
-          {children}
-        </motion.div>
-      </AnimatePresence>
+      <div className="w-full h-full">{children}</div>
     </div>
   )
 }
