@@ -38,6 +38,7 @@ function PlayerBody({ children }: { children: React.ReactNode }) {
   )
 }
 import { motion } from 'motion/react'
+import { cn } from '~/lib/utils'
 
 function TrackPositionSlider() {
   // biome-ignore lint/style/noNonNullAssertion :
@@ -47,7 +48,7 @@ function TrackPositionSlider() {
   return (
     <div
       className="relative cursor-pointer min-h-3 -mb-3"
-      onClick={(e) => {
+      onMouseDown={(e) => {
         const clickX = e.clientX
         const divWidth = (e.target as HTMLDivElement).offsetWidth
         const percentage = clickX / divWidth
@@ -126,15 +127,15 @@ export default function Player() {
         >
           <div className="flex flex-row items-center space-x-5 ">
             <div
-              className="px-4 py-2 group"
+              className={cn(
+                'px-4 py-2 rounded-md border hover:border-orange-400 border-transparent transition-all duration-100 ease-in-out',
+                autoplay ? 'bg-orange-400 text-white' : null,
+              )}
               onClick={() => {
                 changeAutoplay(!autoplay)
               }}
             >
-              <AutoplayIcon
-                size={15}
-                className={`text-xs text-gray-400 group-hover:text-orange-400 ${autoplay ? 'text-orange-400' : null}`}
-              />
+              <AutoplayIcon size={15} className={'text-xs'} />
             </div>
             <StepBackwardIcon
               size={20}
@@ -168,15 +169,15 @@ export default function Player() {
               }}
             />
             <div
-              className="px-4 py-2 group"
+              className={cn(
+                'px-4 py-2 rounded-md border hover:border-orange-400 border-transparent transition-all duration-100 ease-in-out',
+                loop ? 'bg-orange-400 text-white' : null,
+              )}
               onClick={() => {
                 changeLoop(!loop)
               }}
             >
-              <LoopIcon
-                size={15}
-                className={`text-xs text-gray-400 group-hover:text-orange-400 ${loop ? 'text-orange-400' : null}`}
-              />
+              <LoopIcon size={15} className={'text-xs '} />
             </div>
           </div>
         </div>
