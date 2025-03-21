@@ -39,7 +39,7 @@ function PlayerBody({ children }: { children: React.ReactNode }) {
 import { frame, motion, useMotionValue } from 'motion/react'
 import { cn } from '~/lib/utils'
 import BufferedImage from './bufferedImage'
-export function useFollowPointer(
+export function useTooltipFollowPointer(
   ref: RefObject<HTMLDivElement | null>,
   y: number,
 ) {
@@ -77,20 +77,25 @@ function TrackPositionSlider() {
   // biome-ignore lint/style/noNonNullAssertion :
   const { position, changePosition, maxposition } = usePosition()!
   const currentPercentage = ((position[0] as number) / maxposition) * 100
+  const [hovering, setHovering] = React.useState(false)
 
   const tooltipRef = React.useRef<HTMLDivElement>(null)
   const hoverTime = useMotionValue('0:00')
 
-  const { x, y } = useFollowPointer(tooltipRef, -45)
+  const { x, y } = useTooltipFollowPointer(tooltipRef, -45)
   return (
     <>
       <motion.div
-        className="absolute text-sm px-3 py-2 rounded-md z-50 pointer-events-none hidden bg-orange-400 text-white font-medium shadow-lg-top-12 left-1/2 -translate-x-1/2 before:content-[''] before:absolute before:left-1/2 before:-translate-x-1/2 before:bottom-[-6px] before:border-l-[6px] before:border-l-transparent before:border-t-[6px] before:border-t-orange-400 before:border-r-[6px] before:border-r-transparent"
+        className={cn(
+          "absolute text-sm px-3 py-2 rounded-md z-50 pointer-events-none bg-orange-400 text-white font-medium shadow-lg-top-12 left-1/2 -translate-x-1/2 before:content-[''] before:absolute before:left-1/2 before:-translate-x-1/2 before:bottom-[-6px] before:border-l-[6px] before:border-l-transparent before:border-t-[6px] before:border-t-orange-400 before:border-r-[6px] before:border-r-transparent",
+          !hovering ? 'hidden' : null,
+        )}
         ref={tooltipRef}
         style={{
           x,
           y,
         }}
+        animate={{ opacity: hovering ? 1 : 0 }}
       >
         {hoverTime}
       </motion.div>
@@ -111,10 +116,10 @@ function TrackPositionSlider() {
           hoverTime.set(secondsToTimeString(hoveredPosition))
         }}
         onPointerLeave={() => {
-          tooltipRef.current?.classList.add('hidden')
+          setHovering(false)
         }}
         onPointerEnter={() => {
-          tooltipRef.current?.classList.remove('hidden')
+          setHovering(true)
         }}
       >
         <motion.div className="bg-gray-500 min-h-0.5 absolute top-0 left-0 w-full" />
