@@ -26,15 +26,17 @@ export default async function AppLayout({
   }
 
   const { content: currentTrackInfo } = await getCurrentTrack()
+
   let currentTrack: TrackQuery | null = null
   let currentTrackPosition = 0
   if (
-    currentTrackInfo !== undefined &&
+    currentTrackInfo !== null &&
     currentTrackInfo?.setCurrentTrackId !== null
   ) {
     const { content: track } = await getTrack(
       currentTrackInfo.setCurrentTrackId,
     )
+
     currentTrack = track ?? null
     currentTrackPosition = currentTrackInfo.setCurrentTrackPosition ?? 0
   }

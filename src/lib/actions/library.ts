@@ -19,48 +19,103 @@ import sharp from 'sharp'
 import * as mm from 'music-metadata'
 import type { PostgresJsDatabase } from 'drizzle-orm/postgres-js'
 import type { User } from '~/lib/actions/helper'
+import { tryCatch } from '../try-catch'
 
 export const getAlbumTracks = protectedAction(
   async (user: User, albumId: string) => {
-    const query = await db
-      .selectDistinct({
-        ...getTableColumns(tracks),
-        albumName: albums.name,
-        listens: userListens.listens,
-        artistNames: sql<string>`string_agg(${artists.name}, ';')`,
-        artistIds: sql<string>`string_agg(cast(${artists.id} AS TEXT), ';')`,
-      })
-      .from(tracks)
-      .innerJoin(albums, eq(tracks.albumId, albums.id))
-      .innerJoin(artistTracks, eq(tracks.id, artistTracks.trackId))
-      .innerJoin(artists, eq(artistTracks.artistId, artists.id))
-      .leftJoin(
-        userListens,
-        and(
-          eq(userListens.userId, user.id),
-          eq(userListens.trackId, tracks.id),
-        ),
-      ) // include tracks with no listens. will be null
-      .groupBy(tracks.id, albums.name, userListens.listens) // Include all non-aggregated columns
-      .orderBy(asc(tracks.trackNumber))
-      .where(eq(albums.id, albumId))
-      .execute()
+    const { data: query, error } = await tryCatch(
+      db
+        .selectDistinct({
+          ...getTableColumns(tracks),
+          albumName: albums.name,
+          listens: userListens.listens,
+          artistNames: sql<string>`string_agg(${artists.name}, ';')`,
+          artistIds: sql<string>`string_agg(cast(${artists.id} AS TEXT), ';')`,
+        })
+        .from(tracks)
+        .innerJoin(albums, eq(tracks.albumId, albums.id))
+        .innerJoin(artistTracks, eq(tracks.id, artistTracks.trackId))
+        .innerJoin(artists, eq(artistTracks.artistId, artists.id))
+        .leftJoin(
+          userListens,
+          and(
+            eq(userListens.userId, user.id),
+            eq(userListens.trackId, tracks.id),
+          ),
+        ) // include tracks with no listens. will be null
+        .groupBy(tracks.id, albums.name, userListens.listens) // Include all non-aggregated columns
+        .orderBy(asc(tracks.trackNumber))
+        .where(eq(albums.id, albumId))
+        .execute(),
+    )
+    if (error) {
+      return {
+        status_code: 500,
+        error: error.message,
+        content: null,
+      }
+    }
 
     return {
       status_code: 200,
       content: query,
+      error: null,
     }
   },
 )
 
 export const allTracks = protectedAction(
   async (user: User, page: number, pageSize: number) => {
-    const query = await db
+    const { data: query, error } = await tryCatch(
+      db
+        .selectDistinct({
+          ...getTableColumns(tracks),
+          albumName: albums.name,
+          listens: userListens.listens,
+          artistNames: sql<string>`string_agg(${artists.name}, ';')`,
+          artistIds: sql<string>`string_agg(cast(${artists.id} AS TEXT), ';')`,
+        })
+        .from(tracks)
+        .innerJoin(albums, eq(tracks.albumId, albums.id))
+        .innerJoin(artistTracks, eq(tracks.id, artistTracks.trackId))
+        .innerJoin(artists, eq(artistTracks.artistId, artists.id))
+        .leftJoin(
+          userListens,
+          and(
+            eq(userListens.userId, user.id),
+            eq(userListens.trackId, tracks.id),
+          ),
+        ) // include tracks with no listens. will be null
+        .groupBy(tracks.id, albums.name, userListens.listens) // Include all non-aggregated columns
+        .orderBy(asc(tracks.id))
+        .limit(pageSize)
+        .offset((page - 1) * pageSize)
+        .execute(),
+    )
+    if (error) {
+      return {
+        status_code: 500,
+        error: error.message,
+        content: null,
+      }
+    }
+
+    return {
+      status_code: 200,
+      content: query,
+      error: null,
+    }
+  },
+)
+
+export const search = protectedAction(async (user: User, query: string) => {
+  const { data: searchResult, error } = await tryCatch(
+    db
       .selectDistinct({
         ...getTableColumns(tracks),
         albumName: albums.name,
-        listens: userListens.listens,
         artistNames: sql<string>`string_agg(${artists.name}, ';')`,
+        listens: userListens.listens,
         artistIds: sql<string>`string_agg(cast(${artists.id} AS TEXT), ';')`,
       })
       .from(tracks)
@@ -74,57 +129,143 @@ export const allTracks = protectedAction(
           eq(userListens.trackId, tracks.id),
         ),
       ) // include tracks with no listens. will be null
-      .groupBy(tracks.id, albums.name, userListens.listens) // Include all non-aggregated columns
-      .orderBy(asc(tracks.id))
-      .limit(pageSize)
-      .offset((page - 1) * pageSize)
-      .execute()
 
+      .where(
+        or(
+          sql`${tracks.name} % ${query} OR word_similarity(${tracks.name}, ${query}) > 0.3`,
+          sql`${artists.name} % ${query} OR word_similarity(${artists.name}, ${query}) > 0.3`,
+          sql`${albums.name} % ${query} OR word_similarity(${albums.name}, ${query}) > 0.3`,
+        ),
+      )
+      .groupBy(tracks.id, albums.name, userListens.listens)
+      .execute(),
+  )
+  if (error) {
     return {
-      status_code: 200,
-      content: query,
+      status_code: 500,
+      error: error.message,
+      content: null,
     }
-  },
-)
-
-export const search = protectedAction(async (user: User, query: string) => {
-  const searchResult = await db
-    .selectDistinct({
-      ...getTableColumns(tracks),
-      albumName: albums.name,
-      artistNames: sql<string>`string_agg(${artists.name}, ';')`,
-      listens: userListens.listens,
-      artistIds: sql<string>`string_agg(cast(${artists.id} AS TEXT), ';')`,
-    })
-    .from(tracks)
-    .innerJoin(albums, eq(tracks.albumId, albums.id))
-    .innerJoin(artistTracks, eq(tracks.id, artistTracks.trackId))
-    .innerJoin(artists, eq(artistTracks.artistId, artists.id))
-    .leftJoin(
-      userListens,
-      and(eq(userListens.userId, user.id), eq(userListens.trackId, tracks.id)),
-    ) // include tracks with no listens. will be null
-
-    .where(
-      or(
-        sql`${tracks.name} % ${query} OR word_similarity(${tracks.name}, ${query}) > 0.3`,
-        sql`${artists.name} % ${query} OR word_similarity(${artists.name}, ${query}) > 0.3`,
-        sql`${albums.name} % ${query} OR word_similarity(${albums.name}, ${query}) > 0.3`,
-      ),
-    )
-    .groupBy(tracks.id, albums.name, userListens.listens)
-    .execute()
+  }
   return {
     status_code: 200,
     content: searchResult,
+    error: null,
   }
 })
 
 export const getTrack = protectedAction(async (user: User, trackId: string) => {
-  const trackFound =
-    (
-      await db
-        .select({
+  const { data: trackFound, error } = await tryCatch(
+    db
+      .select({
+        ...getTableColumns(tracks),
+        albumName: albums.name,
+        listens: userListens.listens,
+        artistNames: sql<string>`string_agg(${artists.name}, ';') AS artistNames`,
+        artistIds: sql<string>`string_agg(cast(${artists.id} AS TEXT), ';')`.as(
+          'artistIds',
+        ),
+      })
+      .from(tracks)
+      .where(eq(tracks.id, trackId))
+      .innerJoin(albums, eq(tracks.albumId, albums.id))
+      .innerJoin(artistTracks, eq(artistTracks.trackId, tracks.id))
+      .innerJoin(artists, eq(artists.id, artistTracks.artistId))
+      .leftJoin(
+        userListens,
+        and(
+          eq(userListens.userId, user.id),
+          eq(userListens.trackId, tracks.id),
+        ),
+      ) // include tracks with no listens. will be null
+      .groupBy(tracks.id, albums.name, userListens.listens)
+      .execute(),
+  )
+  if (error) {
+    return {
+      status_code: 500,
+      error: error.message,
+      content: null,
+    }
+  }
+  const [track] = trackFound
+  if (!track) {
+    return {
+      status_code: 404,
+      error: 'Track not found',
+      content: null,
+    }
+  }
+  return {
+    status_code: 200,
+    content: track,
+    error: null,
+  }
+})
+
+export const getAlbum = protectedAction(async (_: User, albumId: string) => {
+  const { data: albumFound, error } = await tryCatch(
+    db
+      .select({
+        ...getTableColumns(albums),
+      })
+      .from(albums)
+      .where(eq(albums.id, albumId))
+      .execute(),
+  )
+  if (error) {
+    return {
+      status_code: 500,
+      error: error.message,
+      content: null,
+    }
+  }
+  const [album] = albumFound
+  if (!album) {
+    return {
+      status_code: 404,
+      error: 'Album not found',
+      content: null,
+    }
+  }
+  return {
+    status_code: 200,
+    content: album,
+    error: null,
+  }
+})
+
+export const getArtist = protectedAction(async (_: User, artistId: string) => {
+  const { data: artistFound, error } = await tryCatch(
+    db.select().from(artists).where(eq(artists.id, artistId)).execute(),
+  )
+  if (error) {
+    return {
+      status_code: 500,
+      error: error.message,
+      content: null,
+    }
+  }
+  const [artist] = artistFound
+  if (!artist) {
+    return {
+      status_code: 404,
+      error: 'Artist not found',
+      content: null,
+    }
+  }
+  return {
+    status_code: 200,
+    content: artist,
+    error: null,
+  }
+})
+
+export const getArtistTracks = protectedAction(
+  async (user: User, artistId: string) => {
+    const { data: query, error } = await tryCatch(
+      db
+        .selectDistinct({
           ...getTableColumns(tracks),
           albumName: albums.name,
           listens: userListens.listens,
@@ -135,10 +276,9 @@ export const getTrack = protectedAction(async (user: User, trackId: string) => {
             ),
         })
         .from(tracks)
-        .where(eq(tracks.id, trackId))
         .innerJoin(albums, eq(tracks.albumId, albums.id))
-        .innerJoin(artistTracks, eq(artistTracks.trackId, tracks.id))
-        .innerJoin(artists, eq(artists.id, artistTracks.artistId))
+        .innerJoin(artistTracks, eq(tracks.id, artistTracks.trackId))
+        .innerJoin(artists, eq(artistTracks.artistId, artists.id))
         .leftJoin(
           userListens,
           and(
@@ -146,69 +286,35 @@ export const getTrack = protectedAction(async (user: User, trackId: string) => {
             eq(userListens.trackId, tracks.id),
           ),
         ) // include tracks with no listens. will be null
+        .where(eq(artists.id, artistId))
         .groupBy(tracks.id, albums.name, userListens.listens)
-        .execute()
-    )[0] || null
-  if (!trackFound) {
-    return {
-      status_code: 404,
-      error: 'Track not found',
-    }
-  }
-  return {
-    status_code: 200,
-    content: trackFound,
-  }
-})
+        .execute(),
+    )
 
-export const getAlbum = protectedAction(async (_: User, albumId: string) => {
-  const albumFound =
-    (
-      await db
-        .select({
-          ...getTableColumns(albums),
-        })
-        .from(albums)
-        .where(eq(albums.id, albumId))
-        .execute()
-    )[0] || null
-  if (!albumFound) {
-    return {
-      status_code: 404,
-      error: 'Album not found',
+    if (error) {
+      return {
+        status_code: 500,
+        error: error.message,
+        content: null,
+      }
     }
-  }
-  return {
-    status_code: 200,
-    content: albumFound,
-  }
-})
 
-export const getArtist = protectedAction(async (_: User, artistId: string) => {
-  const artistFound =
-    (
-      await db.select().from(artists).where(eq(artists.id, artistId)).execute()
-    )[0] || null
-  if (!artistFound) {
     return {
-      status_code: 404,
-      error: 'Artist not found',
+      status_code: 200,
+      content: query,
+      error: null,
     }
-  }
-  return {
-    status_code: 200,
-    content: artistFound,
-  }
-})
+  },
+)
 
-export const getArtistTracks = protectedAction(
-  async (user: User, artistId: string) => {
-    const query = await db
-      .selectDistinct({
+export const getRandomTrack = protectedAction(async (user: User) => {
+  const { data: query, error } = await tryCatch(
+    db
+      .select({
         ...getTableColumns(tracks),
         albumName: albums.name,
-        listens: userListens.listens,
         artistNames: sql<string>`string_agg(${artists.name}, ';') AS artistNames`,
+        listens: userListens.listens,
         artistIds: sql<string>`string_agg(cast(${artists.id} AS TEXT), ';')`.as(
           'artistIds',
         ),
@@ -224,51 +330,34 @@ export const getArtistTracks = protectedAction(
           eq(userListens.trackId, tracks.id),
         ),
       ) // include tracks with no listens. will be null
-      .where(eq(artists.id, artistId))
       .groupBy(tracks.id, albums.name, userListens.listens)
-      .execute()
-
+      .orderBy(sql`RANDOM()`)
+      .limit(1)
+      .execute(),
+  )
+  if (error) {
     return {
-      status_code: 200,
-      content: query,
+      status_code: 500,
+      error: error.message,
+      content: null,
     }
-  },
-)
-
-export const getRandomTrack = protectedAction(async (user: User) => {
-  const query = await db
-    .select({
-      ...getTableColumns(tracks),
-      albumName: albums.name,
-      artistNames: sql<string>`string_agg(${artists.name}, ';') AS artistNames`,
-      listens: userListens.listens,
-      artistIds: sql<string>`string_agg(cast(${artists.id} AS TEXT), ';')`.as(
-        'artistIds',
-      ),
-    })
-    .from(tracks)
-    .innerJoin(albums, eq(tracks.albumId, albums.id))
-    .innerJoin(artistTracks, eq(tracks.id, artistTracks.trackId))
-    .innerJoin(artists, eq(artistTracks.artistId, artists.id))
-    .leftJoin(
-      userListens,
-      and(eq(userListens.userId, user.id), eq(userListens.trackId, tracks.id)),
-    ) // include tracks with no listens. will be null
-    .groupBy(tracks.id, albums.name, userListens.listens)
-    .orderBy(sql`RANDOM()`)
-    .limit(1)
-    .execute()
-  if (!query.length) {
+  }
+  const [track] = query
+  if (!track) {
     return {
       status_code: 404,
       error: 'No tracks found',
+      content: null,
     }
   }
   return {
     status_code: 200,
-    content: query[0],
+    content: track,
+    error: null,
   }
 })
+
+// TODO: REFACTOR BELOW
 
 export const sync = protectedAction(async () => {
   async function getTracks(dir: string): Promise<string[]> {
@@ -682,5 +771,7 @@ export const sync = protectedAction(async () => {
   await pruneMissingTracks(db)
   return {
     status_code: 200,
+    content: {},
+    error: null,
   }
 })

@@ -4,14 +4,23 @@ import { auth } from '~/lib/auth'
 import { db } from '~/server/db'
 import { users_data } from '~/server/db/schema'
 import { eq } from 'drizzle-orm'
-export const key = 'meow'
+import { tryCatch } from '../try-catch'
 
 async function getUserFromUsername(username: string) {
-  const [user] = await db
-    .select()
-    .from(users_data)
-    .where(eq(users_data.username, username))
-    .execute()
+  const { data: userQuery, error } = await tryCatch(
+    db
+      .select()
+      .from(users_data)
+      .where(eq(users_data.username, username))
+      .execute(),
+  )
+  if (error) {
+    return null
+  }
+  const [user] = userQuery
+  if (!user) {
+    return null
+  }
   return user
 }
 
@@ -27,12 +36,14 @@ export async function isAuthorized(): Promise<APIResponse<string>> {
     return {
       status_code: 401,
       error: 'Unauthorized',
+      content: null,
     }
   }
 
   return {
     status_code: 200,
     content: session.user.name,
+    error: null,
   }
 }
 // biome-ignore lint/suspicious/noExplicitAny : dont care
@@ -45,14 +56,16 @@ export const protectedAction = <T, Args extends any[]>(
       return {
         status_code: 401,
         error: 'Unauthorized',
+        content: null,
       }
     }
 
     const user = await getUserFromUsername(isAuthenticated.content || '')
-    if (user === undefined) {
+    if (user === null) {
       return {
         status_code: 401,
         error: 'Unauthorized',
+        content: null,
       }
     }
 

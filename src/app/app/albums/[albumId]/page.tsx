@@ -3,32 +3,11 @@ import PageHeading from '~/components/app/page_heading'
 import { TrackTable } from '~/components/app/track_table'
 import { getAlbum, getAlbumTracks } from '~/lib/actions/library'
 
-// export default async function AblumPage() {
-//   return (
-//     <>
-//       <PageHeading>
-//         <div className="flex flex-row items-center">
-//           <Image
-//             // alt={albumQuery?.album?.name || 'Album Cover'}
-//             // src={`/api/covers?id=${tracks[0]?.id}&size=xl`}
-//             className="mr-5 h-24 w-24 rounded-md"
-//             loading="eager"
-//             width={40}
-//             height={40}
-//           />
-//           {albumQuery?.album?.name}
-//         </div>
-//       </PageHeading>
-//       <TrackTableScroll tracks={tracks} />
-//     </>
-//   )
-// }
-//
 export default async function AlbumPage({
   params,
 }: { params: Promise<{ albumId: string }> }) {
   const album = await getAlbum((await params).albumId)
-  if (!album.content) {
+  if (album.error !== null) {
     return notFound()
   }
 

@@ -22,7 +22,7 @@ type TrackTableProps = {
   dataCallback?: (
     page: number,
     pageSize: number,
-  ) => Promise<TrackQuery[] | undefined>
+  ) => Promise<TrackQuery[] | null>
 }
 
 function TrackCell({
