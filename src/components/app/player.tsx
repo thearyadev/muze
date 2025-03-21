@@ -1,6 +1,6 @@
 'use client'
 
-import type React from 'react'
+import React, { type RefObject } from 'react'
 import Link from 'next/link'
 
 import { VolumeSlider } from '../ui/slider'
@@ -37,35 +37,96 @@ function PlayerBody({ children }: { children: React.ReactNode }) {
     </div>
   )
 }
-import { motion } from 'motion/react'
+import { frame, motion, useMotionValue } from 'motion/react'
 import { cn } from '~/lib/utils'
+export function useFollowPointer(ref: RefObject<HTMLDivElement | null>) {
+  const x = useMotionValue(0)
+  const y = useMotionValue(-45)
 
+  React.useEffect(() => {
+    if (!ref.current) return
+
+    const handlePointerMove = ({ clientX }: MouseEvent) => {
+      const element = ref.current
+      if (!element) return
+
+      frame.read(() => {
+        x.set(clientX - element.offsetLeft - element.offsetWidth / 2)
+      })
+    }
+
+    window.addEventListener('pointermove', handlePointerMove)
+
+    return () => window.removeEventListener('pointermove', handlePointerMove)
+  }, [x.set, ref])
+
+  return { x, y }
+}
+
+function secondsToTimeString(seconds: number) {
+  const minutes = Math.floor(seconds / 60)
+  const remainingSeconds = Math.floor(seconds % 60)
+  const timeString = `${minutes}:${
+    remainingSeconds < 10 ? '0' : ''
+  }${remainingSeconds}`
+  return timeString
+}
 function TrackPositionSlider() {
   // biome-ignore lint/style/noNonNullAssertion :
   const { position, changePosition, maxposition } = usePosition()!
   const currentPercentage = ((position[0] as number) / maxposition) * 100
 
+  const tooltipRef = React.useRef<HTMLDivElement>(null)
+  const hoverTime = useMotionValue('0:00')
+
+  const { x, y } = useFollowPointer(tooltipRef)
   return (
-    <div
-      className="relative cursor-pointer min-h-3 -mb-3"
-      onMouseDown={(e) => {
-        const clickX = e.clientX
-        const divWidth = (e.target as HTMLDivElement).offsetWidth
-        const percentage = clickX / divWidth
-        const newPosition = percentage * maxposition
-        changePosition([newPosition])
-      }}
-    >
-      <div className="bg-gray-500 min-h-0.5 absolute top-0 left-0 w-full" />
+    <div>
       <motion.div
-        className="bg-orange-400 min-h-0.5 absolute top-0 left-0 pointer-events-none"
-        animate={{ width: `${currentPercentage}%` }}
-        transition={{
-          type: 'tween',
-          ease: 'linear',
-          duration: 0.18,
+        // className="absolute text-sm px-2 rounded-sm z-50 pointer-events-none hidden bg-orange-400
+        className="absolute text-sm px-3 py-2 rounded-md z-50 pointer-events-none hidden bg-orange-400 text-white font-medium shadow-lg-top-12 left-1/2 -translate-x-1/2 before:content-[''] before:absolute before:left-1/2 before:-translate-x-1/2 before:bottom-[-6px] before:border-l-[6px] before:border-l-transparent before:border-t-[6px] before:border-t-orange-400 before:border-r-[6px] before:border-r-transparent"
+        ref={tooltipRef}
+        style={{
+          x,
+          y,
         }}
-      />
+      >
+        {hoverTime}
+      </motion.div>
+      <motion.div
+        className="relative cursor-pointer min-h-6 -mb-6"
+        onMouseDown={(e) => {
+          const clickX = e.clientX
+          const divWidth = (e.target as HTMLDivElement).offsetWidth
+          const percentage = clickX / divWidth
+          const newPosition = percentage * maxposition
+          changePosition([newPosition])
+        }}
+        onPointerMove={(e) => {
+          const hoverX = e.clientX
+          const divWidth = (e.target as HTMLDivElement).offsetWidth
+          const percentage = hoverX / divWidth
+          const hoveredPosition = percentage * maxposition
+          hoverTime.set(secondsToTimeString(hoveredPosition))
+        }}
+        onPointerLeave={() => {
+          tooltipRef.current?.classList.add('hidden')
+        }}
+        onPointerEnter={() => {
+          tooltipRef.current?.classList.remove('hidden')
+        }}
+      >
+        <motion.div className="bg-gray-500 min-h-0.5 absolute top-0 left-0 w-full" />
+        <motion.div
+          className="bg-orange-400 min-h-0.5 absolute top-0 left-0 pointer-events-none"
+          animate={{ width: `${currentPercentage}%` }}
+          transition={{
+            type: 'tween',
+            ease: 'linear',
+            duration: 0.18,
+          }}
+        />
+      </motion.div>
     </div>
   )
 }
