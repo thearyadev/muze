@@ -27,7 +27,6 @@ import { useLoop } from './providers/loop'
 import { usePlaying } from './providers/playing'
 import { usePosition } from './providers/position'
 import { useQueue } from './providers/queue'
-import Image from 'next/image'
 import { useAutoplay } from './providers/autoplay'
 
 function PlayerBody({ children }: { children: React.ReactNode }) {
@@ -39,9 +38,12 @@ function PlayerBody({ children }: { children: React.ReactNode }) {
 }
 import { frame, motion, useMotionValue } from 'motion/react'
 import { cn } from '~/lib/utils'
-export function useFollowPointer(ref: RefObject<HTMLDivElement | null>) {
+import BufferedImage from './bufferedImage'
+export function useFollowPointer(
+  ref: RefObject<HTMLDivElement | null>,
+  y: number,
+) {
   const x = useMotionValue(0)
-  const y = useMotionValue(-45)
 
   React.useEffect(() => {
     if (!ref.current) return
@@ -79,11 +81,10 @@ function TrackPositionSlider() {
   const tooltipRef = React.useRef<HTMLDivElement>(null)
   const hoverTime = useMotionValue('0:00')
 
-  const { x, y } = useFollowPointer(tooltipRef)
+  const { x, y } = useFollowPointer(tooltipRef, -45)
   return (
-    <div>
+    <>
       <motion.div
-        // className="absolute text-sm px-2 rounded-sm z-50 pointer-events-none hidden bg-orange-400
         className="absolute text-sm px-3 py-2 rounded-md z-50 pointer-events-none hidden bg-orange-400 text-white font-medium shadow-lg-top-12 left-1/2 -translate-x-1/2 before:content-[''] before:absolute before:left-1/2 before:-translate-x-1/2 before:bottom-[-6px] before:border-l-[6px] before:border-l-transparent before:border-t-[6px] before:border-t-orange-400 before:border-r-[6px] before:border-r-transparent"
         ref={tooltipRef}
         style={{
@@ -127,7 +128,7 @@ function TrackPositionSlider() {
           }}
         />
       </motion.div>
-    </div>
+    </>
   )
 }
 export default function Player() {
@@ -156,15 +157,13 @@ export default function Player() {
         >
           {track !== null ? (
             <>
-              <Image
+              <BufferedImage
                 alt={track.name || 'Track Cover'}
                 src={`/api/library/covers?id=${track.id}&size=xl`}
-                className="h-16 w-16 rounded-md"
+                className="h-16 w-16 rounded-md bg-zinc-800"
                 loading="eager"
                 width={40}
                 height={40}
-                placeholder="blur"
-                blurDataURL="data:image/png;base64,/9j/4AAQSkZJRgABAQAAAQABAAD/2wBDAAMCAgICAgMCAgIDAwMDBAYEBAQEBAgGBgUGCQgKCgkICQkKDA8MCgsOCwkJDRENDg8QEBEQCgwSExIQEw8QEBD/wAALCABkAGQBAREA/8QAFQABAQAAAAAAAAAAAAAAAAAAAAj/xAAUEAEAAAAAAAAAAAAAAAAAAAAA/9oACAEBAAA/AIkAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAf/9k="
               />
               <div className="hidden pl-3 sm:block">
                 <p className="text-sm leading-tight text-white">{track.name}</p>

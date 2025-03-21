@@ -8,7 +8,7 @@ import { VolumeProvider, useVolume } from './volume'
 import { QueueProvider, useQueue } from './queue'
 import type { getTrack } from '~/lib/actions/library'
 import { AutoplayProvider, useAutoplay } from './autoplay'
-import Image from 'next/image'
+import BufferedImage from '../bufferedImage'
 
 type TrackQuery = NonNullable<Awaited<ReturnType<typeof getTrack>>['content']>
 
@@ -75,14 +75,12 @@ function ContextRichOverlay() {
         }
       }
     >
-      <Image
+      <BufferedImage
         alt={track.name || 'Track Cover'}
         src={`/api/library/covers?id=${track.id}&size=xl`}
-        className="h-full w-full object-cover"
+        className="h-full w-full object-cover bg-zinc-800"
         loading="eager"
-        fill
-        placeholder="blur"
-        blurDataURL="data:image/png;base64,/9j/4AAQSkZJRgABAQAAAQABAAD/2wBDAAMCAgICAgMCAgIDAwMDBAYEBAQEBAgGBgUGCQgKCgkICQkKDA8MCgsOCwkJDRENDg8QEBEQCgwSExIQEw8QEBD/wAALCABkAGQBAREA/8QAFQABAQAAAAAAAAAAAAAAAAAAAAj/xAAUEAEAAAAAAAAAAAAAAAAAAAAA/9oACAEBAAA/AIkAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAf/9k="
+        fill={true}
       />
     </div>
   )

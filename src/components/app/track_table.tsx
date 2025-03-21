@@ -6,7 +6,7 @@ import { Separator } from '~/components/ui/separator'
 import Link from 'next/link'
 import { useTrack } from './providers/track'
 import { useQueue } from './providers/queue'
-import Image from 'next/image'
+import BufferedImage from './bufferedImage'
 import type { allTracks } from '~/lib/actions/library'
 
 type TrackQuery = NonNullable<
@@ -41,10 +41,10 @@ function TrackCell({
     >
       <div className="col-span-6 flex flex-row space-x-3 text-sm">
         <div>
-          <Image
+          <BufferedImage
             alt={track?.name || 'Track Cover'}
             src={`/api/library/covers?id=${track?.id}&size=xl`}
-            className="h-10 w-10 rounded-md"
+            className="h-10 w-10 rounded-md bg-zinc-800"
             loading={index <= 20 ? 'eager' : 'lazy'}
             width={40}
             height={40}
