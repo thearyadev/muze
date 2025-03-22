@@ -87,7 +87,7 @@ function TrackPositionSlider() {
     <>
       <motion.div
         className={cn(
-          "absolute text-sm px-3 py-2 rounded-md z-50 pointer-events-none bg-orange-400 text-white font-medium shadow-lg-top-12 left-1/2 -translate-x-1/2 before:content-[''] before:absolute before:left-1/2 before:-translate-x-1/2 before:bottom-[-6px] before:border-l-[6px] before:border-l-transparent before:border-t-[6px] before:border-t-orange-400 before:border-r-[6px] before:border-r-transparent",
+          "absolute text-sm px-3 py-2 rounded-md z-50 pointer-events-none bg-orange-400 text-white border-b-1 border-orange-400 border font-medium shadow-lg-top-12 left-1/2 -translate-x-1/2 before:content-[''] before:absolute before:left-1/2 before:-translate-x-1/2 before:bottom-[-6px] before:border-l-[6px] before:border-l-transparent before:border-t-[6px] before:border-t-orange-400 before:border-r-[6px] before:border-r-transparent",
           !hovering ? 'hidden' : null,
         )}
         ref={tooltipRef}
