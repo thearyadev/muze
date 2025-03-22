@@ -9,6 +9,7 @@ import { QueueProvider, useQueue } from './queue'
 import type { getTrack } from '~/lib/actions/library'
 import { AutoplayProvider, useAutoplay } from './autoplay'
 import BufferedImage from '../bufferedImage'
+import { AnimatePresence, motion } from 'motion/react'
 
 type TrackQuery = NonNullable<Awaited<ReturnType<typeof getTrack>>['content']>
 
@@ -67,22 +68,33 @@ function ContextRichOverlay() {
   }
 
   return (
-    <div
-      className="z-10000 pointer-events-none fixed left-0 top-0 h-full w-full overflow-hidden bg-cover bg-center bg-no-repeat opacity-10 blur-xl"
-      style={
-        {
-          // backgroundImage: `url('/api/library/covers/?id=${track.id}&size=xl')`,
-        }
-      }
-    >
-      <BufferedImage
-        alt={track.name || 'Track Cover'}
-        src={`/api/library/covers?id=${track.id}&size=xl`}
-        className="h-full w-full object-cover bg-zinc-800"
-        loading="eager"
-        fill={true}
-      />
-    </div>
+    <AnimatePresence mode="sync">
+      <motion.div
+        className="z-10000 pointer-events-none fixed left-0 top-0 h-full w-full overflow-hidden bg-cover bg-center bg-no-repeat opacity-10 blur-xl"
+        initial={{ opacity: 0 }}
+        animate={{ opacity: 0.1 }}
+        transition={{
+          type: 'tween',
+          duration: 0.5,
+        }}
+        exit={{
+          opacity: 0,
+          transition: {
+            type: 'tween',
+            duration: 0.1,
+          },
+        }}
+        key={track.id}
+      >
+        <BufferedImage
+          alt={track.name || 'Track Cover'}
+          src={`/api/library/covers?id=${track.id}&size=xl`}
+          className="h-full w-full object-cover bg-zinc-800"
+          loading="eager"
+          fill={true}
+        />
+      </motion.div>
+    </AnimatePresence>
   )
 }
 function ContextRichLocalStorageLoader({

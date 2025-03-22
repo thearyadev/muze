@@ -193,8 +193,8 @@ export default function Player() {
           <div className="flex flex-row items-center space-x-5 ">
             <div
               className={cn(
-                'px-4 py-2 rounded-md border hover:border-orange-400 border-transparent transition-all duration-100 ease-in-out',
-                autoplay ? 'bg-orange-400 text-white' : null,
+                'px-4 py-2 rounded-md border transition-all duration-100 ease-in-out',
+                autoplay ? 'bg-orange-400 text-white' : 'hover:bg-orange-300',
               )}
               onClick={() => {
                 changeAutoplay(!autoplay)
