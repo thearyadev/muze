@@ -193,14 +193,20 @@ export default function Player() {
           <div className="flex flex-row items-center space-x-5 ">
             <div
               className={cn(
-                'px-4 py-2 rounded-md border transition-all duration-100 ease-in-out',
-                autoplay ? 'bg-orange-400 text-white' : 'hover:bg-orange-300',
+                'px-4 py-2 rounded-md',
+                'transition-all duration-300 ease-in-out',
+                autoplay
+                  ? 'bg-orange-500 text-white'
+                  : 'bg-transparent hover:text-orange-500 hover:bg-orange-50',
               )}
               onClick={() => {
                 changeAutoplay(!autoplay)
               }}
             >
-              <AutoplayIcon size={15} className={'text-xs'} />
+              <AutoplayIcon
+                size={15}
+                className={cn('text-xs', 'transition-all duration-300')}
+              />
             </div>
             <StepBackwardIcon
               size={20}
@@ -235,14 +241,20 @@ export default function Player() {
             />
             <div
               className={cn(
-                'px-4 py-2 rounded-md border hover:border-orange-400 border-transparent transition-all duration-100 ease-in-out',
-                loop ? 'bg-orange-400 text-white' : null,
+                'px-4 py-2 rounded-md',
+                'transition-all duration-300 ease-in-out',
+                loop
+                  ? 'bg-orange-500 text-white'
+                  : 'bg-transparent hover:text-orange-500 hover:bg-orange-50',
               )}
               onClick={() => {
                 changeLoop(!loop)
               }}
             >
-              <LoopIcon size={15} className={'text-xs '} />
+              <LoopIcon
+                size={15}
+                className={cn('text-xs', 'transition-all duration-300')}
+              />
             </div>
           </div>
         </div>
