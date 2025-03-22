@@ -19,9 +19,11 @@ import { useRouter } from 'next/navigation'
 import { authClient } from '~/lib/auth-client'
 import { sync } from '~/lib/actions/library'
 import { useHotkeys } from '@mantine/hooks'
-import { env } from '~/env'
 
-export function PageWrapper({ children }: { children: React.ReactNode }) {
+export function PageWrapper({
+  tag,
+  children,
+}: { tag: string; children: React.ReactNode }) {
   const router = useRouter()
 
   useHotkeys([
@@ -81,7 +83,7 @@ export function PageWrapper({ children }: { children: React.ReactNode }) {
       <Sidebar open={open} setOpen={setOpen} animate={true}>
         <SidebarBody className="justify-between gap-10">
           <div className="flex flex-col flex-1 overflow-y-auto overflow-x-hidden">
-            <Logo />
+            <Logo tag={tag} />
             <div className="mt-8 flex flex-col gap-2">
               {links.map((link) => (
                 <SidebarLink key={link.label} link={link} />
@@ -132,7 +134,7 @@ export function PageWrapper({ children }: { children: React.ReactNode }) {
     </div>
   )
 }
-export const Logo = () => {
+export const Logo = ({ tag }: { tag: string }) => {
   return (
     <Link
       href="#"
@@ -146,7 +148,7 @@ export const Logo = () => {
       >
         <span className="text-white pr-2">muze</span>
         <span className="text-zinc-600 text-xs hidden group-hover:inline-block ">
-          {env.NEXT_PUBLIC_TAG}
+          {tag}
         </span>
       </motion.span>
     </Link>

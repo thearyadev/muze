@@ -13,9 +13,7 @@ export const env = createEnv({
     TAG: z.string().default('dev'),
   },
 
-  client: {
-    NEXT_PUBLIC_TAG: z.string().default('dev'),
-  },
+  client: {},
   runtimeEnv: {
     DATABASE_URL: process.env.DATABASE_URL,
     NODE_ENV: process.env.NODE_ENV,
@@ -23,7 +21,6 @@ export const env = createEnv({
     COVER_ART_PATH: process.env.COVER_ART_PATH,
     APP_URL: process.env.APP_URL,
     TAG: process.env.TAG,
-    NEXT_PUBLIC_TAG: process.env.TAG,
   },
   skipValidation: !!process.env.SKIP_ENV_VALIDATION,
   emptyStringAsUndefined: true,

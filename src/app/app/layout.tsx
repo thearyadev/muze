@@ -11,6 +11,7 @@ import StateViewer from '~/components/app/state_viewer'
 import ScreenSizeIndicator from '~/components/app/ssi'
 import { SidebarProvider } from '~/components/ui/sidebar'
 import { getCurrentTrack } from '~/lib/actions/user'
+import { env } from '~/env'
 
 type TrackQuery = NonNullable<Awaited<ReturnType<typeof getTrack>>['content']>
 
@@ -51,7 +52,7 @@ export default async function AppLayout({
 
         <div className="h-screen flex flex-col">
           <div className="overflow-hidden flex-1 ">
-            <PageWrapper>{children}</PageWrapper>
+            <PageWrapper tag={env.TAG}>{children}</PageWrapper>
           </div>
 
           <div className="flex-shrink-0">
